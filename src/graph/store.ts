@@ -161,5 +161,68 @@ function initTables(db: Database.Database): void {
       created_at TEXT NOT NULL,
       accepted_graph_version TEXT NOT NULL
     );
+
+    -- v0.2: §8.1 WorkPackage
+    CREATE TABLE IF NOT EXISTS work_packages (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL DEFAULT 'unknown',
+      status TEXT NOT NULL DEFAULT 'planned',
+      scope_paths TEXT NOT NULL DEFAULT '[]',
+      included_entity_ids TEXT NOT NULL DEFAULT '[]',
+      excluded_entity_ids TEXT NOT NULL DEFAULT '[]',
+      allowed_external_refs TEXT NOT NULL DEFAULT '[]',
+      forbidden_ownership TEXT NOT NULL DEFAULT '[]',
+      dependencies_on_packages TEXT NOT NULL DEFAULT '[]',
+      owner_agent TEXT,
+      open_questions TEXT NOT NULL DEFAULT '[]',
+      notes TEXT
+    );
+
+    -- v0.2: §9.1 ModuleProposal
+    CREATE TABLE IF NOT EXISTS module_proposals (
+      id TEXT PRIMARY KEY,
+      work_package_id TEXT NOT NULL,
+      module_name TEXT NOT NULL,
+      module_type TEXT NOT NULL DEFAULT 'unknown',
+      purpose TEXT NOT NULL DEFAULT '',
+      owned_code_entities TEXT NOT NULL DEFAULT '[]',
+      used_code_entities TEXT NOT NULL DEFAULT '[]',
+      entrypoints TEXT NOT NULL DEFAULT '[]',
+      ports TEXT NOT NULL DEFAULT '[]',
+      internal_flows TEXT NOT NULL DEFAULT '[]',
+      outgoing_dependencies TEXT NOT NULL DEFAULT '[]',
+      incoming_dependencies TEXT NOT NULL DEFAULT '[]',
+      unknown_boundaries TEXT NOT NULL DEFAULT '[]',
+      coverage_gaps TEXT NOT NULL DEFAULT '[]',
+      confidence REAL NOT NULL DEFAULT 1.0,
+      status TEXT NOT NULL DEFAULT 'draft',
+      FOREIGN KEY (work_package_id) REFERENCES work_packages(id)
+    );
+
+    -- v0.2: §10.1 ProposalReview
+    CREATE TABLE IF NOT EXISTS proposal_reviews (
+      id TEXT PRIMARY KEY,
+      proposal_id TEXT NOT NULL,
+      reviewer_agent TEXT,
+      status TEXT NOT NULL DEFAULT 'needs_revision',
+      findings TEXT NOT NULL DEFAULT '[]',
+      coverage_notes TEXT NOT NULL DEFAULT '',
+      evidence_notes TEXT NOT NULL DEFAULT '',
+      recommended_fixes TEXT NOT NULL DEFAULT '[]',
+      FOREIGN KEY (proposal_id) REFERENCES module_proposals(id)
+    );
+
+    -- v0.2: §12.4 MergedProposalMapping
+    CREATE TABLE IF NOT EXISTS merged_proposal_mappings (
+      id TEXT PRIMARY KEY,
+      proposal_id TEXT NOT NULL,
+      work_package_id TEXT NOT NULL,
+      block_id TEXT NOT NULL,
+      merged_at TEXT NOT NULL,
+      FOREIGN KEY (proposal_id) REFERENCES module_proposals(id),
+      FOREIGN KEY (work_package_id) REFERENCES work_packages(id),
+      FOREIGN KEY (block_id) REFERENCES blocks(id)
+    );
   `);
 }

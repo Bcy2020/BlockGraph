@@ -1,4 +1,4 @@
-# BlockGraph MCP v0.1
+# BlockGraph MCP v0.2
 
 A constrained graph editor for architecture-first repository maintenance, implemented as an MCP (Model Context Protocol) server.
 
@@ -11,6 +11,18 @@ BlockGraph MCP helps coding agents maintain a structured architecture model of a
 - **Flow Graph** — entrypoint-triggered business processes through blocks
 
 All semantic graph edits follow the **draft → compile → promote → snapshot** protocol.
+
+## v0.2: Parallel Initialization & Quality Gates
+
+v0.2 adds:
+
+- **Work Packages** — isolated boundaries for parallel initialization
+- **Module Proposals** — structured intermediate artifacts before graph merge
+- **Proposal Reviews** — structured quality feedback with findings
+- **Quality Gates** — coverage, missing modules, shared dependencies, connector audit, flow sufficiency
+- **Coordinator-Only Merge** — only coordinator merges proposals into draft graph
+
+See [docs/parallel-initialization-skill.md](docs/parallel-initialization-skill.md) for the multi-agent initialization workflow.
 
 ## Setup
 
@@ -94,6 +106,54 @@ Or add to your MCP client configuration:
 |------|-------------|
 | `query_block` | Get block details with ports, mappings, connectors, and flow steps |
 | `query_symbols_by_block` | Get all code entities mapped to a block |
+| `suggest_block_candidates` | Suggest candidate blocks from code graph using heuristics |
+
+### Work Packages (v0.2)
+
+| Tool | Description |
+|------|-------------|
+| `create_work_package` | Create a planned work package with isolation boundaries |
+| `list_work_packages` | List work packages by status or type |
+| `update_work_package_status` | Update work package status with legal transition enforcement |
+| `check_work_package_conflicts` | Report ownership conflicts, scope violations, and missing dependencies |
+
+### Module Proposals (v0.2)
+
+| Tool | Description |
+|------|-------------|
+| `create_module_proposal` | Create a module proposal for a work package |
+| `attach_proposal_entity` | Add owned/used/entrypoint entity evidence to a proposal |
+| `add_proposal_port` | Add a proposed port to a proposal |
+| `add_proposal_dependency` | Add incoming or outgoing dependency evidence |
+| `add_proposal_flow` | Add an internal proposed flow |
+| `mark_proposal_gap` | Record unresolved module-local uncertainty |
+| `submit_module_proposal` | Mark a module proposal as ready for review |
+
+### Proposal Reviews (v0.2)
+
+| Tool | Description |
+|------|-------------|
+| `submit_proposal_review` | Record a structured review with findings |
+| `list_proposal_reviews` | List reviews and findings for a proposal |
+| `resolve_proposal_finding` | Mark a finding as resolved, rejected, or deferred |
+
+### Merge (v0.2)
+
+| Tool | Description |
+|------|-------------|
+| `merge_module_proposal` | Coordinator-only: merge approved proposal into draft graph |
+| `list_merged_proposals` | List proposal-to-block merge mappings |
+
+### Quality Gates (v0.2)
+
+| Tool | Description |
+|------|-------------|
+| `coverage_report` | Report mapped/unmapped entities and directories |
+| `detect_missing_modules` | Detect likely missing feature modules |
+| `detect_shared_dependencies` | Detect shared dependency candidates |
+| `connector_audit` | Audit cross-block code edges and connector evidence |
+| `flow_sufficiency_check` | Evaluate whether flows are sufficient for complexity |
+| `quality_gate_report` | Run all quality checks, return ready/not-ready decision |
 
 ## Graph Model
 
@@ -120,10 +180,24 @@ Entrypoint-triggered business processes:
 - **Flow**: named process triggered by a code entity
 - **FlowStep**: ordered step binding a block and code entity
 
+### Work Packages (v0.2)
+
+Parallel initialization boundaries:
+
+- **WorkPackage**: isolated unit with scope, dependencies, and status
+- **ModuleProposal**: structured proposal with entities, ports, flows, gaps
+- **ProposalReview**: structured review with findings and resolutions
+
 ## State Machine
 
 ```
 draft ──compile──> valid ──promote──> accepted ──commit──> snapshot (immutable)
+```
+
+v0.2 adds a pre-merge proposal layer:
+
+```
+work package -> module proposal -> proposal review -> coordinator merge -> compile -> promote -> quality gate -> snapshot
 ```
 
 - **draft**: editable working state. All agent edits go here first.
@@ -133,7 +207,7 @@ draft ──compile──> valid ──promote──> accepted ──commit─�
 
 The accepted graph MUST NOT be edited directly.
 
-## Initialization Workflow
+## Initialization Workflow (v0.1)
 
 1. Call `begin_initialization({ repo_path })`
 2. Call `scan_repo({ repo_path })`
@@ -151,6 +225,19 @@ The accepted graph MUST NOT be edited directly.
 14. Compile the graph with `compile_draft_graph`
 15. Commit a snapshot with `commit_snapshot({ git_sha })`
 
+## Parallel Initialization Workflow (v0.2)
+
+See [docs/parallel-initialization-skill.md](docs/parallel-initialization-skill.md) for the full workflow.
+
+Summary:
+1. Scan repository and detect candidates
+2. Create work packages with isolation boundaries
+3. Module agents create proposals in parallel
+4. Review agents review proposals independently
+5. Coordinator resolves findings and merges approved proposals
+6. Run quality gates to verify readiness
+7. Commit snapshot only when quality gates pass
+
 ## Testing
 
 ```bash
@@ -163,10 +250,16 @@ pnpm test -- tests/scanner.test.ts
 
 Test coverage:
 - `tests/graph.test.ts` — CRUD operations (36 tests)
-- `tests/mcp-tools.test.ts` — Tool handler success/failure paths (48 tests)
-- `tests/scanner.test.ts` — Scanner fixture detection (13 tests)
+- `tests/mcp-tools.test.ts` — Tool handler success/failure paths (71 tests)
+- `tests/scanner.test.ts` — Scanner fixture detection (16 tests)
 - `tests/compiler.test.ts` — Compiler errors/warnings (22 tests)
 - `tests/initialization-flow.test.ts` — Full init loop end-to-end (1 test)
+- `tests/work-packages.test.ts` — Work package CRUD and status transitions (32 tests)
+- `tests/proposals.test.ts` — Proposal CRUD and scope validation (26 tests)
+- `tests/reviews.test.ts` — Review submission and finding resolution (13 tests)
+- `tests/merge.test.ts` — Coordinator merge and conflict detection (14 tests)
+- `tests/quality-gates.test.ts` — Quality gate reports (17 tests)
+- `tests/multi-agent.test.ts` — Multi-agent protocol simulation (6 tests)
 
 ## Project Structure
 
@@ -183,18 +276,21 @@ src/
   scanner/
     tsScanner.ts  — TypeScript/React scanner using ts-morph
 fixtures/
-  ts-react-auth/  — Test fixture repository
+  ts-react-auth/    — Test fixture repository (simple)
+  ts-react-complex/ — Test fixture repository (complex)
 tests/
   *.test.ts       — Test files
+docs/
+  agent-initialization-skill.md   — v0.1 initialization guide
+  parallel-initialization-skill.md — v0.2 parallel initialization guide
 ```
 
-## Known Limitations (v0.1)
+## Known Limitations
 
 - Scanner only supports TypeScript/JavaScript (no multi-language)
 - No visual graph UI
 - No runtime tracing or Playwright integration
 - No Neo4j or external graph databases
-- Agent must manually create blocks (no automatic decomposition)
 - Evidence is natural language only (no structured schemas for ports)
 - Flows do not support branching execution
 - CLI is minimal (for dev/debug only, MCP tools are primary interface)

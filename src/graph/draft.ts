@@ -23,6 +23,21 @@ import type {
   Snapshot,
   UnknownBoundary,
   UnknownBoundaryStatus,
+  WorkPackage,
+  WorkPackageStatus,
+  WorkPackageType,
+  ModuleProposal,
+  ModuleProposalStatus,
+  ProposalEntity,
+  ProposalPort,
+  ProposalDependency,
+  ProposalFlow,
+  ProposalGap,
+  ProposalUnknownBoundary,
+  ProposalReview,
+  ProposalReviewStatus,
+  ReviewFinding,
+  MergedProposalMapping,
 } from "./schema.js";
 
 // ── helpers ────────────────────────────────────────────────────────────────
@@ -691,5 +706,677 @@ export function listSnapshots(db: Database.Database): Snapshot[] {
     git_sha: row.git_sha as string,
     created_at: row.created_at as string,
     accepted_graph_version: row.accepted_graph_version as string,
+  }));
+}
+
+// ── v0.2: WorkPackage ─────────────────────────────────────────────────────
+
+/** Legal status transitions for work packages. */
+const WP_TRANSITIONS: Record<WorkPackageStatus, WorkPackageStatus[]> = {
+  planned: ["assigned", "rejected", "deferred", "merged"],
+  assigned: ["proposed", "rejected", "deferred", "merged"],
+  proposed: ["reviewing", "rejected", "deferred", "merged"],
+  reviewing: ["needs_revision", "approved", "rejected", "merged"],
+  needs_revision: ["proposed", "rejected", "deferred", "merged"],
+  approved: ["merged", "rejected"],
+  merged: [],
+  rejected: [],
+  deferred: ["planned"],
+};
+
+export function createWorkPackage(
+  db: Database.Database,
+  input: {
+    id: string;
+    name: string;
+    type?: WorkPackageType;
+    scope_paths?: string[];
+    included_entity_ids?: string[];
+    excluded_entity_ids?: string[];
+    allowed_external_refs?: string[];
+    forbidden_ownership?: string[];
+    dependencies_on_packages?: string[];
+    owner_agent?: string;
+    open_questions?: string[];
+    notes?: string;
+  },
+): WorkPackage {
+  const type = input.type ?? "unknown";
+  const scope_paths = input.scope_paths ?? [];
+  const included_entity_ids = input.included_entity_ids ?? [];
+  const excluded_entity_ids = input.excluded_entity_ids ?? [];
+  const allowed_external_refs = input.allowed_external_refs ?? [];
+  const forbidden_ownership = input.forbidden_ownership ?? [];
+  const dependencies_on_packages = input.dependencies_on_packages ?? [];
+  const open_questions = input.open_questions ?? [];
+
+  db.prepare(
+    `INSERT INTO work_packages (id, name, type, status, scope_paths, included_entity_ids, excluded_entity_ids, allowed_external_refs, forbidden_ownership, dependencies_on_packages, owner_agent, open_questions, notes)
+     VALUES (?, ?, ?, 'planned', ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    input.id,
+    input.name,
+    type,
+    JSON.stringify(scope_paths),
+    JSON.stringify(included_entity_ids),
+    JSON.stringify(excluded_entity_ids),
+    JSON.stringify(allowed_external_refs),
+    JSON.stringify(forbidden_ownership),
+    JSON.stringify(dependencies_on_packages),
+    input.owner_agent ?? null,
+    JSON.stringify(open_questions),
+    input.notes ?? null,
+  );
+
+  return {
+    id: input.id,
+    name: input.name,
+    type,
+    status: "planned",
+    scope_paths,
+    included_entity_ids,
+    excluded_entity_ids,
+    allowed_external_refs,
+    forbidden_ownership,
+    dependencies_on_packages,
+    owner_agent: input.owner_agent,
+    open_questions,
+    notes: input.notes,
+  };
+}
+
+export function getWorkPackage(
+  db: Database.Database,
+  id: string,
+): WorkPackage | null {
+  const row = db.prepare(`SELECT * FROM work_packages WHERE id = ?`).get(id) as Record<string, unknown> | undefined;
+  if (!row) return null;
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    type: row.type as WorkPackageType,
+    status: row.status as WorkPackageStatus,
+    scope_paths: parseJson(row.scope_paths as string),
+    included_entity_ids: parseJson(row.included_entity_ids as string),
+    excluded_entity_ids: parseJson(row.excluded_entity_ids as string),
+    allowed_external_refs: parseJson(row.allowed_external_refs as string),
+    forbidden_ownership: parseJson(row.forbidden_ownership as string),
+    dependencies_on_packages: parseJson(row.dependencies_on_packages as string),
+    owner_agent: row.owner_agent as string | undefined,
+    open_questions: parseJson(row.open_questions as string),
+    notes: row.notes as string | undefined,
+  };
+}
+
+export function listWorkPackages(
+  db: Database.Database,
+  filter?: { status?: WorkPackageStatus; type?: WorkPackageType },
+): WorkPackage[] {
+  let sql = `SELECT * FROM work_packages WHERE 1=1`;
+  const params: unknown[] = [];
+  if (filter?.status) {
+    sql += ` AND status = ?`;
+    params.push(filter.status);
+  }
+  if (filter?.type) {
+    sql += ` AND type = ?`;
+    params.push(filter.type);
+  }
+  const rows = db.prepare(sql).all(...params) as Record<string, unknown>[];
+  return rows.map((row) => ({
+    id: row.id as string,
+    name: row.name as string,
+    type: row.type as WorkPackageType,
+    status: row.status as WorkPackageStatus,
+    scope_paths: parseJson(row.scope_paths as string),
+    included_entity_ids: parseJson(row.included_entity_ids as string),
+    excluded_entity_ids: parseJson(row.excluded_entity_ids as string),
+    allowed_external_refs: parseJson(row.allowed_external_refs as string),
+    forbidden_ownership: parseJson(row.forbidden_ownership as string),
+    dependencies_on_packages: parseJson(row.dependencies_on_packages as string),
+    owner_agent: row.owner_agent as string | undefined,
+    open_questions: parseJson(row.open_questions as string),
+    notes: row.notes as string | undefined,
+  }));
+}
+
+export function updateWorkPackageStatus(
+  db: Database.Database,
+  id: string,
+  status: WorkPackageStatus,
+): { ok: boolean; error?: string } {
+  const pkg = getWorkPackage(db, id);
+  if (!pkg) return { ok: false, error: `Work package not found: ${id}` };
+
+  const allowed = WP_TRANSITIONS[pkg.status] ?? [];
+  if (!allowed.includes(status)) {
+    return { ok: false, error: `Illegal status transition: ${pkg.status} -> ${status}` };
+  }
+
+  db.prepare(`UPDATE work_packages SET status = ? WHERE id = ?`).run(status, id);
+  return { ok: true };
+}
+
+export function deleteWorkPackage(db: Database.Database, id: string): boolean {
+  const result = db.prepare(`DELETE FROM work_packages WHERE id = ?`).run(id);
+  return result.changes > 0;
+}
+
+// ── v0.2: ModuleProposal ──────────────────────────────────────────────────
+
+/** Proposal status transitions. */
+const PROPOSAL_TRANSITIONS: Record<ModuleProposalStatus, ModuleProposalStatus[]> = {
+  draft: ["submitted", "rejected"],
+  submitted: ["reviewing", "rejected", "needs_revision"],
+  reviewing: ["needs_revision", "approved", "rejected"],
+  needs_revision: ["submitted", "rejected"],
+  approved: ["merged", "rejected"],
+  merged: [],
+  rejected: [],
+};
+
+/** Check if an entity's file_path matches any of the package's scope_paths. */
+export function isEntityInScope(
+  db: Database.Database,
+  entityId: string,
+  pkg: WorkPackage,
+): boolean {
+  const entity = getCodeEntity(db, entityId);
+  if (!entity) return false;
+  if (pkg.scope_paths.length === 0) return true; // no scope = no restriction
+  return pkg.scope_paths.some((scope) => {
+    const prefix = scope.replace(/\*\*\/?$/, "").replace(/\*$/, "");
+    return entity.file_path.startsWith(prefix);
+  });
+}
+
+/** Check if an entity is in the package's forbidden_ownership paths. */
+export function isEntityForbidden(
+  db: Database.Database,
+  entityId: string,
+  pkg: WorkPackage,
+): boolean {
+  const entity = getCodeEntity(db, entityId);
+  if (!entity) return false;
+  return pkg.forbidden_ownership.some((fp) => {
+    const prefix = fp.replace(/\*\*\/?$/, "").replace(/\*$/, "");
+    return entity.file_path.startsWith(prefix);
+  });
+}
+
+/** Check if an entity is in the package's allowed_external_refs or included_entity_ids. */
+export function isEntityAllowedExternal(
+  db: Database.Database,
+  entityId: string,
+  pkg: WorkPackage,
+): boolean {
+  const entity = getCodeEntity(db, entityId);
+  if (!entity) return false;
+  if (pkg.included_entity_ids.includes(entityId)) return true;
+  if (pkg.allowed_external_refs.length === 0) return true; // no restrictions
+  return pkg.allowed_external_refs.some((ref) => {
+    const prefix = ref.replace(/\*\*\/?$/, "").replace(/\*$/, "");
+    return entity.file_path.startsWith(prefix) || entityId === ref;
+  });
+}
+
+export function createModuleProposal(
+  db: Database.Database,
+  input: {
+    id: string;
+    work_package_id: string;
+    module_name: string;
+    module_type?: WorkPackageType;
+    purpose?: string;
+    confidence?: number;
+  },
+): ModuleProposal {
+  const module_type = input.module_type ?? "unknown";
+  const purpose = input.purpose ?? "";
+  const confidence = input.confidence ?? 1.0;
+
+  db.prepare(
+    `INSERT INTO module_proposals (id, work_package_id, module_name, module_type, purpose, confidence, status)
+     VALUES (?, ?, ?, ?, ?, ?, 'draft')`,
+  ).run(input.id, input.work_package_id, input.module_name, module_type, purpose, confidence);
+
+  return {
+    id: input.id,
+    work_package_id: input.work_package_id,
+    module_name: input.module_name,
+    module_type,
+    purpose,
+    owned_code_entities: [],
+    used_code_entities: [],
+    entrypoints: [],
+    ports: [],
+    internal_flows: [],
+    outgoing_dependencies: [],
+    incoming_dependencies: [],
+    unknown_boundaries: [],
+    coverage_gaps: [],
+    confidence,
+    status: "draft",
+  };
+}
+
+export function getModuleProposal(
+  db: Database.Database,
+  id: string,
+): ModuleProposal | null {
+  const row = db.prepare(`SELECT * FROM module_proposals WHERE id = ?`).get(id) as Record<string, unknown> | undefined;
+  if (!row) return null;
+  return {
+    id: row.id as string,
+    work_package_id: row.work_package_id as string,
+    module_name: row.module_name as string,
+    module_type: row.module_type as WorkPackageType,
+    purpose: row.purpose as string,
+    owned_code_entities: parseJson(row.owned_code_entities as string),
+    used_code_entities: parseJson(row.used_code_entities as string),
+    entrypoints: parseJson(row.entrypoints as string),
+    ports: parseJson(row.ports as string),
+    internal_flows: parseJson(row.internal_flows as string),
+    outgoing_dependencies: parseJson(row.outgoing_dependencies as string),
+    incoming_dependencies: parseJson(row.incoming_dependencies as string),
+    unknown_boundaries: parseJson(row.unknown_boundaries as string),
+    coverage_gaps: parseJson(row.coverage_gaps as string),
+    confidence: row.confidence as number,
+    status: row.status as ModuleProposalStatus,
+  };
+}
+
+export function listModuleProposals(
+  db: Database.Database,
+  filter?: { work_package_id?: string; status?: ModuleProposalStatus },
+): ModuleProposal[] {
+  let sql = `SELECT * FROM module_proposals WHERE 1=1`;
+  const params: unknown[] = [];
+  if (filter?.work_package_id) {
+    sql += ` AND work_package_id = ?`;
+    params.push(filter.work_package_id);
+  }
+  if (filter?.status) {
+    sql += ` AND status = ?`;
+    params.push(filter.status);
+  }
+  const rows = db.prepare(sql).all(...params) as Record<string, unknown>[];
+  return rows.map((row) => ({
+    id: row.id as string,
+    work_package_id: row.work_package_id as string,
+    module_name: row.module_name as string,
+    module_type: row.module_type as WorkPackageType,
+    purpose: row.purpose as string,
+    owned_code_entities: parseJson(row.owned_code_entities as string),
+    used_code_entities: parseJson(row.used_code_entities as string),
+    entrypoints: parseJson(row.entrypoints as string),
+    ports: parseJson(row.ports as string),
+    internal_flows: parseJson(row.internal_flows as string),
+    outgoing_dependencies: parseJson(row.outgoing_dependencies as string),
+    incoming_dependencies: parseJson(row.incoming_dependencies as string),
+    unknown_boundaries: parseJson(row.unknown_boundaries as string),
+    coverage_gaps: parseJson(row.coverage_gaps as string),
+    confidence: row.confidence as number,
+    status: row.status as ModuleProposalStatus,
+  }));
+}
+
+export function updateModuleProposal(
+  db: Database.Database,
+  id: string,
+  updates: {
+    owned_code_entities?: ProposalEntity[];
+    used_code_entities?: ProposalEntity[];
+    entrypoints?: ProposalEntity[];
+    ports?: ProposalPort[];
+    internal_flows?: ProposalFlow[];
+    outgoing_dependencies?: ProposalDependency[];
+    incoming_dependencies?: ProposalDependency[];
+    unknown_boundaries?: ProposalUnknownBoundary[];
+    coverage_gaps?: ProposalGap[];
+    confidence?: number;
+    status?: ModuleProposalStatus;
+    purpose?: string;
+  },
+): boolean {
+  const sets: string[] = [];
+  const params: unknown[] = [];
+
+  if (updates.owned_code_entities !== undefined) {
+    sets.push(`owned_code_entities = ?`);
+    params.push(JSON.stringify(updates.owned_code_entities));
+  }
+  if (updates.used_code_entities !== undefined) {
+    sets.push(`used_code_entities = ?`);
+    params.push(JSON.stringify(updates.used_code_entities));
+  }
+  if (updates.entrypoints !== undefined) {
+    sets.push(`entrypoints = ?`);
+    params.push(JSON.stringify(updates.entrypoints));
+  }
+  if (updates.ports !== undefined) {
+    sets.push(`ports = ?`);
+    params.push(JSON.stringify(updates.ports));
+  }
+  if (updates.internal_flows !== undefined) {
+    sets.push(`internal_flows = ?`);
+    params.push(JSON.stringify(updates.internal_flows));
+  }
+  if (updates.outgoing_dependencies !== undefined) {
+    sets.push(`outgoing_dependencies = ?`);
+    params.push(JSON.stringify(updates.outgoing_dependencies));
+  }
+  if (updates.incoming_dependencies !== undefined) {
+    sets.push(`incoming_dependencies = ?`);
+    params.push(JSON.stringify(updates.incoming_dependencies));
+  }
+  if (updates.unknown_boundaries !== undefined) {
+    sets.push(`unknown_boundaries = ?`);
+    params.push(JSON.stringify(updates.unknown_boundaries));
+  }
+  if (updates.coverage_gaps !== undefined) {
+    sets.push(`coverage_gaps = ?`);
+    params.push(JSON.stringify(updates.coverage_gaps));
+  }
+  if (updates.confidence !== undefined) {
+    sets.push(`confidence = ?`);
+    params.push(updates.confidence);
+  }
+  if (updates.status !== undefined) {
+    sets.push(`status = ?`);
+    params.push(updates.status);
+  }
+  if (updates.purpose !== undefined) {
+    sets.push(`purpose = ?`);
+    params.push(updates.purpose);
+  }
+
+  if (sets.length === 0) return false;
+
+  params.push(id);
+  const result = db.prepare(`UPDATE module_proposals SET ${sets.join(", ")} WHERE id = ?`).run(...params);
+  return result.changes > 0;
+}
+
+export function deleteModuleProposal(db: Database.Database, id: string): boolean {
+  const result = db.prepare(`DELETE FROM module_proposals WHERE id = ?`).run(id);
+  return result.changes > 0;
+}
+
+/**
+ * Update proposal status with legal transition enforcement.
+ * Separate from updateModuleProposal to enforce transition rules.
+ */
+export function updateModuleProposalStatus(
+  db: Database.Database,
+  id: string,
+  status: ModuleProposalStatus,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, id);
+  if (!proposal) return { ok: false, error: `Module proposal not found: ${id}` };
+
+  const allowed = PROPOSAL_TRANSITIONS[proposal.status] ?? [];
+  if (!allowed.includes(status)) {
+    return { ok: false, error: `Illegal proposal status transition: ${proposal.status} -> ${status}` };
+  }
+
+  db.prepare(`UPDATE module_proposals SET status = ? WHERE id = ?`).run(status, id);
+  return { ok: true };
+}
+
+/**
+ * Append an owned/used/entrypoint entity to a proposal.
+ * Returns the updated entity list.
+ */
+export function appendProposalEntity(
+  db: Database.Database,
+  proposalId: string,
+  entityType: "owned" | "used" | "entrypoint",
+  entity: ProposalEntity,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, proposalId);
+  if (!proposal) return { ok: false, error: `Proposal not found: ${proposalId}` };
+
+  const field = entityType === "owned"
+    ? "owned_code_entities"
+    : entityType === "used"
+      ? "used_code_entities"
+      : "entrypoints";
+
+  const list = [...proposal[field], entity];
+  db.prepare(`UPDATE module_proposals SET ${field} = ? WHERE id = ?`).run(JSON.stringify(list), proposalId);
+  return { ok: true };
+}
+
+/**
+ * Append a port to a proposal.
+ */
+export function appendProposalPort(
+  db: Database.Database,
+  proposalId: string,
+  port: ProposalPort,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, proposalId);
+  if (!proposal) return { ok: false, error: `Proposal not found: ${proposalId}` };
+
+  const list = [...proposal.ports, port];
+  db.prepare(`UPDATE module_proposals SET ports = ? WHERE id = ?`).run(JSON.stringify(list), proposalId);
+  return { ok: true };
+}
+
+/**
+ * Append a dependency to a proposal.
+ */
+export function appendProposalDependency(
+  db: Database.Database,
+  proposalId: string,
+  direction: "incoming" | "outgoing",
+  dependency: ProposalDependency,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, proposalId);
+  if (!proposal) return { ok: false, error: `Proposal not found: ${proposalId}` };
+
+  const field = direction === "outgoing" ? "outgoing_dependencies" : "incoming_dependencies";
+  const list = [...proposal[field], dependency];
+  db.prepare(`UPDATE module_proposals SET ${field} = ? WHERE id = ?`).run(JSON.stringify(list), proposalId);
+  return { ok: true };
+}
+
+/**
+ * Append a flow to a proposal.
+ */
+export function appendProposalFlow(
+  db: Database.Database,
+  proposalId: string,
+  flow: ProposalFlow,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, proposalId);
+  if (!proposal) return { ok: false, error: `Proposal not found: ${proposalId}` };
+
+  const list = [...proposal.internal_flows, flow];
+  db.prepare(`UPDATE module_proposals SET internal_flows = ? WHERE id = ?`).run(JSON.stringify(list), proposalId);
+  return { ok: true };
+}
+
+/**
+ * Append a gap to a proposal.
+ */
+export function appendProposalGap(
+  db: Database.Database,
+  proposalId: string,
+  gap: ProposalGap,
+): { ok: boolean; error?: string } {
+  const proposal = getModuleProposal(db, proposalId);
+  if (!proposal) return { ok: false, error: `Proposal not found: ${proposalId}` };
+
+  const list = [...proposal.coverage_gaps, gap];
+  db.prepare(`UPDATE module_proposals SET coverage_gaps = ? WHERE id = ?`).run(JSON.stringify(list), proposalId);
+  return { ok: true };
+}
+
+// ── v0.2: ProposalReview ──────────────────────────────────────────────────
+
+export function createProposalReview(
+  db: Database.Database,
+  input: {
+    id: string;
+    proposal_id: string;
+    reviewer_agent?: string;
+    status?: ProposalReviewStatus;
+    findings?: ReviewFinding[];
+    coverage_notes?: string;
+    evidence_notes?: string;
+    recommended_fixes?: string[];
+  },
+): ProposalReview {
+  const status = input.status ?? "needs_revision";
+  const findings = input.findings ?? [];
+  const coverage_notes = input.coverage_notes ?? "";
+  const evidence_notes = input.evidence_notes ?? "";
+  const recommended_fixes = input.recommended_fixes ?? [];
+
+  db.prepare(
+    `INSERT INTO proposal_reviews (id, proposal_id, reviewer_agent, status, findings, coverage_notes, evidence_notes, recommended_fixes)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    input.id,
+    input.proposal_id,
+    input.reviewer_agent ?? null,
+    status,
+    JSON.stringify(findings),
+    coverage_notes,
+    evidence_notes,
+    JSON.stringify(recommended_fixes),
+  );
+
+  return {
+    id: input.id,
+    proposal_id: input.proposal_id,
+    reviewer_agent: input.reviewer_agent,
+    status,
+    findings,
+    coverage_notes,
+    evidence_notes,
+    recommended_fixes,
+  };
+}
+
+export function getProposalReview(
+  db: Database.Database,
+  id: string,
+): ProposalReview | null {
+  const row = db.prepare(`SELECT * FROM proposal_reviews WHERE id = ?`).get(id) as Record<string, unknown> | undefined;
+  if (!row) return null;
+  return {
+    id: row.id as string,
+    proposal_id: row.proposal_id as string,
+    reviewer_agent: row.reviewer_agent as string | undefined,
+    status: row.status as ProposalReviewStatus,
+    findings: parseJson(row.findings as string),
+    coverage_notes: row.coverage_notes as string,
+    evidence_notes: row.evidence_notes as string,
+    recommended_fixes: parseJson(row.recommended_fixes as string),
+  };
+}
+
+export function listProposalReviews(
+  db: Database.Database,
+  filter?: { proposal_id?: string; status?: ProposalReviewStatus },
+): ProposalReview[] {
+  let sql = `SELECT * FROM proposal_reviews WHERE 1=1`;
+  const params: unknown[] = [];
+  if (filter?.proposal_id) {
+    sql += ` AND proposal_id = ?`;
+    params.push(filter.proposal_id);
+  }
+  if (filter?.status) {
+    sql += ` AND status = ?`;
+    params.push(filter.status);
+  }
+  const rows = db.prepare(sql).all(...params) as Record<string, unknown>[];
+  return rows.map((row) => ({
+    id: row.id as string,
+    proposal_id: row.proposal_id as string,
+    reviewer_agent: row.reviewer_agent as string | undefined,
+    status: row.status as ProposalReviewStatus,
+    findings: parseJson(row.findings as string),
+    coverage_notes: row.coverage_notes as string,
+    evidence_notes: row.evidence_notes as string,
+    recommended_fixes: parseJson(row.recommended_fixes as string),
+  }));
+}
+
+export function updateProposalReview(
+  db: Database.Database,
+  id: string,
+  updates: {
+    status?: ProposalReviewStatus;
+    findings?: ReviewFinding[];
+  },
+): boolean {
+  const sets: string[] = [];
+  const params: unknown[] = [];
+
+  if (updates.status !== undefined) {
+    sets.push(`status = ?`);
+    params.push(updates.status);
+  }
+  if (updates.findings !== undefined) {
+    sets.push(`findings = ?`);
+    params.push(JSON.stringify(updates.findings));
+  }
+
+  if (sets.length === 0) return false;
+
+  params.push(id);
+  const result = db.prepare(`UPDATE proposal_reviews SET ${sets.join(", ")} WHERE id = ?`).run(...params);
+  return result.changes > 0;
+}
+
+export function deleteProposalReview(db: Database.Database, id: string): boolean {
+  const result = db.prepare(`DELETE FROM proposal_reviews WHERE id = ?`).run(id);
+  return result.changes > 0;
+}
+
+// ── v0.2: MergedProposalMapping ───────────────────────────────────────────
+
+export function createMergedProposalMapping(
+  db: Database.Database,
+  input: {
+    proposal_id: string;
+    work_package_id: string;
+    block_id: string;
+  },
+): MergedProposalMapping {
+  const id = genId();
+  const merged_at = new Date().toISOString();
+  db.prepare(
+    `INSERT INTO merged_proposal_mappings (id, proposal_id, work_package_id, block_id, merged_at)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run(id, input.proposal_id, input.work_package_id, input.block_id, merged_at);
+  return { id, proposal_id: input.proposal_id, work_package_id: input.work_package_id, block_id: input.block_id, merged_at };
+}
+
+export function listMergedProposalMappings(
+  db: Database.Database,
+  filter?: { work_package_id?: string; proposal_id?: string },
+): MergedProposalMapping[] {
+  let sql = `SELECT * FROM merged_proposal_mappings WHERE 1=1`;
+  const params: unknown[] = [];
+  if (filter?.work_package_id) {
+    sql += ` AND work_package_id = ?`;
+    params.push(filter.work_package_id);
+  }
+  if (filter?.proposal_id) {
+    sql += ` AND proposal_id = ?`;
+    params.push(filter.proposal_id);
+  }
+  const rows = db.prepare(sql).all(...params) as Record<string, unknown>[];
+  return rows.map((row) => ({
+    id: row.id as string,
+    proposal_id: row.proposal_id as string,
+    work_package_id: row.work_package_id as string,
+    block_id: row.block_id as string,
+    merged_at: row.merged_at as string,
   }));
 }
