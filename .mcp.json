@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "blockgraph": {
+      "command": "node",
+      "args": ["--import", "tsx", "src/mcp/server.ts"],
+      "env": {}
+    }
+  }
+}
