@@ -15,5 +15,5 @@ Thumbs.db
 test-workspace/
 test-workspace-complex/
 
-# Claude Code machine-local permissions and state
-.claude/settings.local.json
+# Claude Code machine-local state
+.claude/
