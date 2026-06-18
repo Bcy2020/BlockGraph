@@ -15,5 +15,14 @@ Thumbs.db
 test-workspace/
 test-workspace-complex/
 
+# Benchmark repositories (external clones, not tracked)
+benchmarks/
+
 # Claude Code machine-local state
 .claude/
+
+# Versioned Claude Code template for target repositories
+!templates/
+!templates/claude-blockgraph-init/
+!templates/claude-blockgraph-init/.claude/
+!templates/claude-blockgraph-init/.claude/**
