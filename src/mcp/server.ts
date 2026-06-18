@@ -11,6 +11,8 @@ import * as z from "zod/v4";
 import {
   createToolContext,
   handleBeginInitialization,
+  handleResumeInitialization,
+  handleSessionStatus,
   handleCreateBlock,
   handleAttachCodeEntity,
   handleCreatePort,
@@ -40,10 +42,12 @@ import {
   handleMarkProposalGap,
   handleSubmitModuleProposal,
   handleSubmitProposalReview,
+  handleApproveModuleProposal,
   handleListProposalReviews,
   handleResolveProposalFinding,
   handleMergeModuleProposal,
   handleListMergedProposals,
+  handleListModuleProposals,
   handleCoverageReport,
   handleDetectMissingModules,
   handleDetectSharedDependencies,
@@ -77,13 +81,47 @@ export function createServer(): { server: McpServer; ctx: ToolContext } {
   server.registerTool(
     "begin_initialization",
     {
-      description: "Create or reset an initialization session for a repository. Initializes SQLite storage.",
+      description: "Create or reconnect an initialization session for a repository. If .blockgraph/blockgraph.db exists with prior data, returns resumed: true. Does not delete existing data.",
       inputSchema: {
         repo_path: z.string().describe("Absolute or relative path to the repository root."),
       },
     },
     async (args) => {
       const result = handleBeginInitialization(ctx, args);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        isError: !result.ok,
+      };
+    },
+  );
+
+  // resume_initialization
+  server.registerTool(
+    "resume_initialization",
+    {
+      description: "Reconnect to an existing BlockGraph session. Same behavior as begin_initialization — opens existing DB or creates new one. Use this name to make recovery intent explicit.",
+      inputSchema: {
+        repo_path: z.string().describe("Absolute or relative path to the repository root."),
+      },
+    },
+    async (args) => {
+      const result = handleResumeInitialization(ctx, args);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        isError: !result.ok,
+      };
+    },
+  );
+
+  // session_status
+  server.registerTool(
+    "session_status",
+    {
+      description: "Check whether there is an active in-memory BlockGraph session. When active, returns repo path, DB path, and graph summary.",
+      inputSchema: {},
+    },
+    async (args) => {
+      const result = handleSessionStatus(ctx, args as any);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
         isError: !result.ok,
@@ -707,6 +745,26 @@ export function createServer(): { server: McpServer; ctx: ToolContext } {
     },
   );
 
+  // §12.3 approve_module_proposal
+  server.registerTool(
+    "approve_module_proposal",
+    {
+      description: "Coordinator-only: approve a reviewed proposal so it can be merged. Requires at least one pass review and no unresolved P0/P1 findings.",
+      inputSchema: {
+        proposal_id: z.string().describe("Proposal ID."),
+        coordinator_agent: z.string().optional().describe("Coordinator agent identifier."),
+        notes: z.string().optional().describe("Approval notes."),
+      },
+    },
+    async (args) => {
+      const result = handleApproveModuleProposal(ctx, args);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        isError: !result.ok,
+      };
+    },
+  );
+
   // §12.3 list_proposal_reviews
   server.registerTool(
     "list_proposal_reviews",
@@ -777,6 +835,25 @@ export function createServer(): { server: McpServer; ctx: ToolContext } {
     },
     async (args) => {
       const result = handleListMergedProposals(ctx, args as any);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        isError: !result.ok,
+      };
+    },
+  );
+
+  // list_module_proposals
+  server.registerTool(
+    "list_module_proposals",
+    {
+      description: "List module proposals with optional filters. After reconnect, use this to inspect proposal progress before deciding whether to review, approve, merge, or revise.",
+      inputSchema: {
+        work_package_id: z.string().optional().describe("Filter by work package ID."),
+        status: z.enum(["draft", "submitted", "reviewing", "needs_revision", "approved", "merged", "rejected"]).optional().describe("Filter by proposal status."),
+      },
+    },
+    async (args) => {
+      const result = handleListModuleProposals(ctx, args as any);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
         isError: !result.ok,

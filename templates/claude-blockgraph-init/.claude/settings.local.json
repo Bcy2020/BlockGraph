@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Glob",
+      "Grep",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Task",
+      "TodoWrite",
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__blockgraph__*"
+    ],
+    "deny": [
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore --source *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(npm publish*)",
+      "Bash(pnpm publish*)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(format *)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "blockgraph"
+  ],
+  "enableAllProjectMcpServers": true
+}

@@ -135,7 +135,22 @@ Coordinator resolves proposal findings:
 
 P0/P1 findings must be fixed before merge.
 
-### Step 7: Merge Approved Proposals
+### Step 7: Approve Proposals
+
+After all P0/P1 findings are resolved or rejected, coordinator approves each proposal:
+
+```
+Call approve_module_proposal({ proposal_id: "<id>" })
+```
+
+**Important:** `submit_proposal_review(status: "pass")` does NOT automatically approve a proposal. Review pass is evidence for approval, not approval itself. You must explicitly call `approve_module_proposal`.
+
+Approval fails if:
+- No reviews exist
+- No pass review exists
+- Unresolved P0/P1 findings remain
+
+### Step 8: Merge Approved Proposals
 
 Coordinator merges proposals in this order:
 1. Root block
@@ -148,7 +163,7 @@ Coordinator merges proposals in this order:
 8. Global flows
 9. Unknown boundaries
 
-### Step 8: Compile Blocks
+### Step 9: Compile Blocks
 
 After merge, coordinator runs:
 - `compile_draft_block`
@@ -156,7 +171,7 @@ After merge, coordinator runs:
 
 Fix compile errors before continuing.
 
-### Step 9: Build Connectors And Flows
+### Step 10: Build Connectors And Flows
 
 Coordinator creates:
 - High-confidence connectors
@@ -166,7 +181,7 @@ Coordinator creates:
 Do not invent evidence.
 External library behavior must be labeled as external behavior.
 
-### Step 10: Run Quality Gates
+### Step 11: Run Quality Gates
 
 Coordinator runs:
 - `compile_draft_graph`
@@ -179,7 +194,7 @@ Coordinator runs:
 
 If not ready, revise proposals or graph.
 
-### Step 11: Final Independent Review
+### Step 12: Final Independent Review
 
 Fresh reviewer reviews:
 - Source code
@@ -192,7 +207,7 @@ Run at least three maintenance simulations:
 - Impact analysis for a shared service change
 - Choose target block for a new feature
 
-### Step 12: Commit Snapshot
+### Step 13: Commit Snapshot
 
 Only commit snapshot if:
 - `compile_draft_graph` has no errors
@@ -256,3 +271,51 @@ Examples:
 **Symptom:** Merge rejected due to unresolved findings.
 
 **Fix:** Fix the issue, reject the finding with reason, or defer with coordinator override.
+
+## Session Recovery
+
+If the MCP server restarts or the session is lost, graph data persists in `.blockgraph/blockgraph.db`.
+
+### Reconnecting
+
+```
+Call begin_initialization({ repo_path: "/path/to/repo" })
+```
+
+If existing data is found, the response includes `resumed: true` and a summary of existing graph state. No data is lost.
+
+Alternatively, use the explicit reconnect alias:
+
+```
+Call resume_initialization({ repo_path: "/path/to/repo" })
+```
+
+### Checking Session Status
+
+```
+Call session_status({})
+```
+
+Returns whether there is an active session, the repo path, DB path, and graph summary.
+
+### Inspecting Proposals After Reconnect
+
+After reconnecting, check proposal progress:
+
+```
+Call list_module_proposals({})
+Call list_module_proposals({ work_package_id: "wp-auth" })
+Call list_module_proposals({ status: "submitted" })
+```
+
+This helps you decide whether to review, approve, merge, or revise proposals.
+
+### Degraded Path: Direct Block Creation
+
+If the proposal workflow is unavailable, you can bypass it:
+
+1. `create_block` — create draft block directly
+2. `attach_code_entity` — attach code entities
+3. `create_port` — create ports
+4. `compile_draft_block` — compile
+5. `promote_draft_block` — promote to accepted

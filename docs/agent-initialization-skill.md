@@ -191,11 +191,27 @@ Call mark_unknown_boundary({
 
 This is better than hiding uncertainty or creating incorrect connectors.
 
+## Session Recovery
+
+If the MCP server restarts, graph data persists in `.blockgraph/blockgraph.db`. To reconnect:
+
+```
+Call begin_initialization({ repo_path: "/path/to/repo" })
+```
+
+If existing data is found, the response includes `resumed: true` and a summary. You can also use `resume_initialization` as an explicit reconnect alias.
+
+Check session status at any time:
+
+```
+Call session_status({})
+```
+
 ## Common Errors
 
 | Error Code | Meaning | Fix |
 |------------|---------|-----|
-| `NO_SESSION` | No active session | Call `begin_initialization` first |
+| `NO_SESSION` | No active in-memory session. Data may exist in `.blockgraph/blockgraph.db` | Call `begin_initialization` or `resume_initialization` to reconnect |
 | `BLOCK_NOT_FOUND` | Block ID doesn't exist | Check the block ID |
 | `ENTITY_NOT_FOUND` | Code entity doesn't exist | Run `scan_repo` first |
 | `NO_CODE_MAPPING` | Non-root block has no mappings | Attach at least one code entity |

@@ -36,6 +36,7 @@ import {
   handleAddProposalFlow,
   handleSubmitModuleProposal,
   handleSubmitProposalReview,
+  handleApproveModuleProposal,
   handleResolveProposalFinding,
   handleMergeModuleProposal,
   handleListMergedProposals,
@@ -59,7 +60,7 @@ function makeInitializedCtx(): ToolContext {
   return ctx;
 }
 
-/** Create a full approved proposal ready for merge. */
+/** Create a full approved proposal ready for merge (uses internal API bypass for backward compat). */
 function createApprovedProposal(ctx: ToolContext): string {
   handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth", scope_paths: ["src/auth"] });
   handleCreateModuleProposal(ctx, {
@@ -108,6 +109,54 @@ function createApprovedProposal(ctx: ToolContext): string {
   return "prop-auth";
 }
 
+/** Create a full approved proposal using only MCP tools (no internal API bypass). */
+function createApprovedProposalViaMcp(ctx: ToolContext): string {
+  handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth", scope_paths: ["src/auth"] });
+  handleCreateModuleProposal(ctx, {
+    id: "prop-auth",
+    work_package_id: "wp-auth",
+    module_name: "Auth Module",
+    purpose: "Handle authentication",
+  });
+
+  const entity = createCodeEntity(ctx.db!, {
+    type: "function",
+    name: "login",
+    file_path: "src/auth/login.ts",
+    start_line: 1,
+    end_line: 10,
+  });
+
+  handleAttachProposalEntity(ctx, {
+    proposal_id: "prop-auth",
+    entity_type: "owned",
+    code_entity_id: entity.id,
+    role: "owns",
+  });
+
+  handleAddProposalPort(ctx, {
+    proposal_id: "prop-auth",
+    name: "loginRequest",
+    direction: "in",
+    contract: "Accepts credentials",
+  });
+
+  // Submit proposal: draft -> submitted
+  handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+  // Submit review with pass (moves submitted -> reviewing)
+  handleSubmitProposalReview(ctx, {
+    proposal_id: "prop-auth",
+    status: "pass",
+    findings: [],
+  });
+
+  // Approve via MCP tool (moves reviewing -> approved)
+  handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+  return "prop-auth";
+}
+
 // ── MCP Tool Handler Tests ─────────────────────────────────────────────────
 
 describe("Merge Tool Handlers", () => {
@@ -122,6 +171,303 @@ describe("Merge Tool Handlers", () => {
   afterEach(() => {
     if (ctx.db) closeStore(ctx.db);
     fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  describe("handleApproveModuleProposal", () => {
+    it("success: approve submitted proposal with pass review", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth", scope_paths: ["src/auth"] });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+      // Pass review moves submitted → reviewing via side effect
+      handleSubmitProposalReview(ctx, { proposal_id: "prop-auth", status: "pass", findings: [] });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(true);
+      expect(result.data!.status).toBe("approved");
+      // previous_status is "reviewing" because the pass review side effect already moved it
+      expect(result.data!.previous_status).toBe("reviewing");
+      expect(result.data!.review_count).toBe(1);
+      expect(result.data!.pass_review_count).toBe(1);
+    });
+
+    it("success: approve from needs_revision after new pass review", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth", scope_paths: ["src/auth"] });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      // First review: needs_revision with P1 finding
+      const reviewResult = handleSubmitProposalReview(ctx, {
+        proposal_id: "prop-auth",
+        status: "needs_revision",
+        findings: [{
+          priority: "P1",
+          title: "Missing evidence",
+          description: "No evidence",
+          expected: "Evidence",
+          observed: "No evidence",
+          recommendation: "Add evidence",
+        }],
+      });
+
+      // Resolve the finding
+      handleResolveProposalFinding(ctx, {
+        review_id: reviewResult.data!.review_id,
+        finding_index: 0,
+        resolution: "resolved",
+        resolution_reason: "Fixed",
+      });
+
+      // Second review: pass
+      handleSubmitProposalReview(ctx, { proposal_id: "prop-auth", status: "pass", findings: [] });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(true);
+      expect(result.data!.status).toBe("approved");
+    });
+
+    it("fails: no reviews", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("NO_REVIEWS");
+    });
+
+    it("fails: no pass review", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+      handleSubmitProposalReview(ctx, { proposal_id: "prop-auth", status: "needs_revision", findings: [] });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("NO_PASS_REVIEW");
+    });
+
+    it("fails: unresolved P0 finding", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      // Pass review but with unresolved P0
+      handleSubmitProposalReview(ctx, {
+        proposal_id: "prop-auth",
+        status: "pass",
+        findings: [{
+          priority: "P0",
+          title: "Critical issue",
+          description: "Critical",
+          expected: "Expected",
+          observed: "Observed",
+          recommendation: "Fix",
+        }],
+      });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("UNRESOLVED_FINDING");
+    });
+
+    it("success: approve after P0 resolved", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      const reviewResult = handleSubmitProposalReview(ctx, {
+        proposal_id: "prop-auth",
+        status: "pass",
+        findings: [{
+          priority: "P0",
+          title: "Critical issue",
+          description: "Critical",
+          expected: "Expected",
+          observed: "Observed",
+          recommendation: "Fix",
+        }],
+      });
+
+      handleResolveProposalFinding(ctx, {
+        review_id: reviewResult.data!.review_id,
+        finding_index: 0,
+        resolution: "resolved",
+        resolution_reason: "Fixed",
+      });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(true);
+      expect(result.data!.status).toBe("approved");
+    });
+
+    it("fails: draft proposal", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("INVALID_STATUS");
+    });
+
+    it("fails: proposal not found", () => {
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "nonexistent" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("PROPOSAL_NOT_FOUND");
+    });
+
+    it("fails: no session", () => {
+      const noSessionCtx = makeCtx();
+      const result = handleApproveModuleProposal(noSessionCtx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+    });
+
+    it("fails: latest review is reject", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth", scope_paths: ["src/auth"] });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      // First review: pass (moves submitted → reviewing)
+      handleSubmitProposalReview(ctx, { proposal_id: "prop-auth", status: "pass", findings: [] });
+
+      // Second review: reject — but the side effect would move to "rejected" (terminal).
+      // To test the LATEST_REVIEW_REJECTED guard (not the INVALID_STATUS guard),
+      // insert the reject review directly via service layer, bypassing side effects.
+      createProposalReview(ctx.db!, {
+        id: "review-reject-direct",
+        proposal_id: "prop-auth",
+        status: "reject",
+        findings: [],
+      });
+
+      // Proposal is still at "reviewing" — now the latest review is reject
+      const result = handleApproveModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("LATEST_REVIEW_REJECTED");
+    });
   });
 
   describe("handleMergeModuleProposal", () => {
@@ -274,7 +620,7 @@ describe("Merge Tool Handlers", () => {
 
       handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
 
-      // Submit review with P1 finding
+      // Submit review with P1 finding (side effect: submitted → needs_revision)
       handleSubmitProposalReview(ctx, {
         proposal_id: "prop-auth",
         status: "needs_revision",
@@ -288,7 +634,9 @@ describe("Merge Tool Handlers", () => {
         }],
       });
 
-      // Approve anyway (shouldn't happen in real workflow, but testing merge guard)
+      // Bypass to approved via manual transitions (testing merge guard)
+      // needs_revision → submitted → reviewing → approved
+      updateModuleProposalStatus(ctx.db!, "prop-auth", "submitted");
       updateModuleProposalStatus(ctx.db!, "prop-auth", "reviewing");
       updateModuleProposalStatus(ctx.db!, "prop-auth", "approved");
 
@@ -487,6 +835,20 @@ describe("Merge Tool Handlers", () => {
       const noSessionCtx = makeCtx();
       const result = handleMergeModuleProposal(noSessionCtx, { proposal_id: "prop-auth" });
       expect(result.ok).toBe(false);
+    });
+
+    it("success: MCP-only flow (create → submit → review → approve → merge)", () => {
+      // This test proves the full workflow works without any internal API bypass
+      createApprovedProposalViaMcp(ctx);
+
+      const result = handleMergeModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(true);
+      expect(result.data!.block_id).toBeDefined();
+
+      const block = getBlock(ctx.db!, result.data!.block_id);
+      expect(block).not.toBeNull();
+      expect(block!.name).toBe("Auth Module");
+      expect(block!.status).toBe("draft");
     });
   });
 

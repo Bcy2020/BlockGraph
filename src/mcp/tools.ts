@@ -116,6 +116,45 @@ function requireDb(ctx: ToolContext): Database.Database | null {
   return ctx.db;
 }
 
+/** Shared NO_SESSION error with reconnect guidance. */
+function noSessionError(): Diagnostic {
+  return err(
+    "NO_SESSION",
+    "No active in-memory BlockGraph session. Existing graph data may still exist in the target repository's .blockgraph/blockgraph.db. Call begin_initialization({ repo_path }) or resume_initialization({ repo_path }) to reconnect.",
+  );
+}
+
+/** Session summary counts for reconnect reporting. */
+interface SessionSummary {
+  code_entities: number;
+  code_edges: number;
+  blocks: number;
+  work_packages: number;
+  module_proposals: number;
+  proposal_reviews: number;
+  merged_proposals: number;
+  flows: number;
+  snapshots: number;
+}
+
+function getSessionSummary(db: Database.Database): SessionSummary {
+  const count = (table: string): number => {
+    const row = db.prepare(`SELECT COUNT(*) AS c FROM ${table}`).get() as { c: number };
+    return row.c;
+  };
+  return {
+    code_entities: count("code_entities"),
+    code_edges: count("code_edges"),
+    blocks: count("blocks"),
+    work_packages: count("work_packages"),
+    module_proposals: count("module_proposals"),
+    proposal_reviews: count("proposal_reviews"),
+    merged_proposals: count("merged_proposal_mappings"),
+    flows: count("flows"),
+    snapshots: count("snapshots"),
+  };
+}
+
 function validateEvidencePaths(evidence: Evidence[] | undefined): Diagnostic[] {
   if (!evidence || evidence.length === 0) return [];
   const errors: Diagnostic[] = [];
@@ -137,12 +176,13 @@ function validateEvidencePaths(evidence: Evidence[] | undefined): Diagnostic[] {
 
 /**
  * §9.1 begin_initialization
- * Creates or resets an initialization session for the repository.
+ * Creates or reconnects an initialization session for the repository.
+ * If .blockgraph/blockgraph.db exists with prior data, returns resumed: true.
  */
 export function handleBeginInitialization(
   ctx: ToolContext,
   args: { repo_path: string },
-): ToolResponse<{ session_id: string; repo_path: string }> {
+): ToolResponse<{ session_id: string; repo_path: string; db_path: string; resumed: boolean; summary: SessionSummary }> {
   const errors: Diagnostic[] = [];
 
   if (!args.repo_path || args.repo_path.trim() === "") {
@@ -166,11 +206,79 @@ export function handleBeginInitialization(
     ctx.db = null;
   }
 
-  ctx.db = openStore(resolved);
+  // Check if DB already exists before opening
+  const dbPath = path.join(resolved, ".blockgraph", "blockgraph.db");
+  const existed = fs.existsSync(dbPath);
+
+  try {
+    ctx.db = openStore(resolved);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    return fail([err("DB_OPEN_FAILED", `Could not open database at ${dbPath}: ${message}. The file may be corrupted. Delete .blockgraph/blockgraph.db and re-initialize.`)]);
+  }
   ctx.repoPath = resolved;
 
+  // Check if there's prior graph data (any non-empty table)
+  let resumed = false;
+  if (existed) {
+    const summary = getSessionSummary(ctx.db);
+    const total = summary.code_entities + summary.blocks + summary.work_packages + summary.module_proposals;
+    resumed = total > 0;
+  }
+
   const sessionId = `session-${Date.now()}`;
-  return ok({ session_id: sessionId, repo_path: resolved });
+  const summary = getSessionSummary(ctx.db);
+
+  return ok({ session_id: sessionId, repo_path: resolved, db_path: dbPath, resumed, summary });
+}
+
+/**
+ * resume_initialization
+ * Explicit reconnect alias for begin_initialization.
+ * Same behavior — opens existing DB or creates new one.
+ */
+export function handleResumeInitialization(
+  ctx: ToolContext,
+  args: { repo_path: string },
+): ToolResponse<{ session_id: string; repo_path: string; db_path: string; resumed: boolean; summary: SessionSummary }> {
+  return handleBeginInitialization(ctx, args);
+}
+
+/**
+ * session_status
+ * Returns whether there is an active in-memory session and, when active, the repo path, db path, and graph summary.
+ */
+export function handleSessionStatus(
+  ctx: ToolContext,
+  args: Record<string, never>,
+): ToolResponse<{ active: boolean; repo_path?: string; db_path?: string; summary?: SessionSummary }> {
+  if (!ctx.db || !ctx.repoPath) {
+    return ok({ active: false });
+  }
+
+  const dbPath = path.join(ctx.repoPath, ".blockgraph", "blockgraph.db");
+  const summary = getSessionSummary(ctx.db);
+
+  return ok({ active: true, repo_path: ctx.repoPath, db_path: dbPath, summary });
+}
+
+/**
+ * list_module_proposals
+ * Lists module proposals with optional filters.
+ * Part of session recovery ergonomics — after reconnect, agents need to inspect proposal progress.
+ */
+export function handleListModuleProposals(
+  ctx: ToolContext,
+  args: { work_package_id?: string; status?: string },
+): ToolResponse<{ proposals: ReturnType<typeof listModuleProposals> }> {
+  const db = requireDb(ctx);
+  if (!db) return fail([noSessionError()]);
+
+  const proposals = listModuleProposals(db, {
+    work_package_id: args.work_package_id,
+    status: args.status as ModuleProposalStatus | undefined,
+  });
+  return ok({ proposals });
 }
 
 /**
@@ -182,7 +290,7 @@ export function handleCreateBlock(
   args: { parent_id?: string | null; name: string; purpose?: string },
 ): ToolResponse<{ block_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -222,7 +330,7 @@ export function handleAttachCodeEntity(
   },
 ): ToolResponse<{ mapping_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -267,7 +375,7 @@ export function handleCreatePort(
   },
 ): ToolResponse<{ port_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -308,7 +416,7 @@ export function handleConnectPorts(
   },
 ): ToolResponse<{ connector_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -362,7 +470,7 @@ export function handleCreateFlow(
   },
 ): ToolResponse<{ flow_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -401,7 +509,7 @@ export function handleAppendFlowStep(
   },
 ): ToolResponse<{ step_id: string; order: number }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -452,7 +560,7 @@ export function handleMarkUnknownBoundary(
   },
 ): ToolResponse<{ boundary_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -501,7 +609,7 @@ export function handleQueryBlock(
   flow_steps: ReturnType<typeof listFlowSteps>;
 }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.block_id) return fail([err("INVALID_INPUT", "block_id is required.")]);
 
@@ -532,7 +640,7 @@ export function handleQuerySymbolsByBlock(
   args: { block_id: string },
 ): ToolResponse<{ entities: NonNullable<ReturnType<typeof getCodeEntity>>[] }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.block_id) return fail([err("INVALID_INPUT", "block_id is required.")]);
 
@@ -561,7 +669,7 @@ export function handleScanRepo(
   args: { repo_path: string },
 ): ToolResponse<{ entity_count: number; edge_count: number; unsupported_file_count: number }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.repo_path || args.repo_path.trim() === "") {
     return fail([err("INVALID_INPUT", "repo_path is required.")] as Diagnostic[]);
@@ -625,7 +733,7 @@ export function handleListCodeEntities(
   args: { filter?: { type?: string; file_path?: string; name_contains?: string } },
 ): ToolResponse<{ entities: ReturnType<typeof listCodeEntities> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const entities = listCodeEntities(db, args.filter);
   return ok({ entities });
@@ -640,7 +748,7 @@ export function handleListCodeEdges(
   args: { filter?: { type?: string; source_entity_id?: string; target_entity_id?: string } },
 ): ToolResponse<{ edges: ReturnType<typeof listCodeEdges> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const edges = listCodeEdges(db, args.filter);
   return ok({ edges });
@@ -657,7 +765,7 @@ export function handleCompileDraftBlock(
   args: { block_id: string },
 ): ToolResponse<{ block_id: string; can_promote: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.block_id) return fail([err("INVALID_INPUT", "block_id is required.")] as Diagnostic[]);
 
@@ -679,7 +787,7 @@ export function handlePromoteDraftBlock(
   args: { block_id: string },
 ): ToolResponse<{ block_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.block_id) return fail([err("INVALID_INPUT", "block_id is required.")] as Diagnostic[]);
 
@@ -704,7 +812,7 @@ export function handleCompileDraftGraph(
   args: Record<string, never>,
 ): ToolResponse<{ can_commit: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const result = compileDraftGraph(db);
   return {
@@ -724,7 +832,7 @@ export function handleCommitSnapshot(
   args: { git_sha: string },
 ): ToolResponse<{ snapshot_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   if (!args.git_sha || args.git_sha.trim() === "") {
     return fail([err("INVALID_INPUT", "git_sha is required.")] as Diagnostic[]);
@@ -753,7 +861,7 @@ export function handleSuggestBlockCandidates(
   args: { strategy?: string },
 ): ToolResponse<{ candidates: Array<{ name: string; reason: string; code_entity_ids: string[]; confidence: number }> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const strategy = args.strategy ?? "mixed";
   const entities = listCodeEntities(db);
@@ -848,7 +956,7 @@ export function handleCreateWorkPackage(
   },
 ): ToolResponse<{ work_package_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -906,7 +1014,7 @@ export function handleListWorkPackages(
   args: { status?: string; type?: string },
 ): ToolResponse<{ packages: ReturnType<typeof listWorkPackages> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const packages = listWorkPackages(db, {
     status: args.status as WorkPackageStatus | undefined,
@@ -924,7 +1032,7 @@ export function handleUpdateWorkPackageStatus(
   args: { id: string; status: string },
 ): ToolResponse<{ id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -950,7 +1058,7 @@ export function handleCheckWorkPackageConflicts(
   args: Record<string, never>,
 ): ToolResponse<ConflictCheckResult> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const packages = listWorkPackages(db);
   const proposals = listModuleProposals(db);
@@ -1071,7 +1179,7 @@ export function handleCreateModuleProposal(
   },
 ): ToolResponse<{ proposal_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1125,7 +1233,7 @@ export function handleAttachProposalEntity(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1206,7 +1314,7 @@ export function handleAddProposalPort(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1256,7 +1364,7 @@ export function handleAddProposalDependency(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1310,7 +1418,7 @@ export function handleAddProposalFlow(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1365,7 +1473,7 @@ export function handleMarkProposalGap(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1403,7 +1511,7 @@ export function handleSubmitModuleProposal(
   },
 ): ToolResponse<{ proposal_id: string; status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1453,9 +1561,9 @@ export function handleSubmitProposalReview(
     evidence_notes?: string;
     recommended_fixes?: string[];
   },
-): ToolResponse<{ review_id: string; status: string }> {
+): ToolResponse<{ review_id: string; status: string; proposal_id: string; proposal_status: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1501,7 +1609,171 @@ export function handleSubmitProposalReview(
     recommended_fixes: args.recommended_fixes,
   });
 
-  return ok({ review_id: review.id, status: review.status });
+  // Side effects: drive proposal status based on review outcome.
+  // Review pass does NOT auto-approve — it moves submitted → reviewing.
+  // needs_revision/reject move proposal when legal.
+  const proposal = getModuleProposal(db, args.proposal_id)!;
+  const reviewStatus = review.status;
+  const proposalWarnings: Diagnostic[] = [];
+
+  if (reviewStatus === "pass" && proposal.status === "submitted") {
+    const transition = updateModuleProposalStatus(db, args.proposal_id, "reviewing");
+    if (!transition.ok) {
+      proposalWarnings.push(warn("STATUS_TRANSITION_SKIPPED", `Could not move proposal to reviewing: ${transition.error}`));
+    }
+  } else if (reviewStatus === "needs_revision" && (proposal.status === "submitted" || proposal.status === "reviewing")) {
+    const transition = updateModuleProposalStatus(db, args.proposal_id, "needs_revision");
+    if (!transition.ok) {
+      proposalWarnings.push(warn("STATUS_TRANSITION_SKIPPED", `Could not move proposal to needs_revision: ${transition.error}`));
+    }
+  } else if (reviewStatus === "reject" && proposal.status !== "merged" && proposal.status !== "rejected") {
+    const transition = updateModuleProposalStatus(db, args.proposal_id, "rejected");
+    if (!transition.ok) {
+      proposalWarnings.push(warn("STATUS_TRANSITION_SKIPPED", `Could not move proposal to rejected: ${transition.error}`));
+    }
+  }
+
+  // Re-read proposal status after potential transition
+  const updatedProposal = getModuleProposal(db, args.proposal_id)!;
+
+  const response: ToolResponse<{ review_id: string; status: string; proposal_id: string; proposal_status: string }> = {
+    ok: true,
+    data: {
+      review_id: review.id,
+      status: review.status,
+      proposal_id: args.proposal_id,
+      proposal_status: updatedProposal.status,
+    },
+  };
+  if (proposalWarnings.length > 0) {
+    response.warnings = proposalWarnings;
+  }
+  return response;
+}
+
+/**
+ * §12.3 approve_module_proposal
+ * Coordinator-only: approve a reviewed proposal so it can be merged.
+ * Valid from: submitted, reviewing, needs_revision.
+ * Requires: at least one pass review, no unresolved P0/P1 findings.
+ */
+export function handleApproveModuleProposal(
+  ctx: ToolContext,
+  args: {
+    proposal_id: string;
+    coordinator_agent?: string;
+    notes?: string;
+  },
+): ToolResponse<{
+  proposal_id: string;
+  status: "approved";
+  previous_status: string;
+  review_count: number;
+  pass_review_count: number;
+  unresolved_blocking_findings: number;
+}> {
+  const db = requireDb(ctx);
+  if (!db) return fail([noSessionError()]);
+
+  const errors: Diagnostic[] = [];
+
+  if (!args.proposal_id) errors.push(err("INVALID_INPUT", "proposal_id is required."));
+
+  let proposal: ReturnType<typeof getModuleProposal> = null;
+  if (args.proposal_id) {
+    proposal = getModuleProposal(db, args.proposal_id);
+    if (!proposal) {
+      errors.push(err("PROPOSAL_NOT_FOUND", `Proposal not found: ${args.proposal_id}`, args.proposal_id));
+    } else {
+      // Cannot approve draft, rejected, or merged proposals
+      if (proposal.status === "draft") {
+        errors.push(err("INVALID_STATUS", "Cannot approve a draft proposal. Submit it first."));
+      } else if (proposal.status === "rejected") {
+        errors.push(err("INVALID_STATUS", "Cannot approve a rejected proposal."));
+      } else if (proposal.status === "merged") {
+        errors.push(err("INVALID_STATUS", "Proposal is already merged."));
+      }
+    }
+  }
+
+  if (errors.length > 0) return fail(errors);
+
+  // Check reviews
+  const reviews = listProposalReviews(db, { proposal_id: args.proposal_id });
+  const reviewCount = reviews.length;
+  const passReviews = reviews.filter(r => r.status === "pass");
+  const passReviewCount = passReviews.length;
+
+  if (reviewCount === 0) {
+    return fail([err("NO_REVIEWS", "Proposal has no reviews. At least one review is required before approval.")]);
+  }
+
+  if (passReviewCount === 0) {
+    return fail([err("NO_PASS_REVIEW", "Proposal has no pass reviews. At least one pass review is required before approval.")]);
+  }
+
+  // Check if the latest review is reject (by insertion order — last element)
+  const latestReview = reviews[reviews.length - 1];
+  if (latestReview.status === "reject") {
+    return fail([err("LATEST_REVIEW_REJECTED", "The latest review rejected this proposal. Approval is not permitted until a new pass review is submitted.")]);
+  }
+
+  // Check for unresolved P0/P1 findings across all reviews
+  let unresolvedBlocking = 0;
+  for (const review of reviews) {
+    for (const finding of review.findings) {
+      if ((finding.priority === "P0" || finding.priority === "P1") &&
+          finding.resolution !== "resolved" && finding.resolution !== "rejected") {
+        unresolvedBlocking++;
+      }
+    }
+  }
+
+  if (unresolvedBlocking > 0) {
+    return fail([err("UNRESOLVED_FINDING", `Proposal has ${unresolvedBlocking} unresolved P0/P1 finding(s). Resolve or reject them before approval.`)]);
+  }
+
+  // Perform status transitions
+  const previousStatus = proposal!.status;
+
+  if (proposal!.status === "submitted") {
+    // submitted → reviewing → approved
+    const r1 = updateModuleProposalStatus(db, args.proposal_id, "reviewing");
+    if (!r1.ok) {
+      return fail([err("STATUS_UPDATE_FAILED", `Could not transition to reviewing: ${r1.error}`)]);
+    }
+  }
+
+  // Now at reviewing (or was already reviewing/needs_revision)
+  if (proposal!.status === "needs_revision") {
+    // needs_revision → submitted → reviewing → approved is not allowed directly.
+    // But we can go needs_revision → submitted → reviewing → approved.
+    // However the transition table says needs_revision → submitted is legal.
+    // And submitted → reviewing is legal. So we chain them.
+    const r1 = updateModuleProposalStatus(db, args.proposal_id, "submitted");
+    if (!r1.ok) {
+      return fail([err("STATUS_UPDATE_FAILED", `Could not transition from needs_revision to submitted: ${r1.error}`)]);
+    }
+    const r2 = updateModuleProposalStatus(db, args.proposal_id, "reviewing");
+    if (!r2.ok) {
+      return fail([err("STATUS_UPDATE_FAILED", `Could not transition to reviewing: ${r2.error}`)]);
+    }
+  }
+
+  // Now at reviewing → approved
+  const rApprove = updateModuleProposalStatus(db, args.proposal_id, "approved");
+  if (!rApprove.ok) {
+    return fail([err("STATUS_UPDATE_FAILED", `Could not transition to approved: ${rApprove.error}`)]);
+  }
+
+  return ok({
+    proposal_id: args.proposal_id,
+    status: "approved" as const,
+    previous_status: previousStatus,
+    review_count: reviewCount,
+    pass_review_count: passReviewCount,
+    unresolved_blocking_findings: 0,
+  });
 }
 
 /**
@@ -1513,7 +1785,7 @@ export function handleListProposalReviews(
   args: { proposal_id?: string },
 ): ToolResponse<{ reviews: ReturnType<typeof listProposalReviews> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const reviews = listProposalReviews(db, {
     proposal_id: args.proposal_id,
@@ -1536,7 +1808,7 @@ export function handleResolveProposalFinding(
   },
 ): ToolResponse<{ ok: boolean }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1597,7 +1869,7 @@ export function handleMergeModuleProposal(
   },
 ): ToolResponse<{ block_id: string; proposal_id: string }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const errors: Diagnostic[] = [];
 
@@ -1748,7 +2020,7 @@ export function handleListMergedProposals(
   args: { work_package_id?: string },
 ): ToolResponse<{ mappings: ReturnType<typeof listMergedProposalMappings> }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const mappings = listMergedProposalMappings(db, {
     work_package_id: args.work_package_id,
@@ -1773,7 +2045,7 @@ export function handleCoverageReport(
   entity_coverage: number;
 }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const entities = listCodeEntities(db);
   const mappings = listBlockCodeMappings(db);
@@ -1822,7 +2094,7 @@ export function handleDetectMissingModules(
   args: Record<string, never>,
 ): ToolResponse<{ missing_modules: string[] }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const entities = listCodeEntities(db);
   const blocks = listBlocks(db);
@@ -1871,7 +2143,7 @@ export function handleDetectSharedDependencies(
   args: Record<string, never>,
 ): ToolResponse<{ candidates: SharedDependencyCandidate[] }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const entities = listCodeEntities(db);
   const blocks = listBlocks(db);
@@ -1945,7 +2217,7 @@ export function handleConnectorAudit(
   weak_connectors: WeakConnector[];
 }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const edges = listCodeEdges(db);
   const mappings = listBlockCodeMappings(db);
@@ -2026,7 +2298,7 @@ export function handleFlowSufficiencyCheck(
   missing_flow_recommendations: string[];
 }> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const complexity = (args.complexity ?? "medium") as RepoComplexity;
   const flows = listFlows(db);
@@ -2073,7 +2345,7 @@ export function handleQualityGateReport(
   args: { complexity?: string },
 ): ToolResponse<QualityGateReport> {
   const db = requireDb(ctx);
-  if (!db) return fail([err("NO_SESSION", "No active session. Call begin_initialization first.")] as Diagnostic[]);
+  if (!db) return fail([noSessionError()]);
 
   const complexity = (args.complexity ?? "medium") as RepoComplexity;
 

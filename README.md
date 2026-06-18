@@ -64,7 +64,9 @@ Or add to your MCP client configuration:
 
 | Tool | Description |
 |------|-------------|
-| `begin_initialization` | Create or reset an initialization session for a repository |
+| `begin_initialization` | Create or reconnect an initialization session. Returns `resumed`, `db_path`, and graph summary |
+| `resume_initialization` | Reconnect to an existing session (alias for `begin_initialization`) |
+| `session_status` | Check whether there is an active session and get repo path + summary |
 
 ### Block Graph Editing
 
@@ -128,12 +130,14 @@ Or add to your MCP client configuration:
 | `add_proposal_flow` | Add an internal proposed flow |
 | `mark_proposal_gap` | Record unresolved module-local uncertainty |
 | `submit_module_proposal` | Mark a module proposal as ready for review |
+| `list_module_proposals` | List proposals with optional filters (work_package_id, status) |
 
 ### Proposal Reviews (v0.2)
 
 | Tool | Description |
 |------|-------------|
-| `submit_proposal_review` | Record a structured review with findings |
+| `submit_proposal_review` | Record a structured review with findings. Returns `proposal_status` and applies side effects |
+| `approve_module_proposal` | Coordinator-only: approve a reviewed proposal (requires pass review, no unresolved P0/P1) |
 | `list_proposal_reviews` | List reviews and findings for a proposal |
 | `resolve_proposal_finding` | Mark a finding as resolved, rejected, or deferred |
 
@@ -256,10 +260,11 @@ Test coverage:
 - `tests/initialization-flow.test.ts` — Full init loop end-to-end (1 test)
 - `tests/work-packages.test.ts` — Work package CRUD and status transitions (32 tests)
 - `tests/proposals.test.ts` — Proposal CRUD and scope validation (26 tests)
-- `tests/reviews.test.ts` — Review submission and finding resolution (13 tests)
-- `tests/merge.test.ts` — Coordinator merge and conflict detection (14 tests)
+- `tests/reviews.test.ts` — Review submission, finding resolution, and side effects (16 tests)
+- `tests/merge.test.ts` — Coordinator merge, approval, and conflict detection (26 tests)
 - `tests/quality-gates.test.ts` — Quality gate reports (17 tests)
 - `tests/multi-agent.test.ts` — Multi-agent protocol simulation (6 tests)
+- `tests/session.test.ts` — Session reconnect and recovery (13 tests)
 
 ## Project Structure
 

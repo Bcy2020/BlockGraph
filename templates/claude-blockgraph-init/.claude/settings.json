@@ -1,0 +1,60 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Glob",
+      "Grep",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Task",
+      "TodoWrite",
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__blockgraph__*"
+    ],
+    "deny": [
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore --source *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(npm publish*)",
+      "Bash(pnpm publish*)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(format *)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "blockgraph"
+  ],
+  "enableAllProjectMcpServers": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -Command \"Write-Output '=== BLOCKGRAPH INIT TEMPLATE ACTIVE ==='; Write-Output 'Before initialization, read .claude/skills/blockgraph-init/SKILL.md and confirm the blockgraph MCP server is enabled with /mcp.'; Write-Output 'If resuming after a restart, call begin_initialization or resume_initialization with the target repo path before continuing.'\""
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -Command \"Write-Output '=== BLOCKGRAPH CONTEXT RECOVERY ==='; Write-Output 'Read .claude/skills/blockgraph-init/SKILL.md, then inspect current BlockGraph state with session_status, list_work_packages, list_module_proposals, coverage_report, and quality_gate_report when available.'\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,21 +1,237 @@
 # BlockGraph MCP v0.2 — Working State
 
 > **RESTORE LINE**
-> Read CLAUDE.md, HOT.md, and docs/blockgraph-mcp-v0.2-prd.md; continue BlockGraph MCP v0.2 strictly phase-by-phase as parallel initialization and quality gates for architecture-first repository maintenance.
+> Read CLAUDE.md, HOT.md, issues/issue#1.md, and docs/blockgraph-mcp-v0.2.1-stabilization-prd.md; v0.2.1 ALL PHASES COMPLETE, 284 tests passed, 14/14 acceptance criteria met, P1 review findings fixed. Ready for v0.2.5 benchmark work.
 
 ## Current Phase
 
-**v0.2 COMPLETE — All Phases Done**
+**v0.2.1 COMPLETE — all 3 phases done**
 
-## Final Verification
+## Blocking Issues From Real-World Initialization
+
+Source: `issues/issue#1.md` — bulletproof-react 仓库初始化时发现的问题，已通过源码审查确认。
+
+| # | 问题 | 严重程度 | 状态 |
+|---|------|----------|------|
+| 1 | 提案审批机制缺失 — `submit_proposal_review` 不推进 proposal 状态，`submitted → reviewing → approved` 路径断裂 | ⚠️ 重要 | ✅ 已修复 (v0.2.1) |
+| 2 | 会话恢复机制缺失 — MCP server 重启后 ctx 内存句柄丢失，错误消息误导（数据已持久化在 SQLite 中） | ⚠️ 重要 | ✅ 已修复 (v0.2.1) |
+| 3 | Skill 工作流设计不完整 — 缺少审批步骤指导、降级路径、会话恢复机制 | ⚠️ 重要 | ✅ 已修复 (v0.2.1) |
+| 4 | 工作包状态机过于刚性 | 🔧 可改进 | 延后 |
+
+### 问题 1 修复方向
+
+`submit_proposal_review(status: "pass")` 应在无未解决 P0/P1 findings 时自动将 proposal 推进到 `approved`。或者添加独立的 `approve_proposal` 工具。
+
+### 问题 2 修复方向
+
+- 改善错误消息：`NO_SESSION` 应提示"数据已存在，调用 begin_initialization 重新连接"
+- 或：`begin_initialization` 检测已有 DB 并自动恢复（返回 `resumed: true`）
+- 或：添加 `list_sessions` / `resume_initialization` 工具
+
+### 问题 3 修复方向
+
+更新 `docs/parallel-initialization-skill.md` 和 `docs/agent-initialization-skill.md`：
+- 补充审批流程说明
+- 补充降级路径（直接 create_block + attach_code_entity）
+- 补充子代理权限检查
+- 补充会话恢复指导
+
+## v0.2.1 Phase 0 — Baseline & Analysis (COMPLETE)
+
+**Date**: 2026-06-18
+
+### Baseline Verification
 
 | Check | Result |
 |-------|--------|
 | `pnpm test` | **256 tests passed** (11 files) |
 | `pnpm exec tsc --noEmit -p tsconfig.json` | Clean (no errors) |
+
+### Issue 1: Proposal Approval Gap — ✅ Confirmed
+
+Source code evidence:
+
+| Location | Finding |
+|----------|---------|
+| `draft.ts:868-876` | `PROPOSAL_TRANSITIONS` defines `submitted → reviewing → approved` path, but no MCP tool drives it |
+| `tools.ts:1493-1504` | `handleSubmitProposalReview` creates review record only, does NOT call `updateModuleProposalStatus` |
+| `tools.ts:1624-1626` | `handleMergeModuleProposal` requires `proposal.status === "approved"` |
+| `server.ts` | 31 registered tools — none is `approve_module_proposal` |
+| `merge.test.ts:104-106` | Tests bypass MCP by calling `updateModuleProposalStatus` directly |
+
+PRD fix suggestions all feasible: `updateModuleProposalStatus` already supports the transitions, just needs a handler + registration.
+
+### Issue 2: Session Reconnect UX — ✅ Confirmed
+
+Source code evidence:
+
+| Location | Finding |
+|----------|---------|
+| `store.ts:16-27` | `openStore` uses `CREATE TABLE IF NOT EXISTS` — re-calling `begin_initialization` preserves data |
+| `tools.ts:88-95` | `ToolContext.db` is in-memory only; lost on MCP server restart |
+| `server.ts:68-74` | `createServer()` creates `{ db: null, repoPath: null }` — no auto-reconnect |
+| `tools.ts` (20+ locations) | All `requireDb` checks return misleading `"No active session"` message |
+
+PRD fix suggestions all feasible: `begin_initialization` can return `resumed`/`summary` by querying existing DB; `resume_initialization` and `session_status` are thin wrappers; `list_module_proposals` reuses existing `listModuleProposals()`.
+
+### Next Step
+
+Phase 1: Implement `approve_module_proposal` MCP tool + update `submit_proposal_review` to return `proposal_status` with review-driven side effects.
+
+## v0.2.1 Phase 1 — Proposal Approval MCP Path (COMPLETE)
+
+**Date**: 2026-06-18
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `src/mcp/tools.ts` | Added `handleApproveModuleProposal`; updated `handleSubmitProposalReview` to return `proposal_status` and add review-driven side effects |
+| `src/mcp/server.ts` | Registered `approve_module_proposal` tool |
+| `tests/merge.test.ts` | Added 10 tests for `approve_module_proposal`; added MCP-only end-to-end merge test |
+| `tests/reviews.test.ts` | Added 3 tests for `submit_proposal_review` side effects |
+
+### Verification
+
+| Check | Result |
+|-------|--------|
+| `pnpm test` | **269 tests passed** (11 files, +13 new) |
+| `pnpm exec tsc --noEmit -p tsconfig.json` | Clean |
+
+### What Changed
+
+- `approve_module_proposal` tool: coordinator-only approval with review/P0/P1 validation
+- `submit_proposal_review` now returns `proposal_id` and `proposal_status`
+- Review side effects: pass moves `submitted→reviewing`, needs_revision moves `submitted→reviewing→needs_revision`, reject moves to `rejected`
+- Review pass does NOT auto-approve (per PRD requirement)
+- MCP-only flow works: create → submit → review → approve → merge without internal API bypass
+
+### Next Step
+
+Phase 2: Session reconnect — `begin_initialization` returns `resumed`/`db_path`/`summary`, add `resume_initialization`, `session_status`, `list_module_proposals`, improve `NO_SESSION` messages.
+
+## v0.2.1 Phase 2 — Session Reconnect & Recovery Tools (COMPLETE)
+
+**Date**: 2026-06-18
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `src/mcp/tools.ts` | Added `noSessionError()` helper + `SessionSummary` type + `getSessionSummary()` helper; updated `handleBeginInitialization` to return `resumed`/`db_path`/`summary`; added `handleResumeInitialization`, `handleSessionStatus`, `handleListModuleProposals`; replaced all 20+ scattered `NO_SESSION` messages with `noSessionError()` |
+| `src/mcp/server.ts` | Registered `resume_initialization`, `session_status`, `list_module_proposals` tools; updated `begin_initialization` description |
+| `tests/session.test.ts` | New file — 13 tests covering resumed detection, resume, session status, list proposals, NO_SESSION messages, data preservation on reconnect |
+
+### Verification
+
+| Check | Result |
+|-------|--------|
+| `pnpm test` | **282 tests passed** (12 files, +13 new) |
+| `pnpm exec tsc --noEmit -p tsconfig.json` | Clean |
+
+### What Changed
+
+- `begin_initialization` now returns `resumed: true/false`, `db_path`, and `SessionSummary`
+- `resume_initialization` — explicit reconnect alias (same implementation, clearer name)
+- `session_status` — read-only check: active, repo_path, db_path, summary
+- `list_module_proposals` — filter by work_package_id or status; part of recovery ergonomics
+- All `NO_SESSION` messages now explain that data persists in `.blockgraph/blockgraph.db` and suggest both `begin_initialization` and `resume_initialization`
+
+### Next Step
+
+Phase 3: Documentation updates for parallel-initialization-skill.md, agent-initialization-skill.md, README.md, and final verification.
+
+## v0.2.1 Phase 3 — Documentation & Final Verification (COMPLETE)
+
+**Date**: 2026-06-18
+
+### Changes
+
+| File | Change |
+|------|--------|
+| `README.md` | Added `resume_initialization`, `session_status`, `approve_module_proposal`, `list_module_proposals` to tool tables; updated test counts |
+| `docs/parallel-initialization-skill.md` | Added Step 7 (Approve Proposals) with explicit `approve_module_proposal` guidance; renumbered subsequent steps; added Session Recovery section with reconnect, session_status, list_module_proposals, and degraded path |
+| `docs/agent-initialization-skill.md` | Updated `NO_SESSION` error description; added Session Recovery section |
+
+### Final Verification
+
+| Check | Result |
+|-------|--------|
+| `pnpm test` | **284 tests passed** (12 files) |
+| `pnpm exec tsc --noEmit -p tsconfig.json` | Clean |
+
+## v0.2.1 Acceptance Criteria (PRD §7)
+
+| # | Criterion | Status |
+|---|-----------|--------|
+| 1 | `approve_module_proposal` MCP tool exists | ✅ PASS |
+| 2 | `approve_module_proposal` enforces review and unresolved P0/P1 rules | ✅ PASS |
+| 3 | `submit_proposal_review` returns `proposal_status` | ✅ PASS |
+| 4 | Review pass does not automatically approve | ✅ PASS |
+| 5 | MCP-only proposal → review → approve → merge test passes | ✅ PASS |
+| 6 | `begin_initialization` returns `resumed`, `db_path`, and session summary | ✅ PASS |
+| 7 | `resume_initialization` tool exists | ✅ PASS |
+| 8 | `session_status` tool exists | ✅ PASS |
+| 9 | `list_module_proposals` tool exists | ✅ PASS |
+| 10 | `NO_SESSION` message explains reconnect and persistent DB behavior | ✅ PASS |
+| 11 | Reconnect tests prove existing graph data remains visible | ✅ PASS |
+| 12 | Documentation describes approval and reconnect workflow | ✅ PASS |
+| 13 | Full `pnpm test` passes | ✅ PASS (284) |
+| 14 | `pnpm exec tsc --noEmit -p tsconfig.json` passes | ✅ PASS |
+
+## Next Proposed Scope
+
+**v0.2.1 COMPLETE — ready for v0.2.5 benchmark work**
+
+v0.2.1 reference PRD (completed):
+
+- `docs/blockgraph-mcp-v0.2.1-stabilization-prd.md`
+
+v0.2.5 reference PRD (next):
+
+- `docs/blockgraph-mcp-v0.2.5-benchmark-prd.md`
+
+## Final Verification (v0.2.1)
+
+| Check | Result |
+|-------|--------|
+| `pnpm test` | **284 tests passed** (12 files) |
+| `pnpm exec tsc --noEmit -p tsconfig.json` | Clean (no errors) |
 | `pnpm test:v02-smoke` | PASS (64 entities, 8 blocks, 52.4% coverage) |
 | v0.1 status | COMPLETE — all 6 phases, 18 MCP tools, all acceptance criteria met |
 | v0.2 status | COMPLETE — all 9 phases, 31 MCP tools, all acceptance criteria met |
+| v0.2.1 status | COMPLETE — all 3 phases, 35 MCP tools, 14/14 acceptance criteria met |
+
+## Independent Review Findings & Fixes (2026-06-18)
+
+3 parallel review agents per CONTRIBUTING.md §10.
+
+### P1 — All Fixed
+
+| # | Finding | Fix |
+|---|---------|-----|
+| P1-1 | `approve_module_proposal` missing latest-review-is-reject check (PRD §4.3) | Added check in tools.ts after pass review validation; test in merge.test.ts |
+| P1-2 | `handleBeginInitialization` no try/catch for corrupted SQLite | Wrapped `openStore` in try/catch, returns `DB_OPEN_FAILED`; test in session.test.ts |
+
+### P2 — Deferred (non-blocking)
+
+| # | Finding | Status |
+|---|---------|--------|
+| P2-1 | `submit_proposal_review` reject side-effect untested | Deferred — side effect code exists, test gap only |
+| P2-2 | Approve on already-approved proposal untested | Deferred — transition table blocks it |
+| P2-3 | Multi-step transition chain non-atomic | Deferred — single-process server, documented |
+| P2-4 | "rejected proposal" test lacks error code assertion | Deferred — test correctly asserts failure |
+| P2-5 | "no session" tests lack NO_SESSION error code assertion | Deferred — test correctly asserts failure |
+
+### P3 — Deferred (cosmetic)
+
+| # | Finding |
+|---|---------|
+| P3-1 | `listProposalReviews` no explicit ORDER BY |
+| P3-2 | `handleListModuleProposals` no handler-level status validation |
+| P3-3 | MCP server version "0.1.0" |
+| P3-4 | Stale local variable in approve handler |
+| P3-5 | agent-init-skill.md NO_SESSION message abbreviation |
 
 ## v0.2 Phased Plan
 
@@ -70,10 +286,12 @@
 - **Coordinator-Only Merge**: only coordinator merges proposals into draft graph (§7.1)
 - **Multi-Agent Protocol**: coordinator → module agents → reviewers → merge (§6, §7)
 
-## v0.2 MCP Tools (31 total)
+## v0.2/v0.2.1 MCP Tools (35 total)
 
 ### Session Management
-- `begin_initialization` — create/reset initialization session
+- `begin_initialization` — create/reconnect initialization session (returns `resumed`, `db_path`, `summary`)
+- `resume_initialization` — explicit reconnect alias for `begin_initialization`
+- `session_status` — check active session status, repo path, and graph summary
 
 ### Scanner
 - `scan_repo` — scan repository and generate code fact graph
@@ -116,9 +334,11 @@
 - `add_proposal_flow` — add internal flow
 - `mark_proposal_gap` — record unresolved uncertainty
 - `submit_module_proposal` — mark ready for review
+- `list_module_proposals` — list proposals with optional filters (v0.2.1)
 
 ### Proposal Reviews (v0.2)
-- `submit_proposal_review` — record structured review
+- `submit_proposal_review` — record structured review (returns `proposal_status`, applies side effects in v0.2.1)
+- `approve_module_proposal` — coordinator-only: approve reviewed proposal (v0.2.1)
 - `list_proposal_reviews` — list reviews and findings
 - `resolve_proposal_finding` — mark finding resolved/rejected/deferred
 
@@ -133,16 +353,6 @@
 - `connector_audit` — audit cross-block edges and connector evidence
 - `flow_sufficiency_check` — evaluate flow coverage vs complexity
 - `quality_gate_report` — run all quality checks, ready/not-ready decision
-
-## Phase 1 Implementation Plan
-
-- Add `WorkPackage` types to `src/graph/schema.ts`
-- Add SQLite tables to `src/graph/store.ts`
-- Add service methods to `src/graph/draft.ts`
-- Add MCP tool handlers to `src/mcp/tools.ts`
-- Register tools in `src/mcp/server.ts`
-- Add tests to `tests/mcp-tools.test.ts` or new test file
-- Verify: focused tests + full `pnpm test` + typecheck
 
 ## Key Design Decisions
 
