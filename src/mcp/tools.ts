@@ -41,6 +41,7 @@ import {
   listMergedProposalMappings,
   createModuleProposal as dbCreateModuleProposal,
   getModuleProposal,
+  updateModuleProposal,
   updateModuleProposalStatus,
   appendProposalEntity,
   appendProposalPort,
@@ -1498,6 +1499,85 @@ export function handleMarkProposalGap(
   if (!result.ok) return fail([err("ATTACH_FAILED", result.error!)]);
 
   return ok({ ok: true });
+}
+
+/**
+ * §12.2 update_module_proposal
+ * Update editable fields on a draft or needs_revision proposal.
+ * Does NOT allow status changes (use submit/approve/merge for that).
+ * Does NOT allow entity list changes (use attach_proposal_entity etc. for that).
+ */
+export function handleUpdateModuleProposal(
+  ctx: ToolContext,
+  args: {
+    proposal_id: string;
+    purpose?: string;
+    module_name?: string;
+    confidence?: number;
+  },
+): ToolResponse<{ proposal_id: string; updated_fields: string[] }> {
+  const db = requireDb(ctx);
+  if (!db) return fail([noSessionError()]);
+
+  const errors: Diagnostic[] = [];
+
+  if (!args.proposal_id) errors.push(err("INVALID_INPUT", "proposal_id is required."));
+
+  let proposal: ReturnType<typeof getModuleProposal> = null;
+  if (args.proposal_id) {
+    proposal = getModuleProposal(db, args.proposal_id);
+    if (!proposal) {
+      errors.push(err("PROPOSAL_NOT_FOUND", `Proposal not found: ${args.proposal_id}`, args.proposal_id));
+    } else {
+      // Only allow editing in draft or needs_revision
+      if (proposal.status !== "draft" && proposal.status !== "needs_revision") {
+        errors.push(err("INVALID_STATUS", `Cannot update proposal in "${proposal.status}" status. Only draft and needs_revision proposals can be edited.`));
+      }
+    }
+  }
+
+  // Validate inputs
+  if (args.purpose !== undefined && args.purpose.trim() === "") {
+    errors.push(err("INVALID_INPUT", "purpose cannot be empty."));
+  }
+  if (args.module_name !== undefined && args.module_name.trim() === "") {
+    errors.push(err("INVALID_INPUT", "module_name cannot be empty."));
+  }
+  if (args.confidence !== undefined && (args.confidence < 0 || args.confidence > 1)) {
+    errors.push(err("INVALID_INPUT", "confidence must be between 0 and 1."));
+  }
+
+  // At least one field must be provided
+  const hasUpdates = args.purpose !== undefined || args.module_name !== undefined || args.confidence !== undefined;
+  if (!hasUpdates && errors.length === 0) {
+    errors.push(err("INVALID_INPUT", "At least one field (purpose, module_name, confidence) must be provided."));
+  }
+
+  if (errors.length > 0) return fail(errors);
+
+  const updates: { purpose?: string; module_name?: string; confidence?: number } = {};
+  const updatedFields: string[] = [];
+
+  if (args.purpose !== undefined) {
+    updates.purpose = args.purpose;
+    updatedFields.push("purpose");
+  }
+  if (args.module_name !== undefined) {
+    updates.module_name = args.module_name;
+    updatedFields.push("module_name");
+  }
+  if (args.confidence !== undefined) {
+    updates.confidence = args.confidence;
+    updatedFields.push("confidence");
+  }
+
+  // Use updateModuleProposal (direct SQL) since we're not changing status
+  const result = updateModuleProposal(db, args.proposal_id, updates);
+  if (!result) {
+    return fail([err("UPDATE_FAILED", "Failed to update proposal.")]);
+  }
+
+  return ok({ proposal_id: args.proposal_id, updated_fields: updatedFields });
 }
 
 /**

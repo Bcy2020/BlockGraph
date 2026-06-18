@@ -1,7 +1,7 @@
 # BlockGraph MCP v0.2 — Working State
 
 > **RESTORE LINE**
-> Read CLAUDE.md, HOT.md, issues/issue#1.md, and docs/blockgraph-mcp-v0.2.1-stabilization-prd.md; v0.2.1 ALL PHASES COMPLETE, 284 tests passed, 14/14 acceptance criteria met, P1 review findings fixed. Ready for v0.2.5 benchmark work.
+> Read CLAUDE.md, HOT.md, issues/issue#1.md, and docs/blockgraph-mcp-v0.2.1-stabilization-prd.md; v0.2.1 ALL PHASES COMPLETE, 294 tests passed, 36 MCP tools, 14/14 acceptance criteria met, review findings fixed, update_module_proposal added. Ready for v0.2.5 benchmark work.
 
 ## Current Phase
 
@@ -157,7 +157,7 @@ Phase 3: Documentation updates for parallel-initialization-skill.md, agent-initi
 
 | Check | Result |
 |-------|--------|
-| `pnpm test` | **284 tests passed** (12 files) |
+| `pnpm test` | **294 tests passed** (12 files) |
 | `pnpm exec tsc --noEmit -p tsconfig.json` | Clean |
 
 ## v0.2.1 Acceptance Criteria (PRD §7)
@@ -176,7 +176,7 @@ Phase 3: Documentation updates for parallel-initialization-skill.md, agent-initi
 | 10 | `NO_SESSION` message explains reconnect and persistent DB behavior | ✅ PASS |
 | 11 | Reconnect tests prove existing graph data remains visible | ✅ PASS |
 | 12 | Documentation describes approval and reconnect workflow | ✅ PASS |
-| 13 | Full `pnpm test` passes | ✅ PASS (284) |
+| 13 | Full `pnpm test` passes | ✅ PASS (294) |
 | 14 | `pnpm exec tsc --noEmit -p tsconfig.json` passes | ✅ PASS |
 
 ## Next Proposed Scope
@@ -195,12 +195,12 @@ v0.2.5 reference PRD (next):
 
 | Check | Result |
 |-------|--------|
-| `pnpm test` | **284 tests passed** (12 files) |
+| `pnpm test` | **294 tests passed** (12 files) |
 | `pnpm exec tsc --noEmit -p tsconfig.json` | Clean (no errors) |
 | `pnpm test:v02-smoke` | PASS (64 entities, 8 blocks, 52.4% coverage) |
 | v0.1 status | COMPLETE — all 6 phases, 18 MCP tools, all acceptance criteria met |
 | v0.2 status | COMPLETE — all 9 phases, 31 MCP tools, all acceptance criteria met |
-| v0.2.1 status | COMPLETE — all 3 phases, 35 MCP tools, 14/14 acceptance criteria met |
+| v0.2.1 status | COMPLETE — all 3 phases, 36 MCP tools, 14/14 acceptance criteria met |
 
 ## Independent Review Findings & Fixes (2026-06-18)
 
@@ -286,7 +286,7 @@ v0.2.5 reference PRD (next):
 - **Coordinator-Only Merge**: only coordinator merges proposals into draft graph (§7.1)
 - **Multi-Agent Protocol**: coordinator → module agents → reviewers → merge (§6, §7)
 
-## v0.2/v0.2.1 MCP Tools (35 total)
+## v0.2/v0.2.1 MCP Tools (36 total)
 
 ### Session Management
 - `begin_initialization` — create/reconnect initialization session (returns `resumed`, `db_path`, `summary`)
@@ -334,6 +334,7 @@ v0.2.5 reference PRD (next):
 - `add_proposal_flow` — add internal flow
 - `mark_proposal_gap` — record unresolved uncertainty
 - `submit_module_proposal` — mark ready for review
+- `update_module_proposal` — update purpose/module_name/confidence on draft/needs_revision proposals (v0.2.1)
 - `list_module_proposals` — list proposals with optional filters (v0.2.1)
 
 ### Proposal Reviews (v0.2)

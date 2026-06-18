@@ -40,6 +40,7 @@ import {
   handleAddProposalDependency,
   handleAddProposalFlow,
   handleMarkProposalGap,
+  handleUpdateModuleProposal,
   handleSubmitModuleProposal,
   handleSubmitProposalReview,
   handleApproveModuleProposal,
@@ -684,6 +685,27 @@ export function createServer(): { server: McpServer; ctx: ToolContext } {
     },
     async (args) => {
       const result = handleMarkProposalGap(ctx, args);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        isError: !result.ok,
+      };
+    },
+  );
+
+  // §12.2 update_module_proposal
+  server.registerTool(
+    "update_module_proposal",
+    {
+      description: "Update editable fields (purpose, module_name, confidence) on a draft or needs_revision proposal. Does not change status or entity lists.",
+      inputSchema: {
+        proposal_id: z.string().describe("Proposal ID."),
+        purpose: z.string().optional().describe("Updated module purpose."),
+        module_name: z.string().optional().describe("Updated module name."),
+        confidence: z.number().min(0).max(1).optional().describe("Updated confidence score 0-1."),
+      },
+    },
+    async (args) => {
+      const result = handleUpdateModuleProposal(ctx, args);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
         isError: !result.ok,

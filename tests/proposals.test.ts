@@ -33,7 +33,9 @@ import {
   handleAddProposalDependency,
   handleAddProposalFlow,
   handleMarkProposalGap,
+  handleUpdateModuleProposal,
   handleSubmitModuleProposal,
+  handleSubmitProposalReview,
   handleCreateWorkPackage,
 } from "../src/mcp/tools.js";
 
@@ -573,6 +575,206 @@ describe("Proposal Tool Handlers", () => {
       });
 
       const result = handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+    });
+  });
+
+  describe("handleUpdateModuleProposal", () => {
+    it("success: update purpose", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        purpose: "Handle authentication and session management",
+      });
+      expect(result.ok).toBe(true);
+      expect(result.data!.updated_fields).toContain("purpose");
+
+      // Attach entity so submit can succeed
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+
+      // Verify the proposal can now be submitted (purpose is no longer empty)
+      const submitResult = handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(submitResult.ok).toBe(true);
+    });
+
+    it("success: update module_name", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        module_name: "Authentication Module",
+      });
+      expect(result.ok).toBe(true);
+      expect(result.data!.updated_fields).toContain("module_name");
+    });
+
+    it("success: update confidence", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        confidence: 0.8,
+      });
+      expect(result.ok).toBe(true);
+      expect(result.data!.updated_fields).toContain("confidence");
+    });
+
+    it("success: update multiple fields", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        purpose: "Updated purpose",
+        module_name: "Updated Name",
+        confidence: 0.5,
+      });
+      expect(result.ok).toBe(true);
+      expect(result.data!.updated_fields).toHaveLength(3);
+    });
+
+    it("success: update needs_revision proposal", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+      // Move to needs_revision via review side effect
+      handleSubmitProposalReview(ctx, {
+        proposal_id: "prop-auth",
+        status: "needs_revision",
+        findings: [{
+          priority: "P1",
+          title: "Issue",
+          description: "Desc",
+          expected: "Expected",
+          observed: "Observed",
+          recommendation: "Fix",
+        }],
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        purpose: "Fixed purpose",
+      });
+      expect(result.ok).toBe(true);
+    });
+
+    it("fails: submitted proposal not editable", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+      // Attach entity so submit succeeds
+      const entity = createCodeEntity(ctx.db!, {
+        type: "function",
+        name: "login",
+        file_path: "src/auth/login.ts",
+        start_line: 1,
+        end_line: 10,
+      });
+      handleAttachProposalEntity(ctx, {
+        proposal_id: "prop-auth",
+        entity_type: "owned",
+        code_entity_id: entity.id,
+      });
+      handleSubmitModuleProposal(ctx, { proposal_id: "prop-auth" });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        purpose: "Should fail",
+      });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("INVALID_STATUS");
+    });
+
+    it("fails: no fields provided", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, { proposal_id: "prop-auth" });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("INVALID_INPUT");
+    });
+
+    it("fails: empty purpose", () => {
+      handleCreateWorkPackage(ctx, { id: "wp-auth", name: "Auth" });
+      handleCreateModuleProposal(ctx, {
+        id: "prop-auth",
+        work_package_id: "wp-auth",
+        module_name: "Auth",
+        purpose: "Auth module",
+      });
+
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "prop-auth",
+        purpose: "",
+      });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("INVALID_INPUT");
+    });
+
+    it("fails: proposal not found", () => {
+      const result = handleUpdateModuleProposal(ctx, {
+        proposal_id: "nonexistent",
+        purpose: "Test",
+      });
+      expect(result.ok).toBe(false);
+      expect(result.errors![0].code).toBe("PROPOSAL_NOT_FOUND");
+    });
+
+    it("fails: no session", () => {
+      const noSessionCtx = makeCtx();
+      const result = handleUpdateModuleProposal(noSessionCtx, {
+        proposal_id: "prop-auth",
+        purpose: "Test",
+      });
       expect(result.ok).toBe(false);
     });
   });

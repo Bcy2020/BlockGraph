@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "blockgraph": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": [
+        "--dir",
+        "E:/repos/kuang-tu_MCP",
+        "exec",
+        "tsx",
+        "src/mcp/server.ts"
+      ],
+      "env": {}
+    }
+  }
+}

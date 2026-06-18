@@ -1037,6 +1037,7 @@ export function updateModuleProposal(
     confidence?: number;
     status?: ModuleProposalStatus;
     purpose?: string;
+    module_name?: string;
   },
 ): boolean {
   const sets: string[] = [];
@@ -1089,6 +1090,10 @@ export function updateModuleProposal(
   if (updates.purpose !== undefined) {
     sets.push(`purpose = ?`);
     params.push(updates.purpose);
+  }
+  if (updates.module_name !== undefined) {
+    sets.push(`module_name = ?`);
+    params.push(updates.module_name);
   }
 
   if (sets.length === 0) return false;
