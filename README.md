@@ -1,4 +1,4 @@
-# BlockGraph MCP v0.2
+# BlockGraph MCP v0.2.5
 
 A constrained graph editor for architecture-first repository maintenance, implemented as an MCP (Model Context Protocol) server.
 
@@ -265,6 +265,47 @@ Test coverage:
 - `tests/quality-gates.test.ts` — Quality gate reports (17 tests)
 - `tests/multi-agent.test.ts` — Multi-agent protocol simulation (6 tests)
 - `tests/session.test.ts` — Session reconnect and recovery (13 tests)
+- `tests/benchmark-schema.test.ts` — Benchmark schema validation (26 tests)
+- `tests/benchmark-access-accuracy.test.ts` — Access accuracy evaluator (16 tests)
+- `tests/benchmark-runner.test.ts` — Adapters and runner (17 tests)
+- `tests/benchmark-report.test.ts` — Graph conditions and reports (12 tests)
+- `tests/benchmark-prompt.test.ts` — Prompt builder (14 tests)
+
+## Benchmark (v0.2.5)
+
+v0.2.5 adds a modular benchmark harness for agent repository access accuracy.
+
+```bash
+# Dry run (plan only)
+pnpm benchmark --dry-run
+
+# Fixture adapter (deterministic, no LLM)
+pnpm benchmark --adapter fixture --profile perfect --conditions no_graph
+
+# Compare profiles
+pnpm benchmark --adapter fixture --profile perfect --conditions no_graph
+pnpm benchmark --adapter fixture --profile weak --conditions no_graph
+
+# Score manually saved answers
+pnpm benchmark --adapter file --answers-dir ./my-answers
+
+# Claude Code command adapter
+pnpm benchmark --adapter command --conditions block_graph_with_flows \
+  --command "claude -p --output-format json --max-turns 20 --max-budget-usd 2.00"
+
+# OpenCode command adapter
+pnpm benchmark --adapter command --conditions block_graph_with_flows \
+  --command "opencode run --format json --dir {repo}"
+```
+
+See [benchmarks/access-accuracy/README.md](benchmarks/access-accuracy/README.md) for full documentation.
+
+Benchmark test coverage:
+- `tests/benchmark-schema.test.ts` — Schema validation and case loading (26 tests)
+- `tests/benchmark-access-accuracy.test.ts` — Evaluator scoring (16 tests)
+- `tests/benchmark-runner.test.ts` — Adapters and runner (17 tests)
+- `tests/benchmark-report.test.ts` — Graph conditions and reports (12 tests)
+- `tests/benchmark-prompt.test.ts` — Prompt builder (14 tests)
 
 ## Project Structure
 
@@ -280,6 +321,25 @@ src/
     tools.ts      — Tool handler implementations
   scanner/
     tsScanner.ts  — TypeScript/React scanner using ts-morph
+  benchmark/
+    schema.ts     — Zod schemas for benchmark types
+    cases.ts      — Case loader with validation
+    run.ts        — Benchmark runner
+    events.ts     — JSONL event logger
+    prompt.ts     — Condition-aware prompt builder
+    report.ts     — JSON and Markdown report generator
+    graphConditions.ts — Graph context preparation
+    adapters/
+      fixture.ts  — Deterministic fixture adapter
+      file.ts     — Score saved agent answers
+      command.ts  — External command adapter
+    evaluators/
+      accessAccuracy.ts — Accuracy/evidence/efficiency scoring
+benchmarks/
+  access-accuracy/
+    cases/        — 5 benchmark case definitions
+    fixture-answers/ — Predefined answers (perfect/weak/wrong)
+    README.md     — Benchmark documentation
 fixtures/
   ts-react-auth/    — Test fixture repository (simple)
   ts-react-complex/ — Test fixture repository (complex)

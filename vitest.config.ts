@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     globals: true,
     testTimeout: 30000,
-    exclude: ["test-workspace/**", "test-workspace-complex/**", "node_modules/**"],
+    exclude: ["test-workspace/**", "test-workspace-complex/**", "node_modules/**", "benchmarks/**"],
   },
 });

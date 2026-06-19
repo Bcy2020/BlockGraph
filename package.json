@@ -8,7 +8,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:external-init": "tsx scripts/external-init.ts",
-    "test:v02-smoke": "tsx scripts/v02-smoke-test.ts"
+    "test:v02-smoke": "tsx scripts/v02-smoke-test.ts",
+    "benchmark": "tsx scripts/benchmark.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
