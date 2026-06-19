@@ -2,6 +2,10 @@ node_modules/
 dist/
 coverage/
 .blockgraph/
+
+# Working state and internal docs (not tracked)
+HOT.md
+docs/
 *.db
 *.db-shm
 *.db-wal
