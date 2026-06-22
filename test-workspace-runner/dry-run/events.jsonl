@@ -1,0 +1,2 @@
+{"ts":"2026-06-21T15:04:00.086Z","run_id":"run-ee126293","type":"run_started","data":{"suite":"access-accuracy","adapter":"fixture-perfect","dryRun":true}}
+{"ts":"2026-06-21T15:04:00.087Z","run_id":"run-ee126293","type":"run_finished","data":{"dry_run":true}}

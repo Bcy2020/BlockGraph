@@ -1,0 +1,119 @@
+{
+  "run_id": "run-ee126293",
+  "created_at": "2026-06-21T15:04:00.075Z",
+  "adapter": "fixture-perfect",
+  "dry_run": true,
+  "cases": [
+    {
+      "case_id": "fixture-api-endpoint-map",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-auth-impact",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-comment-submit-bug",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-component-prop-trace",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-discussion-cross-flow",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-error-handling-gaps",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-login-flow",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-orphaned-code",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-shared-dep-impact",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    },
+    {
+      "case_id": "fixture-team-feature-landing",
+      "conditions": [
+        "no_graph",
+        "code_facts_only",
+        "block_graph",
+        "block_graph_with_flows",
+        "stale_or_incomplete_graph",
+        "block_graph_mcp"
+      ]
+    }
+  ],
+  "total_runs": 60
+}

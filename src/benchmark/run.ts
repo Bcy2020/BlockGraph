@@ -1,17 +1,20 @@
 /**
- * BlockGraph MCP v0.2.5 — Benchmark Runner
+ * BlockGraph MCP v0.2.7 — Benchmark Runner
  * Orchestrates benchmark case execution, scoring, and reporting.
- * PRD §16: runner implementation.
+ * v0.2.7: Condition isolation, trace capture, fairness gates.
  */
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { loadCases, type CaseLoadResult } from "./cases.js";
 import { prepareGraphCondition } from "./graphConditions.js";
+import { prepareBenchmarkRepo, type IsolationMetadata } from "./repoPrep.js";
 import { buildPrompt } from "./prompt.js";
 import { evaluateAccessAccuracy } from "./evaluators/accessAccuracy.js";
 import { EventLogger } from "./events.js";
 import { writeReports } from "./report.js";
+import type { GraphIndex } from "./idResolver.js";
 import type {
   BenchmarkCase,
   BenchmarkCaseRun,
@@ -118,7 +121,7 @@ export async function runBenchmark(
     const run: BenchmarkRun = {
       id: runId,
       created_at: createdAt,
-      benchmark_version: "0.2.5",
+      benchmark_version: "0.2.7",
       adapter: adapter.name,
       model,
       cases: [],
@@ -160,7 +163,7 @@ export async function runBenchmark(
   const run: BenchmarkRun = {
     id: runId,
     created_at: createdAt,
-    benchmark_version: "0.2.5",
+    benchmark_version: "0.2.7",
     adapter: adapter.name,
     model,
     cases: caseRuns,
@@ -215,11 +218,40 @@ async function executeCase(
   let finalAnswer: AgentFinalAnswer | null = null;
   let score: CaseScore | null = null;
   let error: string | undefined;
+  let isolation: IsolationMetadata | undefined;
 
   try {
-    // Prepare graph condition
+    // Phase 1: Prepare isolated repository
+    isolation = await prepareBenchmarkRepo({
+      caseId: case_.id,
+      condition,
+      sourceRepoPath: repoPath,
+      outputDir: caseDir,
+    });
+
+    events.log("repo_prepared", {
+      case_id: case_.id,
+      condition,
+      data: {
+        prepared_repo_path: isolation.prepared_repo_path,
+        fairness_gates: isolation.fairness_gates,
+      },
+    });
+
+    // Check fairness gates - fail early if critical gates fail
+    if (!isolation.fairness_gates.condition_isolation_ok) {
+      throw new Error(
+        `Fairness gate failed: condition isolation violated.\n` +
+        `Issues: ${isolation.fairness_gates.issues.join(", ")}`,
+      );
+    }
+
+    // Use prepared repo path for all subsequent operations
+    const preparedRepoPath = isolation.prepared_repo_path;
+
+    // Prepare graph condition (uses prepared repo)
     const { context, warnings } = await prepareGraphCondition(
-      repoPath,
+      preparedRepoPath,
       caseDir,
       condition,
     );
@@ -229,11 +261,11 @@ async function executeCase(
       data: { warnings },
     });
 
-    // Build prompt
-    const prompt = buildPrompt({ case_, condition, repoPath, context });
+    // Build prompt with prepared repo path
+    const prompt = buildPrompt({ case_, condition, repoPath: preparedRepoPath, context });
     await writeFile(resolve(caseDir, "prompt.txt"), prompt, "utf-8");
 
-    // Run adapter
+    // Run adapter with prepared repo path
     events.log("agent_started", { case_id: case_.id, condition });
     await events.flush();
 
@@ -241,7 +273,7 @@ async function executeCase(
       run_id: runId,
       case: case_,
       condition,
-      repo_path: repoPath,
+      repo_path: preparedRepoPath,
       graph_context: context,
       prompt,
       output_dir: caseDir,
@@ -260,12 +292,24 @@ async function executeCase(
       data: { duration_ms: result.duration_ms },
     });
 
-    // Score
+    // Load graph index if available (FR3/FR4: ID resolution)
+    let graphIndex: GraphIndex | undefined;
+    const graphIndexPath = resolve(caseDir, "graph-context", "graph-index.json");
+    if (existsSync(graphIndexPath)) {
+      try {
+        graphIndex = JSON.parse(await readFile(graphIndexPath, "utf-8"));
+      } catch {
+        // Graph index is optional — continue without it
+      }
+    }
+
+    // Score against prepared repo
     score = evaluateAccessAccuracy({
       case_,
       condition,
       answer: finalAnswer,
-      repo_path: repoPath,
+      repo_path: preparedRepoPath,
+      graphIndex,
     });
     await writeFile(resolve(caseDir, "score.json"), JSON.stringify(score, null, 2));
 
@@ -292,6 +336,7 @@ async function executeCase(
     score,
     duration_ms,
     error,
+    isolation_metadata: isolation,
   };
 }
 

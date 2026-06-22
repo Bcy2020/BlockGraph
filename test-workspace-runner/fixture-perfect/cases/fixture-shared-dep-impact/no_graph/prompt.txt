@@ -1,0 +1,93 @@
+## Task: Shared Dependency Change Impact
+
+The shared API client (src/lib/apiClient.ts) needs a breaking change to its request method signatures. Identify every feature module and service function that directly depends on apiClient, and rank them by how severely they would be affected.
+
+Changed surface: src/lib/apiClient.ts method signatures
+
+## Repository
+
+Repository path: E:\repos\kuang-tu_MCP\test-workspace-runner\fixture-perfect\cases\fixture-shared-dep-impact\no_graph\prepared-repo
+
+## Rules
+
+Do not modify repository files.
+Your task is localization and explanation only.
+Return only JSON matching the required schema.
+
+### Precision-Scored Outputs
+
+Your ranked_files, ranked_entities, and ranked_blocks are **precision-scored first-inspection targets**.
+They should contain the MINIMAL direct files, symbols, and blocks that a maintainer should inspect or edit first.
+
+IMPORTANT:
+- Rank DIRECT targets first (files that need editing, symbols that need changing)
+- Put contextual/transitive/passive items in `evidence` or `notes`, NOT in ranked lists
+- Over-broad ranked lists REDUCE your precision score
+- Include only files/entities/blocks that are directly relevant to the task
+
+Include evidence paths and line ranges when possible.
+Do not claim a flow step unless you can support it with source code or BlockGraph evidence.
+
+### Task-Specific Guidance
+
+**Impact Analysis**: Rank direct changed surface and direct dependents first.
+- Rank the file/symbol being changed at rank 1
+- Rank files that directly import or call the changed symbol
+- Do NOT rank transitive/transitive UI consumers unless they are directly affected
+- Put transitive impacts in `notes`, not ranked lists
+
+## Context Condition
+
+Condition: no_graph
+
+Do not use BlockGraph MCP tools or .blockgraph data.
+Use ordinary repository inspection only.
+
+## Required Output
+
+Return a single JSON object matching this schema:
+
+```json
+{
+  "task_id": "fixture-shared-dep-impact",
+  "condition": "no_graph",
+  "answer": "<your explanation of the localization or analysis>",
+  "ranked_files": [
+    {
+      "id": "<repo-relative file path>",
+      "rank": 1,
+      "confidence": 0.9,
+      "reason": "<why this file is relevant>"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "<file_path#symbol_name>",
+      "rank": 1,
+      "confidence": 0.9
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "<block name>",
+      "rank": 1,
+      "confidence": 0.9
+    }
+  ],
+  "predicted_flow_order": [
+    "<file_path#symbol_name>",
+    "..."
+  ],
+  "evidence": [
+    {
+      "file_path": "<repo-relative path>",
+      "start_line": 1,
+      "end_line": 50,
+      "note": "<what this evidence shows>"
+    }
+  ],
+  "confidence": 0.8,
+  "used_blockgraph": false,
+  "notes": "<any caveats or observations>"
+}
+```

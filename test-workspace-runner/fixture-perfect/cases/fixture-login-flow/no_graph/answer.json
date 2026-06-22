@@ -1,0 +1,109 @@
+{
+  "task_id": "fixture-login-flow",
+  "condition": "no_graph",
+  "answer": "The login flow activates LoginForm → authService.loginUser → apiClient. The form submits credentials, authService processes the login request, and apiClient handles the HTTP call.",
+  "ranked_files": [
+    {
+      "id": "src/features/auth/LoginForm.tsx",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Entry point: login form component with handleSubmit"
+    },
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 2,
+      "confidence": 0.95,
+      "reason": "loginUser function processes authentication"
+    },
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 3,
+      "confidence": 0.9,
+      "reason": "HTTP client used by authService for API calls"
+    },
+    {
+      "id": "src/hooks/useAuth.ts",
+      "rank": 4,
+      "confidence": 0.8,
+      "reason": "useAuth hook manages auth state in LoginForm"
+    },
+    {
+      "id": "src/types/user.ts",
+      "rank": 5,
+      "confidence": 0.7,
+      "reason": "User type used by authService and useAuth"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/auth/LoginForm.tsx#LoginForm",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/auth/authService.ts#loginUser",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 3,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/hooks/useAuth.ts#useAuth",
+      "rank": 4,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/types/user.ts#User",
+      "rank": 5,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Auth",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Shared API Client",
+      "rank": 2,
+      "confidence": 0.9
+    }
+  ],
+  "predicted_flow_order": [
+    "src/features/auth/LoginForm.tsx#LoginForm",
+    "src/features/auth/authService.ts#loginUser",
+    "src/lib/apiClient.ts#apiClient"
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 1,
+      "end_line": 25,
+      "note": "LoginForm component with handleSubmit calling loginUser"
+    },
+    {
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 1,
+      "end_line": 20,
+      "note": "loginUser function using apiClient.post"
+    },
+    {
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 1,
+      "end_line": 26,
+      "note": "apiClient with get/post/put methods using fetch"
+    },
+    {
+      "file_path": "src/hooks/useAuth.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "useAuth hook managing user state"
+    }
+  ],
+  "confidence": 0.95,
+  "used_blockgraph": false
+}

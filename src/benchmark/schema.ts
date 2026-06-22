@@ -45,11 +45,12 @@ export const AccessAccuracyGoldenSchema = z.object({
   expected_entities: z.array(WeightedExpectedItemSchema),
   expected_blocks: z.array(WeightedExpectedItemSchema),
   expected_flow_order: z.array(z.string()).optional(),
+  scoring_mode: z.enum(["all_required", "any_hit"]).optional(),
   acceptable_alternatives: z
     .object({
-      files: z.array(z.string()).optional(),
-      entities: z.array(z.string()).optional(),
-      blocks: z.array(z.string()).optional(),
+      files: z.record(z.string(), z.array(z.string())).optional(),
+      entities: z.record(z.string(), z.array(z.string())).optional(),
+      blocks: z.record(z.string(), z.array(z.string())).optional(),
     })
     .optional(),
   must_not_include: z
@@ -96,6 +97,10 @@ export const RankedItemSchema = z.object({
   rank: z.number().int().min(1),
   confidence: z.number().min(0).max(1).optional(),
   reason: z.string().optional(),
+  name: z.string().optional(),
+  canonical_id: z.string().optional(),
+  raw_id: z.string().optional(),
+  kind: z.string().optional(),
 });
 export type RankedItem = z.infer<typeof RankedItemSchema>;
 
@@ -172,6 +177,15 @@ export const EvidenceMetricsSchema = z.object({
 });
 export type EvidenceMetrics = z.infer<typeof EvidenceMetricsSchema>;
 
+export const ResolutionDiagnosticsSchema = z.object({
+  resolved_blocks: z.number().int(),
+  unresolved_blocks: z.number().int(),
+  resolved_entities: z.number().int(),
+  unresolved_entities: z.number().int(),
+  resolution_methods: z.record(z.string(), z.number().int()),
+}).optional();
+export type ResolutionDiagnosticsSummary = z.infer<typeof ResolutionDiagnosticsSchema>;
+
 export const CaseScoreSchema = z.object({
   case_id: z.string(),
   condition: GraphConditionSchema,
@@ -183,10 +197,31 @@ export const CaseScoreSchema = z.object({
   evidence_score: z.number(),
   overall_score: z.number(),
   warnings: z.array(z.string()),
+  resolution: ResolutionDiagnosticsSchema,
 });
 export type CaseScore = z.infer<typeof CaseScoreSchema>;
 
 // ── Benchmark Run ──────────────────────────────────────────────────────────
+
+export const FairnessGateStatusSchema = z.object({
+  condition_isolation_ok: z.boolean(),
+  explicit_mcp_config_ok: z.boolean(),
+  graph_index_frozen_ok: z.boolean(),
+  issues: z.array(z.string()),
+});
+
+export const IsolationMetadataSchema = z.object({
+  condition: GraphConditionSchema,
+  case_id: z.string(),
+  source_repo_path: z.string(),
+  prepared_repo_path: z.string(),
+  removed_artifacts: z.array(z.string()),
+  mcp_config_path: z.string().nullable(),
+  strict_mcp_config_expected: z.boolean(),
+  isolation_warnings: z.array(z.string()),
+  fairness_gates: FairnessGateStatusSchema,
+});
+export type IsolationMetadata = z.infer<typeof IsolationMetadataSchema>;
 
 export const BenchmarkCaseRunSchema = z.object({
   case_id: z.string(),
@@ -197,16 +232,18 @@ export const BenchmarkCaseRunSchema = z.object({
   score: CaseScoreSchema.nullable(),
   duration_ms: z.number(),
   error: z.string().optional(),
+  isolation_metadata: IsolationMetadataSchema.optional(),
 });
 export type BenchmarkCaseRun = z.infer<typeof BenchmarkCaseRunSchema>;
 
 export const BenchmarkAggregateScoreSchema = z.object({
   overall: z.number(),
-  by_condition: z.record(GraphConditionSchema, z.number()),
+  by_condition: z.record(z.string(), z.number()),
   case_count: z.number().int(),
   failed_count: z.number().int(),
 });
 export type BenchmarkAggregateScore = z.infer<typeof BenchmarkAggregateScoreSchema>;
+// by_condition uses string keys to allow partial condition data
 
 export const BenchmarkRunSchema = z.object({
   id: z.string(),
@@ -308,6 +345,7 @@ export interface EvaluatorInput {
   condition: GraphCondition;
   answer: AgentFinalAnswer;
   repo_path: string;
+  graphIndex?: import("./idResolver.js").GraphIndex;
 }
 
 export interface Evaluator {

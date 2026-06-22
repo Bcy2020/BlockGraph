@@ -1,0 +1,140 @@
+{
+  "task_id": "fixture-auth-impact",
+  "condition": "no_graph",
+  "answer": "Changing auth token attachment affects authService (token source), apiClient (token attachment point), and all feature services that depend on apiClient for authenticated requests: discussionService, commentService, teamService, userService.",
+  "ranked_files": [
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Primary impact: token attachment logic"
+    },
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 2,
+      "confidence": 0.95,
+      "reason": "Token attachment point for all HTTP requests"
+    },
+    {
+      "id": "src/hooks/useAuth.ts",
+      "rank": 3,
+      "confidence": 0.8,
+      "reason": "Auth state management, may need token refresh"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 4,
+      "confidence": 0.7,
+      "reason": "Downstream: uses apiClient for authenticated requests"
+    },
+    {
+      "id": "src/features/comments/commentService.ts",
+      "rank": 5,
+      "confidence": 0.7,
+      "reason": "Downstream: uses apiClient"
+    },
+    {
+      "id": "src/features/teams/teamService.ts",
+      "rank": 6,
+      "confidence": 0.7,
+      "reason": "Downstream: uses apiClient"
+    },
+    {
+      "id": "src/features/users/userService.ts",
+      "rank": 7,
+      "confidence": 0.7,
+      "reason": "Downstream: uses apiClient"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/auth/authService.ts#loginUser",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/hooks/useAuth.ts#useAuth",
+      "rank": 3,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "rank": 4,
+      "confidence": 0.7
+    },
+    {
+      "id": "src/features/comments/commentService.ts#addComment",
+      "rank": 5,
+      "confidence": 0.7
+    },
+    {
+      "id": "src/features/teams/teamService.ts#fetchTeams",
+      "rank": 6,
+      "confidence": 0.7
+    },
+    {
+      "id": "src/features/users/userService.ts#fetchUser",
+      "rank": 7,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Auth",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Shared API Client",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "Discussions",
+      "rank": 3,
+      "confidence": 0.7
+    },
+    {
+      "id": "Comments",
+      "rank": 4,
+      "confidence": 0.7
+    },
+    {
+      "id": "Teams",
+      "rank": 5,
+      "confidence": 0.7
+    },
+    {
+      "id": "Users",
+      "rank": 6,
+      "confidence": 0.7
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 1,
+      "end_line": 20,
+      "note": "loginUser handles token"
+    },
+    {
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 1,
+      "end_line": 26,
+      "note": "apiClient attaches tokens to requests"
+    },
+    {
+      "file_path": "src/hooks/useAuth.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "useAuth manages auth state"
+    }
+  ],
+  "confidence": 0.9,
+  "used_blockgraph": false
+}

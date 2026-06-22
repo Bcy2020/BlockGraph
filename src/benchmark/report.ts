@@ -120,6 +120,39 @@ function buildMarkdownReport(run: BenchmarkRun): string {
     lines.push("");
   }
 
+  // ── ID Resolution Diagnostics ─────────────────────────────────────────
+  const runsWithResolution = scoredRuns.filter((c) => c.score!.resolution);
+  if (runsWithResolution.length > 0) {
+    lines.push("## ID Resolution Diagnostics");
+    lines.push("");
+    lines.push("| Metric | Average |");
+    lines.push("|--------|---------|");
+    lines.push(`| Resolved Blocks | ${fmt(avg(runsWithResolution.map((c) => c.score!.resolution!.resolved_blocks)))} |`);
+    lines.push(`| Unresolved Blocks | ${fmt(avg(runsWithResolution.map((c) => c.score!.resolution!.unresolved_blocks)))} |`);
+    lines.push(`| Resolved Entities | ${fmt(avg(runsWithResolution.map((c) => c.score!.resolution!.resolved_entities)))} |`);
+    lines.push(`| Unresolved Entities | ${fmt(avg(runsWithResolution.map((c) => c.score!.resolution!.unresolved_entities)))} |`);
+    lines.push("");
+
+    // Resolution methods breakdown
+    const allMethods: Record<string, number> = {};
+    for (const c of runsWithResolution) {
+      const methods = c.score!.resolution!.resolution_methods ?? {};
+      for (const [method, count] of Object.entries(methods)) {
+        allMethods[method] = (allMethods[method] ?? 0) + count;
+      }
+    }
+    if (Object.keys(allMethods).length > 0) {
+      lines.push("### Resolution Methods");
+      lines.push("");
+      lines.push("| Method | Count |");
+      lines.push("|--------|-------|");
+      for (const [method, count] of Object.entries(allMethods).sort((a, b) => b[1] - a[1])) {
+        lines.push(`| ${method} | ${count} |`);
+      }
+      lines.push("");
+    }
+  }
+
   // ── Warnings ───────────────────────────────────────────────────────────
   const allWarnings = scoredRuns.flatMap((c) => c.score!.warnings);
   if (allWarnings.length > 0) {

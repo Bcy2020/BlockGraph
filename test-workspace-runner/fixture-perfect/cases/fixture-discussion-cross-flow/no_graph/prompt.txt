@@ -1,0 +1,91 @@
+## Task: Discussion and Comment Cross-Module Flow
+
+Recover the cross-module path for viewing discussions and interacting with related comments. Which modules and files are involved?
+
+## Repository
+
+Repository path: E:\repos\kuang-tu_MCP\test-workspace-runner\fixture-perfect\cases\fixture-discussion-cross-flow\no_graph\prepared-repo
+
+## Rules
+
+Do not modify repository files.
+Your task is localization and explanation only.
+Return only JSON matching the required schema.
+
+### Precision-Scored Outputs
+
+Your ranked_files, ranked_entities, and ranked_blocks are **precision-scored first-inspection targets**.
+They should contain the MINIMAL direct files, symbols, and blocks that a maintainer should inspect or edit first.
+
+IMPORTANT:
+- Rank DIRECT targets first (files that need editing, symbols that need changing)
+- Put contextual/transitive/passive items in `evidence` or `notes`, NOT in ranked lists
+- Over-broad ranked lists REDUCE your precision score
+- Include only files/entities/blocks that are directly relevant to the task
+
+Include evidence paths and line ranges when possible.
+Do not claim a flow step unless you can support it with source code or BlockGraph evidence.
+
+### Task-Specific Guidance
+
+**Cross-Module Flow Recovery**: Rank files/entities in the activation path.
+- Rank the entrypoint file at rank 1
+- Follow the execution path through modules
+- Do NOT rank all UI shells — only those in the active path
+- Focus on files that execute code, not files that define types
+
+## Context Condition
+
+Condition: no_graph
+
+Do not use BlockGraph MCP tools or .blockgraph data.
+Use ordinary repository inspection only.
+
+## Required Output
+
+Return a single JSON object matching this schema:
+
+```json
+{
+  "task_id": "fixture-discussion-cross-flow",
+  "condition": "no_graph",
+  "answer": "<your explanation of the localization or analysis>",
+  "ranked_files": [
+    {
+      "id": "<repo-relative file path>",
+      "rank": 1,
+      "confidence": 0.9,
+      "reason": "<why this file is relevant>"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "<file_path#symbol_name>",
+      "rank": 1,
+      "confidence": 0.9
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "<block name>",
+      "rank": 1,
+      "confidence": 0.9
+    }
+  ],
+  "predicted_flow_order": [
+    "<file_path#symbol_name>",
+    "..."
+  ],
+  "evidence": [
+    {
+      "file_path": "<repo-relative path>",
+      "start_line": 1,
+      "end_line": 50,
+      "note": "<what this evidence shows>"
+    }
+  ],
+  "confidence": 0.8,
+  "used_blockgraph": false,
+  "notes": "<any caveats or observations>"
+}
+```

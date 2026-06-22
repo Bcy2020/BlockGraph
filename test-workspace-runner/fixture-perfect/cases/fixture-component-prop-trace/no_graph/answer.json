@@ -1,0 +1,99 @@
+{
+  "task_id": "fixture-component-prop-trace",
+  "condition": "no_graph",
+  "answer": "The data flow for the Discussions feature is: 1) The Discussion type (src/types/discussion.ts) defines the shape: id, title, content, authorId, createdAt. 2) DiscussionService.fetchDiscussions() calls apiClient.get('/discussions') which returns Discussion[]. 3) DiscussionList mounts, useEffect fires, calls fetchDiscussions().then(setDiscussions) to store the array in component state. 4) DiscussionList renders a <ul> with <li> per discussion showing d.title and d.content. The entire chain: type definition → service function → HTTP transport → component state → JSX render.",
+  "ranked_files": [
+    {
+      "id": "src/types/discussion.ts",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Defines the Discussion data shape that flows through the entire chain"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 2,
+      "confidence": 0.95,
+      "reason": "fetchDiscussions fetches and types the API response as Discussion[]"
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx",
+      "rank": 3,
+      "confidence": 0.95,
+      "reason": "Holds discussions in state and renders them"
+    },
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 4,
+      "confidence": 0.8,
+      "reason": "Transport layer that makes the actual HTTP call"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/types/discussion.ts#Discussion",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+      "rank": 3,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 4,
+      "confidence": 0.8
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Discussions",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Shared API Client",
+      "rank": 2,
+      "confidence": 0.8
+    }
+  ],
+  "predicted_flow_order": [
+    "src/features/discussions/DiscussionList.tsx#DiscussionList",
+    "src/features/discussions/discussionService.ts#fetchDiscussions",
+    "src/lib/apiClient.ts#apiClient",
+    "src/types/discussion.ts#Discussion"
+  ],
+  "evidence": [
+    {
+      "file_path": "src/types/discussion.ts",
+      "start_line": 1,
+      "end_line": 7,
+      "note": "Discussion interface with id, title, content, authorId, createdAt"
+    },
+    {
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 5,
+      "end_line": 10,
+      "note": "fetchDiscussions returns apiClient.get('/discussions') typed as Discussion[]"
+    },
+    {
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 8,
+      "end_line": 15,
+      "note": "useEffect calls fetchDiscussions().then(setDiscussions)"
+    },
+    {
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 18,
+      "end_line": 19,
+      "note": "Renders <li> per discussion showing title and content"
+    }
+  ],
+  "confidence": 0.95,
+  "used_blockgraph": false
+}

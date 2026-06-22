@@ -1,7 +1,7 @@
 /**
- * BlockGraph MCP v0.2.5 — Prompt Builder
+ * BlockGraph MCP v0.2.7 — Prompt Builder
  * Builds deterministic, condition-aware prompts for benchmark agents.
- * PRD §13: prompting rules.
+ * v0.2.7: Explicit precision-scored first-inspection targets.
  */
 import type {
   BenchmarkCase,
@@ -54,9 +54,24 @@ export function buildPrompt(input: BuildPromptInput): string {
   sections.push("Do not modify repository files.");
   sections.push("Your task is localization and explanation only.");
   sections.push("Return only JSON matching the required schema.");
-  sections.push("Rank the most relevant files, entities, and blocks.");
+  sections.push("");
+  sections.push("### Precision-Scored Outputs");
+  sections.push("");
+  sections.push("Your ranked_files, ranked_entities, and ranked_blocks are **precision-scored first-inspection targets**.");
+  sections.push("They should contain the MINIMAL direct files, symbols, and blocks that a maintainer should inspect or edit first.");
+  sections.push("");
+  sections.push("IMPORTANT:");
+  sections.push("- Rank DIRECT targets first (files that need editing, symbols that need changing)");
+  sections.push("- Put contextual/transitive/passive items in `evidence` or `notes`, NOT in ranked lists");
+  sections.push("- Over-broad ranked lists REDUCE your precision score");
+  sections.push("- Include only files/entities/blocks that are directly relevant to the task");
+  sections.push("");
   sections.push("Include evidence paths and line ranges when possible.");
   sections.push("Do not claim a flow step unless you can support it with source code or BlockGraph evidence.");
+  sections.push("");
+  sections.push("### Task-Specific Guidance");
+  sections.push("");
+  sections.push(getTaskTypeGuidance(case_.task.type));
 
   // ── Condition-Specific Instructions ──────────────────────────────────────
   sections.push("");
@@ -110,27 +125,28 @@ export function buildPrompt(input: BuildPromptInput): string {
       break;
 
     case "block_graph_mcp":
-      sections.push("You MUST use BlockGraph MCP tools to query the architecture model.");
-      sections.push("Do NOT read source files directly — use the graph to locate relevant code.");
+      sections.push("You MUST use BlockGraph MCP tools to query the architecture model FIRST.");
+      sections.push("Then inspect MINIMAL source files to verify evidence and line ranges.");
       sections.push("");
-      sections.push("Available MCP tools:");
-      sections.push("- begin_initialization: connect to the repository's blockgraph (call this first)");
-      sections.push("- query_block: get block details (ports, mappings, connectors)");
-      sections.push("- query_symbols_by_block: get code entities mapped to a block");
-      sections.push("- list_code_entities: list code entities with filters");
-      sections.push("- list_code_edges: list code edges with filters");
-      sections.push("- suggest_block_candidates: suggest blocks from heuristics");
+      sections.push("### MCP Workflow");
       sections.push("");
-      sections.push("Goal: PRECISION over exploration.");
-      sections.push("1. Call begin_initialization to connect.");
-      sections.push("2. Use suggest_block_candidates or list_code_entities to identify relevant blocks.");
-      sections.push("3. Use query_block to get block details and mapped entities.");
-      sections.push("4. Report only the blocks and entities you are confident about.");
+      sections.push("1. Call `begin_initialization` to connect to the repository's blockgraph.");
+      sections.push("2. Use MCP tools to identify candidate blocks and entities:");
+      sections.push("   - `suggest_block_candidates`: get initial block candidates");
+      sections.push("   - `query_block`: get block details (ports, mappings, connected blocks)");
+      sections.push("   - `query_symbols_by_block`: get code entities mapped to a block");
+      sections.push("   - `list_code_entities`: search for specific entities");
+      sections.push("3. Inspect ONLY the source files needed to verify evidence.");
+      sections.push("4. Report results with both graph IDs AND human-readable names.");
       sections.push("");
-      sections.push("Constraints:");
+      sections.push("### Important Constraints");
+      sections.push("");
+      sections.push("- **Use MCP first**, then verify with minimal source inspection");
+      sections.push("- **Do NOT rank every connected block** — only rank blocks that are DIRECT localization targets");
+      sections.push("- **Report canonical IDs**: use `file#symbol` format for entities, not raw scanner IDs");
+      sections.push("- **Prefer human-readable names**: use block names, not just UUIDs");
       sections.push("- Aim for ≤10 MCP tool calls. Excessive queries will be penalized.");
-      sections.push("- Each irrelevant block query costs points. Only query blocks you believe are relevant.");
-      sections.push("- Do NOT scan the repository yourself. The graph IS the source of truth.");
+      sections.push("- Each irrelevant block query costs points.");
       if (context?.mcp_config_path) {
         sections.push(`\nMCP config: ${context.mcp_config_path}`);
       }
@@ -178,18 +194,34 @@ export function buildPrompt(input: BuildPromptInput): string {
  * Build the example JSON answer for the prompt.
  */
 function buildExampleAnswer(taskId: string, condition: GraphCondition): object {
+  const isMcpCondition = condition === "block_graph_mcp";
   return {
     task_id: taskId,
     condition,
     answer: "<your explanation of the localization or analysis>",
     ranked_files: [
-      { id: "<repo-relative file path>", rank: 1, confidence: 0.9, reason: "<why this file is relevant>" },
+      {
+        id: "<repo-relative file path>",
+        rank: 1,
+        confidence: 0.9,
+        reason: "<why this file is relevant>",
+      },
     ],
     ranked_entities: [
-      { id: "<file_path#symbol_name>", rank: 1, confidence: 0.9 },
+      {
+        id: "<file_path#symbol_name>",
+        rank: 1,
+        confidence: 0.9,
+        ...(isMcpCondition ? { name: "<human-readable symbol name>", canonical_id: "<file#symbol>", raw_id: "<scanner ID if different>", kind: "function|class|component|..." } : {}),
+      },
     ],
     ranked_blocks: [
-      { id: "<block name or ID>", rank: 1, confidence: 0.9 },
+      {
+        id: isMcpCondition ? "<block UUID or wp-* ID>" : "<block name>",
+        rank: 1,
+        confidence: 0.9,
+        ...(isMcpCondition ? { name: "<human-readable block name>", canonical_id: "<block name>" } : {}),
+      },
     ],
     predicted_flow_order: ["<file_path#symbol_name>", "..."],
     evidence: [
@@ -199,4 +231,59 @@ function buildExampleAnswer(taskId: string, condition: GraphCondition): object {
     used_blockgraph: condition !== "no_graph",
     notes: "<any caveats or observations>",
   };
+}
+
+/**
+ * Get task-type-specific guidance for precision-scored outputs.
+ */
+function getTaskTypeGuidance(taskType: string): string {
+  switch (taskType) {
+    case "bug_localization":
+      return [
+        "**Bug Localization**: Rank likely defect source files and symbols first.",
+        "- Put the file containing the bug at rank 1",
+        "- Rank the specific function/method/class where the bug occurs",
+        "- Do NOT rank files that merely use the buggy code (put those in evidence)",
+        "- Focus on root cause, not symptoms",
+      ].join("\n");
+
+    case "impact_analysis":
+      return [
+        "**Impact Analysis**: Rank direct changed surface and direct dependents first.",
+        "- Rank the file/symbol being changed at rank 1",
+        "- Rank files that directly import or call the changed symbol",
+        "- Do NOT rank transitive/transitive UI consumers unless they are directly affected",
+        "- Put transitive impacts in `notes`, not ranked lists",
+      ].join("\n");
+
+    case "cross_module_flow_recovery":
+      return [
+        "**Cross-Module Flow Recovery**: Rank files/entities in the activation path.",
+        "- Rank the entrypoint file at rank 1",
+        "- Follow the execution path through modules",
+        "- Do NOT rank all UI shells — only those in the active path",
+        "- Focus on files that execute code, not files that define types",
+      ].join("\n");
+
+    case "feature_landing_zone":
+      return [
+        "**Feature Landing Zone**: Rank files/blocks that would be edited or extended.",
+        "- Rank the file where new code should be added at rank 1",
+        "- Rank files that define the extension point or interface",
+        "- Do NOT rank files that merely use the feature (put those in evidence)",
+        "- Focus on modification targets, not consumers",
+      ].join("\n");
+
+    case "entrypoint_path_location":
+      return [
+        "**Entrypoint Path Location**: Rank the entry path and immediate handlers first.",
+        "- Rank the entrypoint file (route, handler) at rank 1",
+        "- Follow the execution path to the first handler",
+        "- Do NOT rank all intermediate files unless they are in the direct path",
+        "- Focus on the activation path, not the entire module",
+      ].join("\n");
+
+    default:
+      return "Rank the most direct, relevant files, entities, and blocks for this task.";
+  }
 }

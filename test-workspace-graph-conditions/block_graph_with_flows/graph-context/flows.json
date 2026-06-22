@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Login Flow",
+    "steps": [
+      {
+        "block": "auth",
+        "entity_id": "LoginForm",
+        "trigger": "form submit"
+      },
+      {
+        "block": "auth",
+        "entity_id": "loginUser",
+        "trigger": "service call"
+      },
+      {
+        "block": "shared-api-client",
+        "entity_id": "apiClient",
+        "trigger": "HTTP request"
+      }
+    ]
+  },
+  {
+    "name": "Discussion View Flow",
+    "steps": [
+      {
+        "block": "discussions",
+        "entity_id": "DiscussionList",
+        "trigger": "component mount"
+      },
+      {
+        "block": "discussions",
+        "entity_id": "fetchDiscussions",
+        "trigger": "service call"
+      },
+      {
+        "block": "shared-api-client",
+        "entity_id": "apiClient",
+        "trigger": "HTTP request"
+      }
+    ]
+  }
+]

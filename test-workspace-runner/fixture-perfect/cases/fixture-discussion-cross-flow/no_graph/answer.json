@@ -1,0 +1,131 @@
+{
+  "task_id": "fixture-discussion-cross-flow",
+  "condition": "no_graph",
+  "answer": "The cross-module flow starts with DiscussionList rendering discussions (via discussionService.fetchDiscussions), then CommentForm allows adding comments (via commentService.addComment). Both modules share apiClient for HTTP communication.",
+  "ranked_files": [
+    {
+      "id": "src/features/discussions/DiscussionList.tsx",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Entry point: renders discussion list"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 2,
+      "confidence": 0.95,
+      "reason": "fetchDiscussions loads discussion data"
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx",
+      "rank": 3,
+      "confidence": 0.85,
+      "reason": "Comment interaction within discussions"
+    },
+    {
+      "id": "src/features/comments/commentService.ts",
+      "rank": 4,
+      "confidence": 0.85,
+      "reason": "addComment submits comments to discussions"
+    },
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 5,
+      "confidence": 0.8,
+      "reason": "Shared HTTP layer for both modules"
+    },
+    {
+      "id": "src/types/discussion.ts",
+      "rank": 6,
+      "confidence": 0.6,
+      "reason": "Discussion type used by discussionService"
+    },
+    {
+      "id": "src/types/comment.ts",
+      "rank": 7,
+      "confidence": 0.6,
+      "reason": "Comment type with discussionId link"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx#CommentForm",
+      "rank": 3,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/features/comments/commentService.ts#addComment",
+      "rank": 4,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 5,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/types/discussion.ts#Discussion",
+      "rank": 6,
+      "confidence": 0.6
+    },
+    {
+      "id": "src/types/comment.ts#Comment",
+      "rank": 7,
+      "confidence": 0.6
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Discussions",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Comments",
+      "rank": 2,
+      "confidence": 0.9
+    },
+    {
+      "id": "Shared API Client",
+      "rank": 3,
+      "confidence": 0.8
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 1,
+      "end_line": 19,
+      "note": "DiscussionList renders discussions"
+    },
+    {
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "fetchDiscussions via apiClient"
+    },
+    {
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 1,
+      "end_line": 26,
+      "note": "CommentForm for adding comments"
+    },
+    {
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "addComment via apiClient"
+    }
+  ],
+  "confidence": 0.9,
+  "used_blockgraph": false
+}

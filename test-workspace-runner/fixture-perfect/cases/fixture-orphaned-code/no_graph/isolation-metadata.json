@@ -1,0 +1,19 @@
+{
+  "condition": "no_graph",
+  "case_id": "fixture-orphaned-code",
+  "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+  "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-orphaned-code\\no_graph\\prepared-repo",
+  "removed_artifacts": [
+    ".mcp.json",
+    ".claude"
+  ],
+  "mcp_config_path": null,
+  "strict_mcp_config_expected": true,
+  "isolation_warnings": [],
+  "fairness_gates": {
+    "condition_isolation_ok": true,
+    "explicit_mcp_config_ok": true,
+    "graph_index_frozen_ok": true,
+    "issues": []
+  }
+}

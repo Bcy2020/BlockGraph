@@ -1,0 +1,98 @@
+{
+  "task_id": "fixture-team-feature-landing",
+  "condition": "no_graph",
+  "answer": "The Teams module should be extended. teamService needs new methods for invitation approval (approveInvitation, getPendingInvitations). TeamList.tsx needs UI for approval actions. The shared apiClient should be referenced but not owned. A new Team type extension may be needed for invitation status.",
+  "ranked_files": [
+    {
+      "id": "src/features/teams/teamService.ts",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Extend with invitation approval methods"
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx",
+      "rank": 2,
+      "confidence": 0.9,
+      "reason": "Add approval UI actions to team list"
+    },
+    {
+      "id": "src/types/team.ts",
+      "rank": 3,
+      "confidence": 0.85,
+      "reason": "Extend Team type with invitation fields"
+    },
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 4,
+      "confidence": 0.7,
+      "reason": "Shared dependency — use existing HTTP methods"
+    },
+    {
+      "id": "src/hooks/useAuth.ts",
+      "rank": 5,
+      "confidence": 0.6,
+      "reason": "May need auth context for approval permissions"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/teams/teamService.ts#fetchTeams",
+      "rank": 1,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/teams/teamService.ts#createTeam",
+      "rank": 2,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/types/team.ts#Team",
+      "rank": 3,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 4,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Teams",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Shared API Client",
+      "rank": 2,
+      "confidence": 0.7
+    },
+    {
+      "id": "Shared Types",
+      "rank": 3,
+      "confidence": 0.6
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/teams/teamService.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "Existing team service methods"
+    },
+    {
+      "file_path": "src/features/teams/TeamList.tsx",
+      "start_line": 1,
+      "end_line": 19,
+      "note": "Team list component"
+    },
+    {
+      "file_path": "src/types/team.ts",
+      "start_line": 1,
+      "end_line": 5,
+      "note": "Team type definition"
+    }
+  ],
+  "confidence": 0.85,
+  "used_blockgraph": false
+}

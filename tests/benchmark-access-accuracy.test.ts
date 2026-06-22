@@ -43,9 +43,9 @@ function perfectLoginAnswer(): AgentFinalAnswer {
       "src/lib/apiClient.ts#apiClient",
     ],
     evidence: [
-      { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 50 },
-      { file_path: "src/features/auth/authService.ts", start_line: 1, end_line: 30 },
-      { file_path: "src/lib/apiClient.ts", start_line: 1, end_line: 40 },
+      { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 25 },
+      { file_path: "src/features/auth/authService.ts", start_line: 1, end_line: 20 },
+      { file_path: "src/lib/apiClient.ts", start_line: 1, end_line: 26 },
     ],
     confidence: 0.95,
     used_blockgraph: false,
@@ -71,7 +71,7 @@ function weakLoginAnswer(): AgentFinalAnswer {
       "src/features/auth/LoginForm.tsx#LoginForm",
     ],
     evidence: [
-      { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 50 },
+      { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 25 },
     ],
     confidence: 0.5,
     used_blockgraph: false,
@@ -319,7 +319,7 @@ describe("Access Accuracy Evaluator", () => {
         ...perfectLoginAnswer(),
         evidence: [
           { file_path: "src/nonexistent/file.ts", start_line: 1, end_line: 10 },
-          { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 50 },
+          { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 25 },
         ],
       };
       const score = evaluateAccessAccuracy({
@@ -371,6 +371,173 @@ describe("Access Accuracy Evaluator", () => {
       expect(score.accuracy.file_recall).toBe(0);
       expect(score.accuracy.file_f1).toBe(0);
       expect(score.overall_score).toBeLessThanOrEqual(0.2);
+    });
+  });
+
+  describe("required field warnings", () => {
+    it("emits warning when required file is missing from predictions", async () => {
+      await loadFixtureCase();
+      // LoginForm.tsx is required:true in the golden answer
+      const answer = perfectLoginAnswer();
+      const answerWithoutRequired: AgentFinalAnswer = {
+        ...answer,
+        ranked_files: answer.ranked_files.filter((f) => !f.id.includes("LoginForm")),
+      };
+      const score = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer: answerWithoutRequired,
+        repo_path: repoPath,
+      });
+      expect(score.warnings.some((w) => w.includes("Missing required file"))).toBe(true);
+    });
+
+    it("does not emit warning when all required items are present", async () => {
+      await loadFixtureCase();
+      const score = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer: perfectLoginAnswer(),
+        repo_path: repoPath,
+      });
+      expect(score.warnings.filter((w) => w.includes("Missing required"))).toHaveLength(0);
+    });
+  });
+
+  describe("line range validation", () => {
+    it("penalizes evidence with end_line exceeding file length", async () => {
+      await loadFixtureCase();
+      const answer: AgentFinalAnswer = {
+        ...perfectLoginAnswer(),
+        evidence: [
+          { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 99999 },
+        ],
+      };
+      const score = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+      });
+      expect(score.evidence.evidence_line_valid_rate).toBeLessThan(1);
+    });
+
+    it("accepts evidence with end_line within file length", async () => {
+      await loadFixtureCase();
+      const answer: AgentFinalAnswer = {
+        ...perfectLoginAnswer(),
+        evidence: [
+          { file_path: "src/features/auth/LoginForm.tsx", start_line: 1, end_line: 25 },
+        ],
+      };
+      const score = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+      });
+      expect(score.evidence.evidence_line_valid_rate).toBe(1);
+    });
+  });
+
+  describe("graph index ID resolution", () => {
+    it("resolves block UUID via graph index", async () => {
+      await loadFixtureCase();
+      const graphIndex: import("../src/benchmark/idResolver.js").GraphIndex = {
+        blocks: [
+          { id: "9c3777cf-1234-5678-abcd-ef0123456789", name: "Auth", slug: "auth", aliases: [], mapped_entities: [] },
+        ],
+        entities: [],
+      };
+      const answer: AgentFinalAnswer = {
+        ...perfectLoginAnswer(),
+        ranked_blocks: [
+          { id: "9c3777cf-1234-5678-abcd-ef0123456789", rank: 1, confidence: 0.9 },
+        ],
+      };
+      const scoreWithIndex = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+        graphIndex,
+      });
+      const scoreWithoutIndex = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+      });
+      // With graph index, UUID should resolve to "Auth" and match
+      expect(scoreWithIndex.accuracy.block_f1).toBeGreaterThan(scoreWithoutIndex.accuracy.block_f1);
+    });
+
+    it("resolves scanner entity ID via graph index", async () => {
+      await loadFixtureCase();
+      // Use a raw ID format that basic normalization won't catch
+      const graphIndex: import("../src/benchmark/idResolver.js").GraphIndex = {
+        blocks: [],
+        entities: [
+          {
+            canonical_id: "src/features/auth/LoginForm.tsx#LoginForm",
+            raw_ids: ["LoginForm@src/features/auth/LoginForm.tsx:42"],
+            file_path: "src/features/auth/LoginForm.tsx",
+            symbol_name: "LoginForm",
+            kind: "component",
+            line: 42,
+          },
+        ],
+      };
+      const answer: AgentFinalAnswer = {
+        ...perfectLoginAnswer(),
+        ranked_entities: [
+          { id: "LoginForm@src/features/auth/LoginForm.tsx:42", rank: 1, confidence: 0.9 },
+        ],
+      };
+      const scoreWithIndex = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+        graphIndex,
+      });
+      const scoreWithoutIndex = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+      });
+      // With graph index, raw ID should resolve and match golden
+      expect(scoreWithIndex.accuracy.entity_f1).toBeGreaterThan(scoreWithoutIndex.accuracy.entity_f1);
+    });
+  });
+
+  describe("resolution diagnostics", () => {
+    it("reports resolution diagnostics in score", async () => {
+      await loadFixtureCase();
+      const graphIndex: import("../src/benchmark/idResolver.js").GraphIndex = {
+        blocks: [
+          { id: "uuid-123", name: "Auth", slug: "auth", aliases: [], mapped_entities: [] },
+        ],
+        entities: [],
+      };
+      const answer: AgentFinalAnswer = {
+        ...perfectLoginAnswer(),
+        ranked_blocks: [
+          { id: "uuid-123", rank: 1 },
+          { id: "unknown-block", rank: 2 },
+        ],
+      };
+      const score = evaluateAccessAccuracy({
+        case_: loginCase!,
+        condition,
+        answer,
+        repo_path: repoPath,
+        graphIndex,
+      });
+      expect(score.resolution).toBeDefined();
+      expect(score.resolution!.resolved_blocks).toBe(1);
+      expect(score.resolution!.unresolved_blocks).toBe(1);
     });
   });
 });

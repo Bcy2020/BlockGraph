@@ -1,0 +1,42 @@
+[
+  {
+    "id": "auth",
+    "name": "Auth",
+    "purpose": "User authentication — login form, auth service, auth hooks"
+  },
+  {
+    "id": "discussions",
+    "name": "Discussions",
+    "purpose": "Discussion listing and management"
+  },
+  {
+    "id": "comments",
+    "name": "Comments",
+    "purpose": "Comment submission and management"
+  },
+  {
+    "id": "teams",
+    "name": "Teams",
+    "purpose": "Team listing and management"
+  },
+  {
+    "id": "users",
+    "name": "Users",
+    "purpose": "User profile management"
+  },
+  {
+    "id": "shared-api-client",
+    "name": "Shared API Client",
+    "purpose": "HTTP client used by all feature services"
+  },
+  {
+    "id": "shared-types",
+    "name": "Shared Types",
+    "purpose": "TypeScript type definitions shared across features"
+  },
+  {
+    "id": "shared-hooks",
+    "name": "Shared Hooks",
+    "purpose": "Reusable React hooks"
+  }
+]

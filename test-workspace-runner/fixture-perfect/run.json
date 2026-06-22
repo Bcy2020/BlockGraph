@@ -1,0 +1,2086 @@
+{
+  "id": "run-6e171290",
+  "created_at": "2026-06-21T15:04:00.090Z",
+  "benchmark_version": "0.2.7",
+  "adapter": "fixture-perfect",
+  "cases": [
+    {
+      "case_id": "fixture-api-endpoint-map",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-api-endpoint-map",
+        "condition": "no_graph",
+        "answer": "All HTTP calls flow through apiClient (src/lib/apiClient.ts) which wraps fetch() with a configurable BASE_URL. The endpoints are: POST /auth/login (loginUser, triggered by LoginForm), GET /discussions (fetchDiscussions, triggered by DiscussionList mount), POST /discussions/:id/comments (addComment, triggered by CommentForm submit), GET /teams (fetchTeams, triggered by TeamList mount), GET /users/:id (fetchUser, triggered by UserProfile mount). Additional unused endpoints: POST /auth/logout, GET /auth/me, POST /discussions, GET /discussions/:id/comments, POST /teams, PUT /users/:id.",
+        "ranked_files": [
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Central transport layer — all HTTP calls go through this"
+          },
+          {
+            "id": "src/features/auth/authService.ts",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "POST /auth/login via loginUser, POST /auth/logout via logoutUser, GET /auth/me via getCurrentUser"
+          },
+          {
+            "id": "src/features/auth/LoginForm.tsx",
+            "rank": 3,
+            "confidence": 0.9,
+            "reason": "Triggers loginUser on form submit"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 4,
+            "confidence": 0.9,
+            "reason": "GET /discussions via fetchDiscussions, POST /discussions via createDiscussion"
+          },
+          {
+            "id": "src/features/discussions/DiscussionList.tsx",
+            "rank": 5,
+            "confidence": 0.85,
+            "reason": "Triggers fetchDiscussions on mount"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 6,
+            "confidence": 0.9,
+            "reason": "GET /discussions/:id/comments via fetchComments, POST /discussions/:id/comments via addComment"
+          },
+          {
+            "id": "src/features/comments/CommentForm.tsx",
+            "rank": 7,
+            "confidence": 0.85,
+            "reason": "Triggers addComment on form submit"
+          },
+          {
+            "id": "src/features/teams/teamService.ts",
+            "rank": 8,
+            "confidence": 0.85,
+            "reason": "GET /teams via fetchTeams, POST /teams via createTeam"
+          },
+          {
+            "id": "src/features/teams/TeamList.tsx",
+            "rank": 9,
+            "confidence": 0.8,
+            "reason": "Triggers fetchTeams on mount"
+          },
+          {
+            "id": "src/features/users/userService.ts",
+            "rank": 10,
+            "confidence": 0.85,
+            "reason": "GET /users/:id via fetchUser, PUT /users/:id via updateUser"
+          },
+          {
+            "id": "src/features/users/UserProfile.tsx",
+            "rank": 11,
+            "confidence": 0.8,
+            "reason": "Triggers fetchUser on mount"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/auth/authService.ts#loginUser",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 3,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/comments/commentService.ts#addComment",
+            "rank": 4,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/teams/teamService.ts#fetchTeams",
+            "rank": 5,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/users/userService.ts#fetchUser",
+            "rank": 6,
+            "confidence": 0.85
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Shared API Client",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Auth",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "Discussions",
+            "rank": 3,
+            "confidence": 0.85
+          },
+          {
+            "id": "Comments",
+            "rank": 4,
+            "confidence": 0.85
+          },
+          {
+            "id": "Teams",
+            "rank": 5,
+            "confidence": 0.8
+          },
+          {
+            "id": "Users",
+            "rank": 6,
+            "confidence": 0.8
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/lib/apiClient.ts",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "apiClient with get/post/put methods wrapping fetch()"
+          },
+          {
+            "file_path": "src/features/auth/authService.ts",
+            "start_line": 5,
+            "end_line": 15,
+            "note": "loginUser calls apiClient.post('/auth/login')"
+          },
+          {
+            "file_path": "src/features/discussions/discussionService.ts",
+            "start_line": 5,
+            "end_line": 10,
+            "note": "fetchDiscussions calls apiClient.get('/discussions')"
+          },
+          {
+            "file_path": "src/features/comments/commentService.ts",
+            "start_line": 10,
+            "end_line": 12,
+            "note": "addComment calls apiClient.post('/discussions/${id}/comments')"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-api-endpoint-map",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 0.85,
+          "entity_f1": 0.9189189189189189,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 0.9884,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 0.9907,
+        "warnings": [
+          "Unresolved blocks: Shared API Client, Auth, Discussions, Comments, Teams, Users"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 6,
+          "resolved_entities": 6,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 6,
+            "exact": 17
+          }
+        }
+      },
+      "duration_ms": 472,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-api-endpoint-map",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-api-endpoint-map\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-auth-impact",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-auth-impact",
+        "condition": "no_graph",
+        "answer": "Changing auth token attachment affects authService (token source), apiClient (token attachment point), and all feature services that depend on apiClient for authenticated requests: discussionService, commentService, teamService, userService.",
+        "ranked_files": [
+          {
+            "id": "src/features/auth/authService.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Primary impact: token attachment logic"
+          },
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "Token attachment point for all HTTP requests"
+          },
+          {
+            "id": "src/hooks/useAuth.ts",
+            "rank": 3,
+            "confidence": 0.8,
+            "reason": "Auth state management, may need token refresh"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 4,
+            "confidence": 0.7,
+            "reason": "Downstream: uses apiClient for authenticated requests"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 5,
+            "confidence": 0.7,
+            "reason": "Downstream: uses apiClient"
+          },
+          {
+            "id": "src/features/teams/teamService.ts",
+            "rank": 6,
+            "confidence": 0.7,
+            "reason": "Downstream: uses apiClient"
+          },
+          {
+            "id": "src/features/users/userService.ts",
+            "rank": 7,
+            "confidence": 0.7,
+            "reason": "Downstream: uses apiClient"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/auth/authService.ts#loginUser",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/hooks/useAuth.ts#useAuth",
+            "rank": 3,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 4,
+            "confidence": 0.7
+          },
+          {
+            "id": "src/features/comments/commentService.ts#addComment",
+            "rank": 5,
+            "confidence": 0.7
+          },
+          {
+            "id": "src/features/teams/teamService.ts#fetchTeams",
+            "rank": 6,
+            "confidence": 0.7
+          },
+          {
+            "id": "src/features/users/userService.ts#fetchUser",
+            "rank": 7,
+            "confidence": 0.7
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Auth",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Shared API Client",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "Discussions",
+            "rank": 3,
+            "confidence": 0.7
+          },
+          {
+            "id": "Comments",
+            "rank": 4,
+            "confidence": 0.7
+          },
+          {
+            "id": "Teams",
+            "rank": 5,
+            "confidence": 0.7
+          },
+          {
+            "id": "Users",
+            "rank": 6,
+            "confidence": 0.7
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/auth/authService.ts",
+            "start_line": 1,
+            "end_line": 20,
+            "note": "loginUser handles token"
+          },
+          {
+            "file_path": "src/lib/apiClient.ts",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "apiClient attaches tokens to requests"
+          },
+          {
+            "file_path": "src/hooks/useAuth.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "useAuth manages auth state"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-auth-impact",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Auth, Shared API Client, Discussions, Comments, Teams, Users"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 6,
+          "resolved_entities": 7,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 6,
+            "exact": 14
+          }
+        }
+      },
+      "duration_ms": 128,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-auth-impact",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-auth-impact\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-comment-submit-bug",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-comment-submit-bug",
+        "condition": "no_graph",
+        "answer": "The bug likely originates in commentService.addComment or the discussion ID binding in CommentForm. The comment may be submitted without a valid discussionId, or the API call may not associate the comment correctly.",
+        "ranked_files": [
+          {
+            "id": "src/features/comments/CommentForm.tsx",
+            "rank": 1,
+            "confidence": 0.9,
+            "reason": "Form component that submits comments — check discussionId binding"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 2,
+            "confidence": 0.9,
+            "reason": "addComment function — check API payload includes discussionId"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 3,
+            "confidence": 0.7,
+            "reason": "fetchDiscussions — verify discussions load correctly"
+          },
+          {
+            "id": "src/types/comment.ts",
+            "rank": 4,
+            "confidence": 0.6,
+            "reason": "Comment type definition — check discussionId field"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/comments/CommentForm.tsx#CommentForm",
+            "rank": 1,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/comments/commentService.ts#addComment",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 3,
+            "confidence": 0.7
+          },
+          {
+            "id": "src/types/comment.ts#Comment",
+            "rank": 4,
+            "confidence": 0.6
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Comments",
+            "rank": 1,
+            "confidence": 0.9
+          },
+          {
+            "id": "Discussions",
+            "rank": 2,
+            "confidence": 0.7
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/comments/CommentForm.tsx",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "CommentForm handleSubmit calling addComment"
+          },
+          {
+            "file_path": "src/features/comments/commentService.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "addComment using apiClient.post"
+          },
+          {
+            "file_path": "src/types/comment.ts",
+            "start_line": 1,
+            "end_line": 7,
+            "note": "Comment interface with discussionId field"
+          }
+        ],
+        "confidence": 0.85,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-comment-submit-bug",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Comments, Discussions"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 2,
+          "resolved_entities": 4,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 2,
+            "exact": 8
+          }
+        }
+      },
+      "duration_ms": 176,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-comment-submit-bug",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-comment-submit-bug\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-component-prop-trace",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-component-prop-trace",
+        "condition": "no_graph",
+        "answer": "The data flow for the Discussions feature is: 1) The Discussion type (src/types/discussion.ts) defines the shape: id, title, content, authorId, createdAt. 2) DiscussionService.fetchDiscussions() calls apiClient.get('/discussions') which returns Discussion[]. 3) DiscussionList mounts, useEffect fires, calls fetchDiscussions().then(setDiscussions) to store the array in component state. 4) DiscussionList renders a <ul> with <li> per discussion showing d.title and d.content. The entire chain: type definition → service function → HTTP transport → component state → JSX render.",
+        "ranked_files": [
+          {
+            "id": "src/types/discussion.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Defines the Discussion data shape that flows through the entire chain"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "fetchDiscussions fetches and types the API response as Discussion[]"
+          },
+          {
+            "id": "src/features/discussions/DiscussionList.tsx",
+            "rank": 3,
+            "confidence": 0.95,
+            "reason": "Holds discussions in state and renders them"
+          },
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 4,
+            "confidence": 0.8,
+            "reason": "Transport layer that makes the actual HTTP call"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/types/discussion.ts#Discussion",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+            "rank": 3,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 4,
+            "confidence": 0.8
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Discussions",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Shared API Client",
+            "rank": 2,
+            "confidence": 0.8
+          }
+        ],
+        "predicted_flow_order": [
+          "src/features/discussions/DiscussionList.tsx#DiscussionList",
+          "src/features/discussions/discussionService.ts#fetchDiscussions",
+          "src/lib/apiClient.ts#apiClient",
+          "src/types/discussion.ts#Discussion"
+        ],
+        "evidence": [
+          {
+            "file_path": "src/types/discussion.ts",
+            "start_line": 1,
+            "end_line": 7,
+            "note": "Discussion interface with id, title, content, authorId, createdAt"
+          },
+          {
+            "file_path": "src/features/discussions/discussionService.ts",
+            "start_line": 5,
+            "end_line": 10,
+            "note": "fetchDiscussions returns apiClient.get('/discussions') typed as Discussion[]"
+          },
+          {
+            "file_path": "src/features/discussions/DiscussionList.tsx",
+            "start_line": 8,
+            "end_line": 15,
+            "note": "useEffect calls fetchDiscussions().then(setDiscussions)"
+          },
+          {
+            "file_path": "src/features/discussions/DiscussionList.tsx",
+            "start_line": 18,
+            "end_line": 19,
+            "note": "Renders <li> per discussion showing title and content"
+          }
+        ],
+        "confidence": 0.95,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-component-prop-trace",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Discussions, Shared API Client"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 2,
+          "resolved_entities": 4,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 2,
+            "exact": 8
+          }
+        }
+      },
+      "duration_ms": 113,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-component-prop-trace",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-component-prop-trace\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-discussion-cross-flow",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-discussion-cross-flow",
+        "condition": "no_graph",
+        "answer": "The cross-module flow starts with DiscussionList rendering discussions (via discussionService.fetchDiscussions), then CommentForm allows adding comments (via commentService.addComment). Both modules share apiClient for HTTP communication.",
+        "ranked_files": [
+          {
+            "id": "src/features/discussions/DiscussionList.tsx",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Entry point: renders discussion list"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "fetchDiscussions loads discussion data"
+          },
+          {
+            "id": "src/features/comments/CommentForm.tsx",
+            "rank": 3,
+            "confidence": 0.85,
+            "reason": "Comment interaction within discussions"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 4,
+            "confidence": 0.85,
+            "reason": "addComment submits comments to discussions"
+          },
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 5,
+            "confidence": 0.8,
+            "reason": "Shared HTTP layer for both modules"
+          },
+          {
+            "id": "src/types/discussion.ts",
+            "rank": 6,
+            "confidence": 0.6,
+            "reason": "Discussion type used by discussionService"
+          },
+          {
+            "id": "src/types/comment.ts",
+            "rank": 7,
+            "confidence": 0.6,
+            "reason": "Comment type with discussionId link"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/comments/CommentForm.tsx#CommentForm",
+            "rank": 3,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/comments/commentService.ts#addComment",
+            "rank": 4,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 5,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/types/discussion.ts#Discussion",
+            "rank": 6,
+            "confidence": 0.6
+          },
+          {
+            "id": "src/types/comment.ts#Comment",
+            "rank": 7,
+            "confidence": 0.6
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Discussions",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Comments",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "Shared API Client",
+            "rank": 3,
+            "confidence": 0.8
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/discussions/DiscussionList.tsx",
+            "start_line": 1,
+            "end_line": 19,
+            "note": "DiscussionList renders discussions"
+          },
+          {
+            "file_path": "src/features/discussions/discussionService.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "fetchDiscussions via apiClient"
+          },
+          {
+            "file_path": "src/features/comments/CommentForm.tsx",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "CommentForm for adding comments"
+          },
+          {
+            "file_path": "src/features/comments/commentService.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "addComment via apiClient"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-discussion-cross-flow",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Discussions, Comments, Shared API Client"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 3,
+          "resolved_entities": 7,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 3,
+            "exact": 14
+          }
+        }
+      },
+      "duration_ms": 108,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-discussion-cross-flow",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-discussion-cross-flow\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-error-handling-gaps",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-error-handling-gaps",
+        "condition": "no_graph",
+        "answer": "Five components have unhandled async operations. LoginForm.handleSubmit calls await loginUser() without try/catch — if the API rejects, the error is unhandled. CommentForm.handleSubmit calls await addComment() without try/catch. DiscussionList, TeamList, and UserProfile all use useEffect with .then() but no .catch() — if the fetch fails, the promise rejection is unhandled. Only authService.getCurrentUser has a try/catch (catches and returns null), but it is unused by any component.",
+        "ranked_files": [
+          {
+            "id": "src/features/auth/LoginForm.tsx",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "handleSubmit has await loginUser() without try/catch — user sees no error on login failure"
+          },
+          {
+            "id": "src/features/comments/CommentForm.tsx",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "handleSubmit has await addComment() without try/catch — user sees no error on comment failure"
+          },
+          {
+            "id": "src/features/discussions/DiscussionList.tsx",
+            "rank": 3,
+            "confidence": 0.85,
+            "reason": "useEffect fetchDiscussions().then() has no .catch() — silent failure on load"
+          },
+          {
+            "id": "src/features/teams/TeamList.tsx",
+            "rank": 4,
+            "confidence": 0.85,
+            "reason": "useEffect fetchTeams().then() has no .catch() — silent failure on load"
+          },
+          {
+            "id": "src/features/users/UserProfile.tsx",
+            "rank": 5,
+            "confidence": 0.85,
+            "reason": "useEffect fetchUser().then() has no .catch() — silent failure on load"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/auth/LoginForm.tsx#LoginForm",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/comments/CommentForm.tsx#CommentForm",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+            "rank": 3,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/teams/TeamList.tsx#TeamList",
+            "rank": 4,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/users/UserProfile.tsx#UserProfile",
+            "rank": 5,
+            "confidence": 0.85
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Auth",
+            "rank": 1,
+            "confidence": 0.9
+          },
+          {
+            "id": "Comments",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "Discussions",
+            "rank": 3,
+            "confidence": 0.8
+          },
+          {
+            "id": "Teams",
+            "rank": 4,
+            "confidence": 0.8
+          },
+          {
+            "id": "Users",
+            "rank": 5,
+            "confidence": 0.8
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/auth/LoginForm.tsx",
+            "start_line": 10,
+            "end_line": 25,
+            "note": "handleSubmit calls await loginUser without try/catch"
+          },
+          {
+            "file_path": "src/features/comments/CommentForm.tsx",
+            "start_line": 10,
+            "end_line": 25,
+            "note": "handleSubmit calls await addComment without try/catch"
+          },
+          {
+            "file_path": "src/features/discussions/DiscussionList.tsx",
+            "start_line": 8,
+            "end_line": 15,
+            "note": "useEffect with .then() but no .catch()"
+          },
+          {
+            "file_path": "src/features/teams/TeamList.tsx",
+            "start_line": 8,
+            "end_line": 15,
+            "note": "useEffect with .then() but no .catch()"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-error-handling-gaps",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Auth, Comments, Discussions, Teams, Users"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 5,
+          "resolved_entities": 5,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 5,
+            "exact": 10
+          }
+        }
+      },
+      "duration_ms": 108,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-error-handling-gaps",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-error-handling-gaps\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-login-flow",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-login-flow",
+        "condition": "no_graph",
+        "answer": "The login flow activates LoginForm → authService.loginUser → apiClient. The form submits credentials, authService processes the login request, and apiClient handles the HTTP call.",
+        "ranked_files": [
+          {
+            "id": "src/features/auth/LoginForm.tsx",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Entry point: login form component with handleSubmit"
+          },
+          {
+            "id": "src/features/auth/authService.ts",
+            "rank": 2,
+            "confidence": 0.95,
+            "reason": "loginUser function processes authentication"
+          },
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 3,
+            "confidence": 0.9,
+            "reason": "HTTP client used by authService for API calls"
+          },
+          {
+            "id": "src/hooks/useAuth.ts",
+            "rank": 4,
+            "confidence": 0.8,
+            "reason": "useAuth hook manages auth state in LoginForm"
+          },
+          {
+            "id": "src/types/user.ts",
+            "rank": 5,
+            "confidence": 0.7,
+            "reason": "User type used by authService and useAuth"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/auth/LoginForm.tsx#LoginForm",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/auth/authService.ts#loginUser",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 3,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/hooks/useAuth.ts#useAuth",
+            "rank": 4,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/types/user.ts#User",
+            "rank": 5,
+            "confidence": 0.7
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Auth",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Shared API Client",
+            "rank": 2,
+            "confidence": 0.9
+          }
+        ],
+        "predicted_flow_order": [
+          "src/features/auth/LoginForm.tsx#LoginForm",
+          "src/features/auth/authService.ts#loginUser",
+          "src/lib/apiClient.ts#apiClient"
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/auth/LoginForm.tsx",
+            "start_line": 1,
+            "end_line": 25,
+            "note": "LoginForm component with handleSubmit calling loginUser"
+          },
+          {
+            "file_path": "src/features/auth/authService.ts",
+            "start_line": 1,
+            "end_line": 20,
+            "note": "loginUser function using apiClient.post"
+          },
+          {
+            "file_path": "src/lib/apiClient.ts",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "apiClient with get/post/put methods using fetch"
+          },
+          {
+            "file_path": "src/hooks/useAuth.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "useAuth hook managing user state"
+          }
+        ],
+        "confidence": 0.95,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-login-flow",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Auth, Shared API Client"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 2,
+          "resolved_entities": 5,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 2,
+            "exact": 10
+          }
+        }
+      },
+      "duration_ms": 185,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-login-flow",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-login-flow\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-orphaned-code",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-orphaned-code",
+        "condition": "no_graph",
+        "answer": "The codebase has significant dead code. src/utils/helpers.ts exports formatDate and formatError but neither is imported anywhere. src/testing/testUtils.ts exports mockApi and createMockUser but they are unused. Additionally, authService exports logoutUser and getCurrentUser which are never called by any component. discussionService exports createDiscussion, commentService exports fetchComments, teamService exports createTeam, and userService exports updateUser — all unused by the UI layer.",
+        "ranked_files": [
+          {
+            "id": "src/utils/helpers.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Both exports (formatDate, formatError) are completely orphaned — no file imports this module"
+          },
+          {
+            "id": "src/testing/testUtils.ts",
+            "rank": 2,
+            "confidence": 0.9,
+            "reason": "Both exports (mockApi, createMockUser) are unused in src/"
+          },
+          {
+            "id": "src/features/auth/authService.ts",
+            "rank": 3,
+            "confidence": 0.85,
+            "reason": "logoutUser and getCurrentUser are exported but never called — only loginUser is used"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 4,
+            "confidence": 0.8,
+            "reason": "createDiscussion is exported but never imported or called"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 5,
+            "confidence": 0.8,
+            "reason": "fetchComments is exported but never imported or called — only addComment is used"
+          },
+          {
+            "id": "src/features/teams/teamService.ts",
+            "rank": 6,
+            "confidence": 0.8,
+            "reason": "createTeam is exported but never imported or called"
+          },
+          {
+            "id": "src/features/users/userService.ts",
+            "rank": 7,
+            "confidence": 0.8,
+            "reason": "updateUser is exported but never imported or called"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/utils/helpers.ts#formatDate",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/utils/helpers.ts#formatError",
+            "rank": 2,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/testing/testUtils.ts#mockApi",
+            "rank": 3,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/testing/testUtils.ts#createMockUser",
+            "rank": 4,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/auth/authService.ts#logoutUser",
+            "rank": 5,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/auth/authService.ts#getCurrentUser",
+            "rank": 6,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#createDiscussion",
+            "rank": 7,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/comments/commentService.ts#fetchComments",
+            "rank": 8,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/teams/teamService.ts#createTeam",
+            "rank": 9,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/users/userService.ts#updateUser",
+            "rank": 10,
+            "confidence": 0.8
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Auth",
+            "rank": 1,
+            "confidence": 0.8
+          },
+          {
+            "id": "Discussions",
+            "rank": 2,
+            "confidence": 0.7
+          },
+          {
+            "id": "Comments",
+            "rank": 3,
+            "confidence": 0.7
+          },
+          {
+            "id": "Teams",
+            "rank": 4,
+            "confidence": 0.7
+          },
+          {
+            "id": "Users",
+            "rank": 5,
+            "confidence": 0.7
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/utils/helpers.ts",
+            "start_line": 1,
+            "end_line": 8,
+            "note": "formatDate and formatError exported but not imported by any file"
+          },
+          {
+            "file_path": "src/testing/testUtils.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "mockApi and createMockUser exported but not imported by any file"
+          },
+          {
+            "file_path": "src/features/auth/authService.ts",
+            "start_line": 15,
+            "end_line": 20,
+            "note": "logoutUser and getCurrentUser exported but never called"
+          },
+          {
+            "file_path": "src/features/auth/LoginForm.tsx",
+            "start_line": 1,
+            "end_line": 25,
+            "note": "Only imports loginUser — does not import logoutUser or getCurrentUser"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-orphaned-code",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 0.2,
+          "block_recall": 1,
+          "block_f1": 0.33333333333333337,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 0.9048,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 0.9238,
+        "warnings": [
+          "Unresolved blocks: Auth, Discussions, Comments, Teams, Users",
+          "Missing required block(s): Shared Types"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 5,
+          "resolved_entities": 10,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 5,
+            "exact": 17
+          }
+        }
+      },
+      "duration_ms": 119,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-orphaned-code",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-orphaned-code\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-shared-dep-impact",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-shared-dep-impact",
+        "condition": "no_graph",
+        "answer": "Every feature service directly imports apiClient. If its method signatures change, all 5 service files break: authService (loginUser, logoutUser, getCurrentUser), discussionService (fetchDiscussions, createDiscussion), commentService (fetchComments, addComment), teamService (fetchTeams, createTeam), userService (fetchUser, updateUser). The UI components are indirectly affected because they call these service functions. The most critical path is authService.loginUser → LoginForm.handleSubmit since it is the only write-path currently wired into the UI alongside commentService.addComment → CommentForm.handleSubmit.",
+        "ranked_files": [
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "The shared dependency being changed"
+          },
+          {
+            "id": "src/features/auth/authService.ts",
+            "rank": 2,
+            "confidence": 0.9,
+            "reason": "3 methods depend on apiClient (loginUser, logoutUser, getCurrentUser)"
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts",
+            "rank": 3,
+            "confidence": 0.9,
+            "reason": "2 methods depend on apiClient (fetchDiscussions, createDiscussion)"
+          },
+          {
+            "id": "src/features/comments/commentService.ts",
+            "rank": 4,
+            "confidence": 0.9,
+            "reason": "2 methods depend on apiClient (fetchComments, addComment)"
+          },
+          {
+            "id": "src/features/teams/teamService.ts",
+            "rank": 5,
+            "confidence": 0.9,
+            "reason": "2 methods depend on apiClient (fetchTeams, createTeam)"
+          },
+          {
+            "id": "src/features/users/userService.ts",
+            "rank": 6,
+            "confidence": 0.9,
+            "reason": "2 methods depend on apiClient (fetchUser, updateUser)"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "src/features/auth/authService.ts#loginUser",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/auth/authService.ts#logoutUser",
+            "rank": 3,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/auth/authService.ts#getCurrentUser",
+            "rank": 4,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+            "rank": 5,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/discussions/discussionService.ts#createDiscussion",
+            "rank": 6,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/comments/commentService.ts#addComment",
+            "rank": 7,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/comments/commentService.ts#fetchComments",
+            "rank": 8,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/teams/teamService.ts#fetchTeams",
+            "rank": 9,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/teams/teamService.ts#createTeam",
+            "rank": 10,
+            "confidence": 0.8
+          },
+          {
+            "id": "src/features/users/userService.ts#fetchUser",
+            "rank": 11,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/features/users/userService.ts#updateUser",
+            "rank": 12,
+            "confidence": 0.8
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Shared API Client",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Auth",
+            "rank": 2,
+            "confidence": 0.9
+          },
+          {
+            "id": "Discussions",
+            "rank": 3,
+            "confidence": 0.9
+          },
+          {
+            "id": "Comments",
+            "rank": 4,
+            "confidence": 0.9
+          },
+          {
+            "id": "Teams",
+            "rank": 5,
+            "confidence": 0.85
+          },
+          {
+            "id": "Users",
+            "rank": 6,
+            "confidence": 0.85
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/lib/apiClient.ts",
+            "start_line": 1,
+            "end_line": 26,
+            "note": "apiClient with get/post/put methods"
+          },
+          {
+            "file_path": "src/features/auth/authService.ts",
+            "start_line": 1,
+            "end_line": 10,
+            "note": "Imports apiClient — all 3 methods use it"
+          },
+          {
+            "file_path": "src/features/discussions/discussionService.ts",
+            "start_line": 1,
+            "end_line": 10,
+            "note": "Imports apiClient — both methods use it"
+          },
+          {
+            "file_path": "src/features/comments/commentService.ts",
+            "start_line": 1,
+            "end_line": 10,
+            "note": "Imports apiClient — both methods use it"
+          }
+        ],
+        "confidence": 0.9,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-shared-dep-impact",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Shared API Client, Auth, Discussions, Comments, Teams, Users"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 6,
+          "resolved_entities": 12,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 6,
+            "exact": 18
+          }
+        }
+      },
+      "duration_ms": 116,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-shared-dep-impact",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-shared-dep-impact\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    },
+    {
+      "case_id": "fixture-team-feature-landing",
+      "condition": "no_graph",
+      "adapter": "fixture-perfect",
+      "final_answer": {
+        "task_id": "fixture-team-feature-landing",
+        "condition": "no_graph",
+        "answer": "The Teams module should be extended. teamService needs new methods for invitation approval (approveInvitation, getPendingInvitations). TeamList.tsx needs UI for approval actions. The shared apiClient should be referenced but not owned. A new Team type extension may be needed for invitation status.",
+        "ranked_files": [
+          {
+            "id": "src/features/teams/teamService.ts",
+            "rank": 1,
+            "confidence": 0.95,
+            "reason": "Extend with invitation approval methods"
+          },
+          {
+            "id": "src/features/teams/TeamList.tsx",
+            "rank": 2,
+            "confidence": 0.9,
+            "reason": "Add approval UI actions to team list"
+          },
+          {
+            "id": "src/types/team.ts",
+            "rank": 3,
+            "confidence": 0.85,
+            "reason": "Extend Team type with invitation fields"
+          },
+          {
+            "id": "src/lib/apiClient.ts",
+            "rank": 4,
+            "confidence": 0.7,
+            "reason": "Shared dependency — use existing HTTP methods"
+          },
+          {
+            "id": "src/hooks/useAuth.ts",
+            "rank": 5,
+            "confidence": 0.6,
+            "reason": "May need auth context for approval permissions"
+          }
+        ],
+        "ranked_entities": [
+          {
+            "id": "src/features/teams/teamService.ts#fetchTeams",
+            "rank": 1,
+            "confidence": 0.9
+          },
+          {
+            "id": "src/features/teams/teamService.ts#createTeam",
+            "rank": 2,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/types/team.ts#Team",
+            "rank": 3,
+            "confidence": 0.85
+          },
+          {
+            "id": "src/lib/apiClient.ts#apiClient",
+            "rank": 4,
+            "confidence": 0.7
+          }
+        ],
+        "ranked_blocks": [
+          {
+            "id": "Teams",
+            "rank": 1,
+            "confidence": 0.95
+          },
+          {
+            "id": "Shared API Client",
+            "rank": 2,
+            "confidence": 0.7
+          },
+          {
+            "id": "Shared Types",
+            "rank": 3,
+            "confidence": 0.6
+          }
+        ],
+        "evidence": [
+          {
+            "file_path": "src/features/teams/teamService.ts",
+            "start_line": 1,
+            "end_line": 12,
+            "note": "Existing team service methods"
+          },
+          {
+            "file_path": "src/features/teams/TeamList.tsx",
+            "start_line": 1,
+            "end_line": 19,
+            "note": "Team list component"
+          },
+          {
+            "file_path": "src/types/team.ts",
+            "start_line": 1,
+            "end_line": 5,
+            "note": "Team type definition"
+          }
+        ],
+        "confidence": 0.85,
+        "used_blockgraph": false
+      },
+      "score": {
+        "case_id": "fixture-team-feature-landing",
+        "condition": "no_graph",
+        "accuracy": {
+          "file_precision": 1,
+          "file_recall": 1,
+          "file_f1": 1,
+          "entity_precision": 1,
+          "entity_recall": 1,
+          "entity_f1": 1,
+          "block_precision": 1,
+          "block_recall": 1,
+          "block_f1": 1,
+          "top1_file_hit": 1,
+          "top3_file_hit": 1,
+          "top5_file_hit": 1,
+          "top1_entity_hit": 1,
+          "top3_entity_hit": 1,
+          "flow_order_score": 1,
+          "must_not_include_penalty": 0,
+          "unsupported_evidence_penalty": 0
+        },
+        "efficiency": {
+          "reported_tool_calls": null,
+          "reported_read_calls": null,
+          "reported_grep_calls": null,
+          "reported_mcp_calls": null,
+          "unique_files_read": null,
+          "search_waste_ratio": null,
+          "duration_ms": null
+        },
+        "evidence": {
+          "evidence_file_exists_rate": 1,
+          "evidence_line_valid_rate": 1,
+          "evidence_entity_valid_rate": 1,
+          "unsupported_claim_count": 0
+        },
+        "accuracy_score": 1,
+        "efficiency_score": null,
+        "evidence_score": 1,
+        "overall_score": 1,
+        "warnings": [
+          "Unresolved blocks: Teams, Shared API Client, Shared Types"
+        ],
+        "resolution": {
+          "resolved_blocks": 0,
+          "unresolved_blocks": 3,
+          "resolved_entities": 4,
+          "unresolved_entities": 0,
+          "resolution_methods": {
+            "unresolved": 3,
+            "exact": 9
+          }
+        }
+      },
+      "duration_ms": 110,
+      "isolation_metadata": {
+        "condition": "no_graph",
+        "case_id": "fixture-team-feature-landing",
+        "source_repo_path": "E:\\repos\\kuang-tu_MCP\\fixtures\\ts-react-complex",
+        "prepared_repo_path": "E:\\repos\\kuang-tu_MCP\\test-workspace-runner\\fixture-perfect\\cases\\fixture-team-feature-landing\\no_graph\\prepared-repo",
+        "removed_artifacts": [
+          ".mcp.json",
+          ".claude"
+        ],
+        "mcp_config_path": null,
+        "strict_mcp_config_expected": true,
+        "isolation_warnings": [],
+        "fairness_gates": {
+          "condition_isolation_ok": true,
+          "explicit_mcp_config_ok": true,
+          "graph_index_frozen_ok": true,
+          "issues": []
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "overall": 0.9915,
+    "by_condition": {
+      "no_graph": 0.9915
+    },
+    "case_count": 10,
+    "failed_count": 0
+  }
+}

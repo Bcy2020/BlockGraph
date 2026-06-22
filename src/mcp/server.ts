@@ -991,6 +991,37 @@ export function createServer(): { server: McpServer; ctx: ToolContext } {
 // ── Main entry ─────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
+  // Gracefully handle uncaught socket/connection errors (ECONNRESET, etc.)
+  // These can occur when the parent process kills the process tree
+  process.on("uncaughtException", (err: Error) => {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (
+      code === "ECONNRESET" ||
+      code === "ERR_SOCKET_CLOSED_BEFORE_CONNECTION" ||
+      code === "EPIPE" ||
+      err.message?.includes("socket hang up")
+    ) {
+      // Socket/connection errors during shutdown are expected — exit cleanly
+      process.exit(0);
+    }
+    // For other uncaught exceptions, log and exit
+    console.error("Uncaught exception:", err.message);
+    process.exit(1);
+  });
+
+  process.on("unhandledRejection", (reason: unknown) => {
+    const msg = reason instanceof Error ? reason.message : String(reason);
+    if (
+      msg.includes("ECONNRESET") ||
+      msg.includes("socket hang up") ||
+      msg.includes("ERR_SOCKET_CLOSED_BEFORE_CONNECTION")
+    ) {
+      process.exit(0);
+    }
+    console.error("Unhandled rejection:", msg);
+    process.exit(1);
+  });
+
   const { server } = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);

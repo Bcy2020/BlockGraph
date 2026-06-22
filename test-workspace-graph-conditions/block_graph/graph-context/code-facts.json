@@ -1,0 +1,1344 @@
+{
+  "entities": [
+    {
+      "id": "src/App.tsx:file:App.tsx:1",
+      "type": "file",
+      "name": "App.tsx",
+      "file_path": "src/App.tsx",
+      "start_line": 1,
+      "end_line": 21,
+      "metadata": {}
+    },
+    {
+      "id": "src/App.tsx:function:App:9",
+      "type": "function",
+      "name": "App",
+      "file_path": "src/App.tsx",
+      "start_line": 9,
+      "end_line": 20,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/App.tsx:component:App:9",
+      "type": "component",
+      "name": "App",
+      "file_path": "src/App.tsx",
+      "start_line": 9,
+      "end_line": 20,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/config/paths.ts:file:paths.ts:1",
+      "type": "file",
+      "name": "paths.ts",
+      "file_path": "src/config/paths.ts",
+      "start_line": 1,
+      "end_line": 10,
+      "metadata": {}
+    },
+    {
+      "id": "src/hooks/useAuth.ts:file:useAuth.ts:1",
+      "type": "file",
+      "name": "useAuth.ts",
+      "file_path": "src/hooks/useAuth.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/hooks/useAuth.ts:function:useAuth:4",
+      "type": "function",
+      "name": "useAuth",
+      "file_path": "src/hooks/useAuth.ts",
+      "start_line": 4,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "type": "file",
+      "name": "apiClient.ts",
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 1,
+      "end_line": 27,
+      "metadata": {}
+    },
+    {
+      "id": "src/lib/apiClient.ts:api_call:fetch:5",
+      "type": "api_call",
+      "name": "fetch",
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 5,
+      "end_line": 5,
+      "metadata": {}
+    },
+    {
+      "id": "src/lib/apiClient.ts:api_call:fetch:10",
+      "type": "api_call",
+      "name": "fetch",
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 10,
+      "end_line": 10,
+      "metadata": {}
+    },
+    {
+      "id": "src/lib/apiClient.ts:api_call:fetch:19",
+      "type": "api_call",
+      "name": "fetch",
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 19,
+      "end_line": 19,
+      "metadata": {}
+    },
+    {
+      "id": "src/testing/testUtils.ts:file:testUtils.ts:1",
+      "type": "file",
+      "name": "testUtils.ts",
+      "file_path": "src/testing/testUtils.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/testing/testUtils.ts:function:mockApi:1",
+      "type": "function",
+      "name": "mockApi",
+      "file_path": "src/testing/testUtils.ts",
+      "start_line": 1,
+      "end_line": 3,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/testing/testUtils.ts:function:createMockUser:5",
+      "type": "function",
+      "name": "createMockUser",
+      "file_path": "src/testing/testUtils.ts",
+      "start_line": 5,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/types/comment.ts:file:comment.ts:1",
+      "type": "file",
+      "name": "comment.ts",
+      "file_path": "src/types/comment.ts",
+      "start_line": 1,
+      "end_line": 8,
+      "metadata": {}
+    },
+    {
+      "id": "src/types/discussion.ts:file:discussion.ts:1",
+      "type": "file",
+      "name": "discussion.ts",
+      "file_path": "src/types/discussion.ts",
+      "start_line": 1,
+      "end_line": 8,
+      "metadata": {}
+    },
+    {
+      "id": "src/types/team.ts:file:team.ts:1",
+      "type": "file",
+      "name": "team.ts",
+      "file_path": "src/types/team.ts",
+      "start_line": 1,
+      "end_line": 6,
+      "metadata": {}
+    },
+    {
+      "id": "src/types/user.ts:file:user.ts:1",
+      "type": "file",
+      "name": "user.ts",
+      "file_path": "src/types/user.ts",
+      "start_line": 1,
+      "end_line": 7,
+      "metadata": {}
+    },
+    {
+      "id": "src/utils/helpers.ts:file:helpers.ts:1",
+      "type": "file",
+      "name": "helpers.ts",
+      "file_path": "src/utils/helpers.ts",
+      "start_line": 1,
+      "end_line": 9,
+      "metadata": {}
+    },
+    {
+      "id": "src/utils/helpers.ts:function:formatDate:1",
+      "type": "function",
+      "name": "formatDate",
+      "file_path": "src/utils/helpers.ts",
+      "start_line": 1,
+      "end_line": 3,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/utils/helpers.ts:function:formatError:5",
+      "type": "function",
+      "name": "formatError",
+      "file_path": "src/utils/helpers.ts",
+      "start_line": 5,
+      "end_line": 8,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/components/ui/Button.tsx:file:Button.tsx:1",
+      "type": "file",
+      "name": "Button.tsx",
+      "file_path": "src/components/ui/Button.tsx",
+      "start_line": 1,
+      "end_line": 16,
+      "metadata": {}
+    },
+    {
+      "id": "src/components/ui/Button.tsx:function:Button:9",
+      "type": "function",
+      "name": "Button",
+      "file_path": "src/components/ui/Button.tsx",
+      "start_line": 9,
+      "end_line": 15,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/components/ui/Button.tsx:component:Button:9",
+      "type": "component",
+      "name": "Button",
+      "file_path": "src/components/ui/Button.tsx",
+      "start_line": 9,
+      "end_line": 15,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/components/ui/Button.tsx:event_handler:onClick:11",
+      "type": "event_handler",
+      "name": "onClick",
+      "file_path": "src/components/ui/Button.tsx",
+      "start_line": 11,
+      "end_line": 11,
+      "metadata": {
+        "attributeName": "onClick"
+      }
+    },
+    {
+      "id": "src/components/ui/Input.tsx:file:Input.tsx:1",
+      "type": "file",
+      "name": "Input.tsx",
+      "file_path": "src/components/ui/Input.tsx",
+      "start_line": 1,
+      "end_line": 20,
+      "metadata": {}
+    },
+    {
+      "id": "src/components/ui/Input.tsx:function:Input:10",
+      "type": "function",
+      "name": "Input",
+      "file_path": "src/components/ui/Input.tsx",
+      "start_line": 10,
+      "end_line": 19,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/components/ui/Input.tsx:component:Input:10",
+      "type": "component",
+      "name": "Input",
+      "file_path": "src/components/ui/Input.tsx",
+      "start_line": 10,
+      "end_line": 19,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/components/ui/Input.tsx:event_handler:e => onChange(e.target.value):15",
+      "type": "event_handler",
+      "name": "e => onChange(e.target.value)",
+      "file_path": "src/components/ui/Input.tsx",
+      "start_line": 15,
+      "end_line": 15,
+      "metadata": {
+        "attributeName": "onChange"
+      }
+    },
+    {
+      "id": "src/features/auth/authService.ts:file:authService.ts:1",
+      "type": "file",
+      "name": "authService.ts",
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 1,
+      "end_line": 21,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/auth/authService.ts:function:loginUser:4",
+      "type": "function",
+      "name": "loginUser",
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 4,
+      "end_line": 7,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/auth/authService.ts:function:logoutUser:9",
+      "type": "function",
+      "name": "logoutUser",
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 9,
+      "end_line": 11,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/auth/authService.ts:function:getCurrentUser:13",
+      "type": "function",
+      "name": "getCurrentUser",
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 13,
+      "end_line": 20,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "type": "file",
+      "name": "LoginForm.tsx",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 1,
+      "end_line": 26,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:function:LoginForm:7",
+      "type": "function",
+      "name": "LoginForm",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 7,
+      "end_line": 25,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:component:LoginForm:7",
+      "type": "component",
+      "name": "LoginForm",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 7,
+      "end_line": 25,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:event_handler:handleSubmit:19",
+      "type": "event_handler",
+      "name": "handleSubmit",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 19,
+      "end_line": 19,
+      "metadata": {
+        "attributeName": "onSubmit"
+      }
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:event_handler:setEmail:20",
+      "type": "event_handler",
+      "name": "setEmail",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 20,
+      "end_line": 20,
+      "metadata": {
+        "attributeName": "onChange"
+      }
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:event_handler:setPassword:21",
+      "type": "event_handler",
+      "name": "setPassword",
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 21,
+      "end_line": 21,
+      "metadata": {
+        "attributeName": "onChange"
+      }
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:file:CommentForm.tsx:1",
+      "type": "file",
+      "name": "CommentForm.tsx",
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 1,
+      "end_line": 27,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:function:CommentForm:10",
+      "type": "function",
+      "name": "CommentForm",
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 10,
+      "end_line": 26,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:component:CommentForm:10",
+      "type": "component",
+      "name": "CommentForm",
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 10,
+      "end_line": 26,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:event_handler:handleSubmit:21",
+      "type": "event_handler",
+      "name": "handleSubmit",
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 21,
+      "end_line": 21,
+      "metadata": {
+        "attributeName": "onSubmit"
+      }
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:event_handler:e => setText(e.target.value):22",
+      "type": "event_handler",
+      "name": "e => setText(e.target.value)",
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 22,
+      "end_line": 22,
+      "metadata": {
+        "attributeName": "onChange"
+      }
+    },
+    {
+      "id": "src/features/comments/commentService.ts:file:commentService.ts:1",
+      "type": "file",
+      "name": "commentService.ts",
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/comments/commentService.ts:function:fetchComments:4",
+      "type": "function",
+      "name": "fetchComments",
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 4,
+      "end_line": 7,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/comments/commentService.ts:function:addComment:9",
+      "type": "function",
+      "name": "addComment",
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 9,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1",
+      "type": "file",
+      "name": "DiscussionList.tsx",
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 1,
+      "end_line": 20,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:function:DiscussionList:5",
+      "type": "function",
+      "name": "DiscussionList",
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 5,
+      "end_line": 19,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:component:DiscussionList:5",
+      "type": "component",
+      "name": "DiscussionList",
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "start_line": 5,
+      "end_line": 19,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts:file:discussionService.ts:1",
+      "type": "file",
+      "name": "discussionService.ts",
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts:function:fetchDiscussions:4",
+      "type": "function",
+      "name": "fetchDiscussions",
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 4,
+      "end_line": 7,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts:function:createDiscussion:9",
+      "type": "function",
+      "name": "createDiscussion",
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 9,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:file:TeamList.tsx:1",
+      "type": "file",
+      "name": "TeamList.tsx",
+      "file_path": "src/features/teams/TeamList.tsx",
+      "start_line": 1,
+      "end_line": 20,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:function:TeamList:5",
+      "type": "function",
+      "name": "TeamList",
+      "file_path": "src/features/teams/TeamList.tsx",
+      "start_line": 5,
+      "end_line": 19,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:component:TeamList:5",
+      "type": "component",
+      "name": "TeamList",
+      "file_path": "src/features/teams/TeamList.tsx",
+      "start_line": 5,
+      "end_line": 19,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/features/teams/teamService.ts:file:teamService.ts:1",
+      "type": "file",
+      "name": "teamService.ts",
+      "file_path": "src/features/teams/teamService.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/teams/teamService.ts:function:fetchTeams:4",
+      "type": "function",
+      "name": "fetchTeams",
+      "file_path": "src/features/teams/teamService.ts",
+      "start_line": 4,
+      "end_line": 7,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/teams/teamService.ts:function:createTeam:9",
+      "type": "function",
+      "name": "createTeam",
+      "file_path": "src/features/teams/teamService.ts",
+      "start_line": 9,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1",
+      "type": "file",
+      "name": "UserProfile.tsx",
+      "file_path": "src/features/users/UserProfile.tsx",
+      "start_line": 1,
+      "end_line": 25,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:function:UserProfile:9",
+      "type": "function",
+      "name": "UserProfile",
+      "file_path": "src/features/users/UserProfile.tsx",
+      "start_line": 9,
+      "end_line": 24,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:component:UserProfile:9",
+      "type": "component",
+      "name": "UserProfile",
+      "file_path": "src/features/users/UserProfile.tsx",
+      "start_line": 9,
+      "end_line": 24,
+      "metadata": {
+        "exported": true
+      }
+    },
+    {
+      "id": "src/features/users/userService.ts:file:userService.ts:1",
+      "type": "file",
+      "name": "userService.ts",
+      "file_path": "src/features/users/userService.ts",
+      "start_line": 1,
+      "end_line": 13,
+      "metadata": {}
+    },
+    {
+      "id": "src/features/users/userService.ts:function:fetchUser:4",
+      "type": "function",
+      "name": "fetchUser",
+      "file_path": "src/features/users/userService.ts",
+      "start_line": 4,
+      "end_line": 7,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    },
+    {
+      "id": "src/features/users/userService.ts:function:updateUser:9",
+      "type": "function",
+      "name": "updateUser",
+      "file_path": "src/features/users/userService.ts",
+      "start_line": 9,
+      "end_line": 12,
+      "metadata": {
+        "exported": true,
+        "defaultExport": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "src/App.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:react-router-dom:2",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"react-router-dom\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:./features/auth/LoginForm:3",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"./features/auth/LoginForm\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:./features/discussions/DiscussionList:4",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 4,
+          "end_line": 4,
+          "note": "import from \"./features/discussions/DiscussionList\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:./features/teams/TeamList:5",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": "src/features/teams/TeamList.tsx:file:TeamList.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 5,
+          "end_line": 5,
+          "note": "import from \"./features/teams/TeamList\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:./features/users/UserProfile:6",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 6,
+          "end_line": 6,
+          "note": "import from \"./features/users/UserProfile\""
+        }
+      ]
+    },
+    {
+      "id": "src/App.tsx:imports:./config/paths:7",
+      "type": "imports",
+      "source_entity_id": "src/App.tsx:file:App.tsx:1",
+      "target_entity_id": "src/config/paths.ts:file:paths.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/App.tsx",
+          "start_line": 7,
+          "end_line": 7,
+          "note": "import from \"./config/paths\""
+        }
+      ]
+    },
+    {
+      "id": "src/hooks/useAuth.ts:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/hooks/useAuth.ts:file:useAuth.ts:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/hooks/useAuth.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/hooks/useAuth.ts:imports:../types/user:2",
+      "type": "imports",
+      "source_entity_id": "src/hooks/useAuth.ts:file:useAuth.ts:1",
+      "target_entity_id": "src/types/user.ts:file:user.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/hooks/useAuth.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../types/user\""
+        }
+      ]
+    },
+    {
+      "id": "src/components/ui/Button.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/components/ui/Button.tsx:file:Button.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/components/ui/Button.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/components/ui/Input.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/components/ui/Input.tsx:file:Input.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/components/ui/Input.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/authService.ts:imports:../../lib/apiClient:1",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/authService.ts:file:authService.ts:1",
+      "target_entity_id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/authService.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"../../lib/apiClient\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/authService.ts:imports:../../types/user:2",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/authService.ts:file:authService.ts:1",
+      "target_entity_id": "src/types/user.ts:file:user.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/authService.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../types/user\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:imports:../../hooks/useAuth:2",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "target_entity_id": "src/hooks/useAuth.ts:file:useAuth.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../hooks/useAuth\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:imports:../../components/ui/Button:3",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "target_entity_id": "src/components/ui/Button.tsx:file:Button.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"../../components/ui/Button\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:imports:../../components/ui/Input:4",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "target_entity_id": "src/components/ui/Input.tsx:file:Input.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 4,
+          "end_line": 4,
+          "note": "import from \"../../components/ui/Input\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:imports:./authService:5",
+      "type": "imports",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1",
+      "target_entity_id": "src/features/auth/authService.ts:file:authService.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 5,
+          "end_line": 5,
+          "note": "import from \"./authService\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:calls:LoginForm->useAuth:10",
+      "type": "calls",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:component:LoginForm:7",
+      "target_entity_id": "src/hooks/useAuth.ts:function:useAuth:4",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 10,
+          "end_line": 10,
+          "note": "LoginForm calls useAuth"
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:calls:LoginForm->loginUser:14",
+      "type": "calls",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:component:LoginForm:7",
+      "target_entity_id": "src/features/auth/authService.ts:function:loginUser:4",
+      "confidence": 0.9,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 14,
+          "end_line": 14,
+          "note": "LoginForm calls loginUser"
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:renders:Input:20",
+      "type": "renders",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:function:LoginForm:7",
+      "target_entity_id": "src/components/ui/Input.tsx:component:Input:10",
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 20,
+          "end_line": 20,
+          "note": "LoginForm renders Input"
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:renders:Input:21",
+      "type": "renders",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:function:LoginForm:7",
+      "target_entity_id": "src/components/ui/Input.tsx:component:Input:10",
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 21,
+          "end_line": 21,
+          "note": "LoginForm renders Input"
+        }
+      ]
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx:renders:Button:22",
+      "type": "renders",
+      "source_entity_id": "src/features/auth/LoginForm.tsx:function:LoginForm:7",
+      "target_entity_id": "src/components/ui/Button.tsx:component:Button:9",
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "file_path": "src/features/auth/LoginForm.tsx",
+          "start_line": 22,
+          "end_line": 22,
+          "note": "LoginForm renders Button"
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/features/comments/CommentForm.tsx:file:CommentForm.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/CommentForm.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:imports:./commentService:2",
+      "type": "imports",
+      "source_entity_id": "src/features/comments/CommentForm.tsx:file:CommentForm.tsx:1",
+      "target_entity_id": "src/features/comments/commentService.ts:file:commentService.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/CommentForm.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"./commentService\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:imports:../../components/ui/Button:3",
+      "type": "imports",
+      "source_entity_id": "src/features/comments/CommentForm.tsx:file:CommentForm.tsx:1",
+      "target_entity_id": "src/components/ui/Button.tsx:file:Button.tsx:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/CommentForm.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"../../components/ui/Button\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx:renders:Button:23",
+      "type": "renders",
+      "source_entity_id": "src/features/comments/CommentForm.tsx:function:CommentForm:10",
+      "target_entity_id": "src/components/ui/Button.tsx:component:Button:9",
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/CommentForm.tsx",
+          "start_line": 23,
+          "end_line": 23,
+          "note": "CommentForm renders Button"
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/commentService.ts:imports:../../lib/apiClient:1",
+      "type": "imports",
+      "source_entity_id": "src/features/comments/commentService.ts:file:commentService.ts:1",
+      "target_entity_id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/commentService.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"../../lib/apiClient\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/comments/commentService.ts:imports:../../types/comment:2",
+      "type": "imports",
+      "source_entity_id": "src/features/comments/commentService.ts:file:commentService.ts:1",
+      "target_entity_id": "src/types/comment.ts:file:comment.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/comments/commentService.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../types/comment\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/features/discussions/DiscussionList.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:imports:./discussionService:2",
+      "type": "imports",
+      "source_entity_id": "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1",
+      "target_entity_id": "src/features/discussions/discussionService.ts:file:discussionService.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/discussions/DiscussionList.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"./discussionService\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx:imports:../../types/discussion:3",
+      "type": "imports",
+      "source_entity_id": "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1",
+      "target_entity_id": "src/types/discussion.ts:file:discussion.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/discussions/DiscussionList.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"../../types/discussion\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts:imports:../../lib/apiClient:1",
+      "type": "imports",
+      "source_entity_id": "src/features/discussions/discussionService.ts:file:discussionService.ts:1",
+      "target_entity_id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/discussions/discussionService.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"../../lib/apiClient\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts:imports:../../types/discussion:2",
+      "type": "imports",
+      "source_entity_id": "src/features/discussions/discussionService.ts:file:discussionService.ts:1",
+      "target_entity_id": "src/types/discussion.ts:file:discussion.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/discussions/discussionService.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../types/discussion\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/features/teams/TeamList.tsx:file:TeamList.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/features/teams/TeamList.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:imports:./teamService:2",
+      "type": "imports",
+      "source_entity_id": "src/features/teams/TeamList.tsx:file:TeamList.tsx:1",
+      "target_entity_id": "src/features/teams/teamService.ts:file:teamService.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/teams/TeamList.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"./teamService\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx:imports:../../types/team:3",
+      "type": "imports",
+      "source_entity_id": "src/features/teams/TeamList.tsx:file:TeamList.tsx:1",
+      "target_entity_id": "src/types/team.ts:file:team.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/teams/TeamList.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"../../types/team\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/teams/teamService.ts:imports:../../lib/apiClient:1",
+      "type": "imports",
+      "source_entity_id": "src/features/teams/teamService.ts:file:teamService.ts:1",
+      "target_entity_id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/teams/teamService.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"../../lib/apiClient\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/teams/teamService.ts:imports:../../types/team:2",
+      "type": "imports",
+      "source_entity_id": "src/features/teams/teamService.ts:file:teamService.ts:1",
+      "target_entity_id": "src/types/team.ts:file:team.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/teams/teamService.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../types/team\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:imports:react:1",
+      "type": "imports",
+      "source_entity_id": "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1",
+      "target_entity_id": null,
+      "confidence": 0.5,
+      "evidence": [
+        {
+          "file_path": "src/features/users/UserProfile.tsx",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"react\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:imports:./userService:2",
+      "type": "imports",
+      "source_entity_id": "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1",
+      "target_entity_id": "src/features/users/userService.ts:file:userService.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/users/UserProfile.tsx",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"./userService\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx:imports:../../types/user:3",
+      "type": "imports",
+      "source_entity_id": "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1",
+      "target_entity_id": "src/types/user.ts:file:user.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/users/UserProfile.tsx",
+          "start_line": 3,
+          "end_line": 3,
+          "note": "import from \"../../types/user\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/users/userService.ts:imports:../../lib/apiClient:1",
+      "type": "imports",
+      "source_entity_id": "src/features/users/userService.ts:file:userService.ts:1",
+      "target_entity_id": "src/lib/apiClient.ts:file:apiClient.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/users/userService.ts",
+          "start_line": 1,
+          "end_line": 1,
+          "note": "import from \"../../lib/apiClient\""
+        }
+      ]
+    },
+    {
+      "id": "src/features/users/userService.ts:imports:../../types/user:2",
+      "type": "imports",
+      "source_entity_id": "src/features/users/userService.ts:file:userService.ts:1",
+      "target_entity_id": "src/types/user.ts:file:user.ts:1",
+      "confidence": 1,
+      "evidence": [
+        {
+          "file_path": "src/features/users/userService.ts",
+          "start_line": 2,
+          "end_line": 2,
+          "note": "import from \"../../types/user\""
+        }
+      ]
+    }
+  ]
+}

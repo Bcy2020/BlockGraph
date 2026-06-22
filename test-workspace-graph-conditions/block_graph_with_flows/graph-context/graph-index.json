@@ -1,0 +1,788 @@
+{
+  "blocks": [
+    {
+      "id": "auth",
+      "name": "Auth",
+      "slug": "auth",
+      "aliases": [
+        "auth",
+        "Authentication",
+        "Auth Feature"
+      ],
+      "mapped_entities": [
+        "src/hooks/useAuth.ts#useAuth.ts",
+        "src/hooks/useAuth.ts#useAuth",
+        "src/features/auth/authService.ts#authService.ts",
+        "src/features/auth/authService.ts#loginUser",
+        "src/features/auth/authService.ts#logoutUser",
+        "src/features/auth/authService.ts#getCurrentUser",
+        "src/features/auth/LoginForm.tsx#LoginForm.tsx",
+        "src/features/auth/LoginForm.tsx#LoginForm",
+        "src/features/auth/LoginForm.tsx#LoginForm",
+        "src/features/auth/LoginForm.tsx#handleSubmit",
+        "src/features/auth/LoginForm.tsx#setEmail",
+        "src/features/auth/LoginForm.tsx#setPassword"
+      ]
+    },
+    {
+      "id": "discussions",
+      "name": "Discussions",
+      "slug": "discussions",
+      "aliases": [
+        "discussions"
+      ],
+      "mapped_entities": [
+        "src/features/discussions/DiscussionList.tsx#DiscussionList.tsx",
+        "src/features/discussions/DiscussionList.tsx#DiscussionList",
+        "src/features/discussions/DiscussionList.tsx#DiscussionList",
+        "src/features/discussions/discussionService.ts#discussionService.ts",
+        "src/features/discussions/discussionService.ts#fetchDiscussions",
+        "src/features/discussions/discussionService.ts#createDiscussion"
+      ]
+    },
+    {
+      "id": "comments",
+      "name": "Comments",
+      "slug": "comments",
+      "aliases": [
+        "comments"
+      ],
+      "mapped_entities": [
+        "src/features/comments/CommentForm.tsx#CommentForm.tsx",
+        "src/features/comments/CommentForm.tsx#CommentForm",
+        "src/features/comments/CommentForm.tsx#CommentForm",
+        "src/features/comments/CommentForm.tsx#handleSubmit",
+        "src/features/comments/CommentForm.tsx#e => setText(e.target.value)",
+        "src/features/comments/commentService.ts#commentService.ts",
+        "src/features/comments/commentService.ts#fetchComments",
+        "src/features/comments/commentService.ts#addComment"
+      ]
+    },
+    {
+      "id": "teams",
+      "name": "Teams",
+      "slug": "teams",
+      "aliases": [
+        "teams"
+      ],
+      "mapped_entities": [
+        "src/features/teams/TeamList.tsx#TeamList.tsx",
+        "src/features/teams/TeamList.tsx#TeamList",
+        "src/features/teams/TeamList.tsx#TeamList",
+        "src/features/teams/teamService.ts#teamService.ts",
+        "src/features/teams/teamService.ts#fetchTeams",
+        "src/features/teams/teamService.ts#createTeam"
+      ]
+    },
+    {
+      "id": "users",
+      "name": "Users",
+      "slug": "users",
+      "aliases": [
+        "users"
+      ],
+      "mapped_entities": [
+        "src/features/users/UserProfile.tsx#UserProfile.tsx",
+        "src/features/users/UserProfile.tsx#UserProfile",
+        "src/features/users/UserProfile.tsx#UserProfile",
+        "src/features/users/userService.ts#userService.ts",
+        "src/features/users/userService.ts#fetchUser",
+        "src/features/users/userService.ts#updateUser"
+      ]
+    },
+    {
+      "id": "shared-api-client",
+      "name": "Shared API Client",
+      "slug": "shared-api-client",
+      "aliases": [
+        "shared api client",
+        "shared-api-client",
+        "API Client",
+        "HTTP Client"
+      ],
+      "mapped_entities": [
+        "src/lib/apiClient.ts#apiClient.ts",
+        "src/lib/apiClient.ts#fetch",
+        "src/lib/apiClient.ts#fetch",
+        "src/lib/apiClient.ts#fetch"
+      ]
+    },
+    {
+      "id": "shared-types",
+      "name": "Shared Types",
+      "slug": "shared-types",
+      "aliases": [
+        "shared types",
+        "shared-types"
+      ],
+      "mapped_entities": [
+        "src/types/comment.ts#comment.ts",
+        "src/types/discussion.ts#discussion.ts",
+        "src/types/team.ts#team.ts",
+        "src/types/user.ts#user.ts"
+      ]
+    },
+    {
+      "id": "shared-hooks",
+      "name": "Shared Hooks",
+      "slug": "shared-hooks",
+      "aliases": [
+        "shared hooks",
+        "shared-hooks"
+      ],
+      "mapped_entities": [
+        "src/hooks/useAuth.ts#useAuth.ts",
+        "src/hooks/useAuth.ts#useAuth"
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "canonical_id": "src/App.tsx#App.tsx",
+      "raw_ids": [
+        "src/App.tsx:file:App.tsx:1"
+      ],
+      "file_path": "src/App.tsx",
+      "symbol_name": "App.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/App.tsx#App",
+      "raw_ids": [
+        "src/App.tsx:function:App:9"
+      ],
+      "file_path": "src/App.tsx",
+      "symbol_name": "App",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/App.tsx#App",
+      "raw_ids": [
+        "src/App.tsx:component:App:9"
+      ],
+      "file_path": "src/App.tsx",
+      "symbol_name": "App",
+      "kind": "component",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/config/paths.ts#paths.ts",
+      "raw_ids": [
+        "src/config/paths.ts:file:paths.ts:1"
+      ],
+      "file_path": "src/config/paths.ts",
+      "symbol_name": "paths.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/hooks/useAuth.ts#useAuth.ts",
+      "raw_ids": [
+        "src/hooks/useAuth.ts:file:useAuth.ts:1"
+      ],
+      "file_path": "src/hooks/useAuth.ts",
+      "symbol_name": "useAuth.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/hooks/useAuth.ts#useAuth",
+      "raw_ids": [
+        "src/hooks/useAuth.ts:function:useAuth:4"
+      ],
+      "file_path": "src/hooks/useAuth.ts",
+      "symbol_name": "useAuth",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/lib/apiClient.ts#apiClient.ts",
+      "raw_ids": [
+        "src/lib/apiClient.ts:file:apiClient.ts:1"
+      ],
+      "file_path": "src/lib/apiClient.ts",
+      "symbol_name": "apiClient.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/lib/apiClient.ts#fetch",
+      "raw_ids": [
+        "src/lib/apiClient.ts:api_call:fetch:5"
+      ],
+      "file_path": "src/lib/apiClient.ts",
+      "symbol_name": "fetch",
+      "kind": "api_call",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/lib/apiClient.ts#fetch",
+      "raw_ids": [
+        "src/lib/apiClient.ts:api_call:fetch:10"
+      ],
+      "file_path": "src/lib/apiClient.ts",
+      "symbol_name": "fetch",
+      "kind": "api_call",
+      "line": 10
+    },
+    {
+      "canonical_id": "src/lib/apiClient.ts#fetch",
+      "raw_ids": [
+        "src/lib/apiClient.ts:api_call:fetch:19"
+      ],
+      "file_path": "src/lib/apiClient.ts",
+      "symbol_name": "fetch",
+      "kind": "api_call",
+      "line": 19
+    },
+    {
+      "canonical_id": "src/testing/testUtils.ts#testUtils.ts",
+      "raw_ids": [
+        "src/testing/testUtils.ts:file:testUtils.ts:1"
+      ],
+      "file_path": "src/testing/testUtils.ts",
+      "symbol_name": "testUtils.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/testing/testUtils.ts#mockApi",
+      "raw_ids": [
+        "src/testing/testUtils.ts:function:mockApi:1"
+      ],
+      "file_path": "src/testing/testUtils.ts",
+      "symbol_name": "mockApi",
+      "kind": "function",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/testing/testUtils.ts#createMockUser",
+      "raw_ids": [
+        "src/testing/testUtils.ts:function:createMockUser:5"
+      ],
+      "file_path": "src/testing/testUtils.ts",
+      "symbol_name": "createMockUser",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/types/comment.ts#comment.ts",
+      "raw_ids": [
+        "src/types/comment.ts:file:comment.ts:1"
+      ],
+      "file_path": "src/types/comment.ts",
+      "symbol_name": "comment.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/types/discussion.ts#discussion.ts",
+      "raw_ids": [
+        "src/types/discussion.ts:file:discussion.ts:1"
+      ],
+      "file_path": "src/types/discussion.ts",
+      "symbol_name": "discussion.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/types/team.ts#team.ts",
+      "raw_ids": [
+        "src/types/team.ts:file:team.ts:1"
+      ],
+      "file_path": "src/types/team.ts",
+      "symbol_name": "team.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/types/user.ts#user.ts",
+      "raw_ids": [
+        "src/types/user.ts:file:user.ts:1"
+      ],
+      "file_path": "src/types/user.ts",
+      "symbol_name": "user.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/utils/helpers.ts#helpers.ts",
+      "raw_ids": [
+        "src/utils/helpers.ts:file:helpers.ts:1"
+      ],
+      "file_path": "src/utils/helpers.ts",
+      "symbol_name": "helpers.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/utils/helpers.ts#formatDate",
+      "raw_ids": [
+        "src/utils/helpers.ts:function:formatDate:1"
+      ],
+      "file_path": "src/utils/helpers.ts",
+      "symbol_name": "formatDate",
+      "kind": "function",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/utils/helpers.ts#formatError",
+      "raw_ids": [
+        "src/utils/helpers.ts:function:formatError:5"
+      ],
+      "file_path": "src/utils/helpers.ts",
+      "symbol_name": "formatError",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/components/ui/Button.tsx#Button.tsx",
+      "raw_ids": [
+        "src/components/ui/Button.tsx:file:Button.tsx:1"
+      ],
+      "file_path": "src/components/ui/Button.tsx",
+      "symbol_name": "Button.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/components/ui/Button.tsx#Button",
+      "raw_ids": [
+        "src/components/ui/Button.tsx:function:Button:9"
+      ],
+      "file_path": "src/components/ui/Button.tsx",
+      "symbol_name": "Button",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/components/ui/Button.tsx#Button",
+      "raw_ids": [
+        "src/components/ui/Button.tsx:component:Button:9"
+      ],
+      "file_path": "src/components/ui/Button.tsx",
+      "symbol_name": "Button",
+      "kind": "component",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/components/ui/Button.tsx#onClick",
+      "raw_ids": [
+        "src/components/ui/Button.tsx:event_handler:onClick:11"
+      ],
+      "file_path": "src/components/ui/Button.tsx",
+      "symbol_name": "onClick",
+      "kind": "event_handler",
+      "line": 11
+    },
+    {
+      "canonical_id": "src/components/ui/Input.tsx#Input.tsx",
+      "raw_ids": [
+        "src/components/ui/Input.tsx:file:Input.tsx:1"
+      ],
+      "file_path": "src/components/ui/Input.tsx",
+      "symbol_name": "Input.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/components/ui/Input.tsx#Input",
+      "raw_ids": [
+        "src/components/ui/Input.tsx:function:Input:10"
+      ],
+      "file_path": "src/components/ui/Input.tsx",
+      "symbol_name": "Input",
+      "kind": "function",
+      "line": 10
+    },
+    {
+      "canonical_id": "src/components/ui/Input.tsx#Input",
+      "raw_ids": [
+        "src/components/ui/Input.tsx:component:Input:10"
+      ],
+      "file_path": "src/components/ui/Input.tsx",
+      "symbol_name": "Input",
+      "kind": "component",
+      "line": 10
+    },
+    {
+      "canonical_id": "src/components/ui/Input.tsx#e => onChange(e.target.value)",
+      "raw_ids": [
+        "src/components/ui/Input.tsx:event_handler:e => onChange(e.target.value):15"
+      ],
+      "file_path": "src/components/ui/Input.tsx",
+      "symbol_name": "e => onChange(e.target.value)",
+      "kind": "event_handler",
+      "line": 15
+    },
+    {
+      "canonical_id": "src/features/auth/authService.ts#authService.ts",
+      "raw_ids": [
+        "src/features/auth/authService.ts:file:authService.ts:1"
+      ],
+      "file_path": "src/features/auth/authService.ts",
+      "symbol_name": "authService.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/auth/authService.ts#loginUser",
+      "raw_ids": [
+        "src/features/auth/authService.ts:function:loginUser:4"
+      ],
+      "file_path": "src/features/auth/authService.ts",
+      "symbol_name": "loginUser",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/features/auth/authService.ts#logoutUser",
+      "raw_ids": [
+        "src/features/auth/authService.ts:function:logoutUser:9"
+      ],
+      "file_path": "src/features/auth/authService.ts",
+      "symbol_name": "logoutUser",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/auth/authService.ts#getCurrentUser",
+      "raw_ids": [
+        "src/features/auth/authService.ts:function:getCurrentUser:13"
+      ],
+      "file_path": "src/features/auth/authService.ts",
+      "symbol_name": "getCurrentUser",
+      "kind": "function",
+      "line": 13
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#LoginForm.tsx",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:file:LoginForm.tsx:1"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "LoginForm.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#LoginForm",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:function:LoginForm:7"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "LoginForm",
+      "kind": "function",
+      "line": 7
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#LoginForm",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:component:LoginForm:7"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "LoginForm",
+      "kind": "component",
+      "line": 7
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#handleSubmit",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:event_handler:handleSubmit:19"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "handleSubmit",
+      "kind": "event_handler",
+      "line": 19
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#setEmail",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:event_handler:setEmail:20"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "setEmail",
+      "kind": "event_handler",
+      "line": 20
+    },
+    {
+      "canonical_id": "src/features/auth/LoginForm.tsx#setPassword",
+      "raw_ids": [
+        "src/features/auth/LoginForm.tsx:event_handler:setPassword:21"
+      ],
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "symbol_name": "setPassword",
+      "kind": "event_handler",
+      "line": 21
+    },
+    {
+      "canonical_id": "src/features/comments/CommentForm.tsx#CommentForm.tsx",
+      "raw_ids": [
+        "src/features/comments/CommentForm.tsx:file:CommentForm.tsx:1"
+      ],
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "symbol_name": "CommentForm.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/comments/CommentForm.tsx#CommentForm",
+      "raw_ids": [
+        "src/features/comments/CommentForm.tsx:function:CommentForm:10"
+      ],
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "symbol_name": "CommentForm",
+      "kind": "function",
+      "line": 10
+    },
+    {
+      "canonical_id": "src/features/comments/CommentForm.tsx#CommentForm",
+      "raw_ids": [
+        "src/features/comments/CommentForm.tsx:component:CommentForm:10"
+      ],
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "symbol_name": "CommentForm",
+      "kind": "component",
+      "line": 10
+    },
+    {
+      "canonical_id": "src/features/comments/CommentForm.tsx#handleSubmit",
+      "raw_ids": [
+        "src/features/comments/CommentForm.tsx:event_handler:handleSubmit:21"
+      ],
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "symbol_name": "handleSubmit",
+      "kind": "event_handler",
+      "line": 21
+    },
+    {
+      "canonical_id": "src/features/comments/CommentForm.tsx#e => setText(e.target.value)",
+      "raw_ids": [
+        "src/features/comments/CommentForm.tsx:event_handler:e => setText(e.target.value):22"
+      ],
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "symbol_name": "e => setText(e.target.value)",
+      "kind": "event_handler",
+      "line": 22
+    },
+    {
+      "canonical_id": "src/features/comments/commentService.ts#commentService.ts",
+      "raw_ids": [
+        "src/features/comments/commentService.ts:file:commentService.ts:1"
+      ],
+      "file_path": "src/features/comments/commentService.ts",
+      "symbol_name": "commentService.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/comments/commentService.ts#fetchComments",
+      "raw_ids": [
+        "src/features/comments/commentService.ts:function:fetchComments:4"
+      ],
+      "file_path": "src/features/comments/commentService.ts",
+      "symbol_name": "fetchComments",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/features/comments/commentService.ts#addComment",
+      "raw_ids": [
+        "src/features/comments/commentService.ts:function:addComment:9"
+      ],
+      "file_path": "src/features/comments/commentService.ts",
+      "symbol_name": "addComment",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/discussions/DiscussionList.tsx#DiscussionList.tsx",
+      "raw_ids": [
+        "src/features/discussions/DiscussionList.tsx:file:DiscussionList.tsx:1"
+      ],
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "symbol_name": "DiscussionList.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+      "raw_ids": [
+        "src/features/discussions/DiscussionList.tsx:function:DiscussionList:5"
+      ],
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "symbol_name": "DiscussionList",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+      "raw_ids": [
+        "src/features/discussions/DiscussionList.tsx:component:DiscussionList:5"
+      ],
+      "file_path": "src/features/discussions/DiscussionList.tsx",
+      "symbol_name": "DiscussionList",
+      "kind": "component",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/features/discussions/discussionService.ts#discussionService.ts",
+      "raw_ids": [
+        "src/features/discussions/discussionService.ts:file:discussionService.ts:1"
+      ],
+      "file_path": "src/features/discussions/discussionService.ts",
+      "symbol_name": "discussionService.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "raw_ids": [
+        "src/features/discussions/discussionService.ts:function:fetchDiscussions:4"
+      ],
+      "file_path": "src/features/discussions/discussionService.ts",
+      "symbol_name": "fetchDiscussions",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/features/discussions/discussionService.ts#createDiscussion",
+      "raw_ids": [
+        "src/features/discussions/discussionService.ts:function:createDiscussion:9"
+      ],
+      "file_path": "src/features/discussions/discussionService.ts",
+      "symbol_name": "createDiscussion",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/teams/TeamList.tsx#TeamList.tsx",
+      "raw_ids": [
+        "src/features/teams/TeamList.tsx:file:TeamList.tsx:1"
+      ],
+      "file_path": "src/features/teams/TeamList.tsx",
+      "symbol_name": "TeamList.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/teams/TeamList.tsx#TeamList",
+      "raw_ids": [
+        "src/features/teams/TeamList.tsx:function:TeamList:5"
+      ],
+      "file_path": "src/features/teams/TeamList.tsx",
+      "symbol_name": "TeamList",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/features/teams/TeamList.tsx#TeamList",
+      "raw_ids": [
+        "src/features/teams/TeamList.tsx:component:TeamList:5"
+      ],
+      "file_path": "src/features/teams/TeamList.tsx",
+      "symbol_name": "TeamList",
+      "kind": "component",
+      "line": 5
+    },
+    {
+      "canonical_id": "src/features/teams/teamService.ts#teamService.ts",
+      "raw_ids": [
+        "src/features/teams/teamService.ts:file:teamService.ts:1"
+      ],
+      "file_path": "src/features/teams/teamService.ts",
+      "symbol_name": "teamService.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/teams/teamService.ts#fetchTeams",
+      "raw_ids": [
+        "src/features/teams/teamService.ts:function:fetchTeams:4"
+      ],
+      "file_path": "src/features/teams/teamService.ts",
+      "symbol_name": "fetchTeams",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/features/teams/teamService.ts#createTeam",
+      "raw_ids": [
+        "src/features/teams/teamService.ts:function:createTeam:9"
+      ],
+      "file_path": "src/features/teams/teamService.ts",
+      "symbol_name": "createTeam",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/users/UserProfile.tsx#UserProfile.tsx",
+      "raw_ids": [
+        "src/features/users/UserProfile.tsx:file:UserProfile.tsx:1"
+      ],
+      "file_path": "src/features/users/UserProfile.tsx",
+      "symbol_name": "UserProfile.tsx",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/users/UserProfile.tsx#UserProfile",
+      "raw_ids": [
+        "src/features/users/UserProfile.tsx:function:UserProfile:9"
+      ],
+      "file_path": "src/features/users/UserProfile.tsx",
+      "symbol_name": "UserProfile",
+      "kind": "function",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/users/UserProfile.tsx#UserProfile",
+      "raw_ids": [
+        "src/features/users/UserProfile.tsx:component:UserProfile:9"
+      ],
+      "file_path": "src/features/users/UserProfile.tsx",
+      "symbol_name": "UserProfile",
+      "kind": "component",
+      "line": 9
+    },
+    {
+      "canonical_id": "src/features/users/userService.ts#userService.ts",
+      "raw_ids": [
+        "src/features/users/userService.ts:file:userService.ts:1"
+      ],
+      "file_path": "src/features/users/userService.ts",
+      "symbol_name": "userService.ts",
+      "kind": "file",
+      "line": 1
+    },
+    {
+      "canonical_id": "src/features/users/userService.ts#fetchUser",
+      "raw_ids": [
+        "src/features/users/userService.ts:function:fetchUser:4"
+      ],
+      "file_path": "src/features/users/userService.ts",
+      "symbol_name": "fetchUser",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "canonical_id": "src/features/users/userService.ts#updateUser",
+      "raw_ids": [
+        "src/features/users/userService.ts:function:updateUser:9"
+      ],
+      "file_path": "src/features/users/userService.ts",
+      "symbol_name": "updateUser",
+      "kind": "function",
+      "line": 9
+    }
+  ],
+  "provenance": {
+    "source_db_path": "synthetic",
+    "export_timestamp": "2026-06-21T15:04:01.686Z",
+    "graph_index_source": "synthetic",
+    "block_count": 8,
+    "entity_count": 64
+  }
+}

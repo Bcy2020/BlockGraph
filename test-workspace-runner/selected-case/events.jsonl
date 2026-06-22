@@ -1,0 +1,2 @@
+{"ts":"2026-06-21T15:04:01.762Z","run_id":"run-f08a6c1e","type":"run_started","data":{"suite":"access-accuracy","adapter":"fixture-perfect","dryRun":false}}
+{"ts":"2026-06-21T15:04:01.763Z","run_id":"run-f08a6c1e","type":"case_started","case_id":"fixture-login-flow","condition":"no_graph"}

@@ -1,0 +1,27 @@
+[
+  {
+    "source_block": "auth",
+    "target_block": "shared-api-client",
+    "protocol": "function_call"
+  },
+  {
+    "source_block": "discussions",
+    "target_block": "shared-api-client",
+    "protocol": "function_call"
+  },
+  {
+    "source_block": "comments",
+    "target_block": "shared-api-client",
+    "protocol": "function_call"
+  },
+  {
+    "source_block": "teams",
+    "target_block": "shared-api-client",
+    "protocol": "function_call"
+  },
+  {
+    "source_block": "users",
+    "target_block": "shared-api-client",
+    "protocol": "function_call"
+  }
+]

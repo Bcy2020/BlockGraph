@@ -1,0 +1,156 @@
+{
+  "task_id": "fixture-orphaned-code",
+  "condition": "no_graph",
+  "answer": "The codebase has significant dead code. src/utils/helpers.ts exports formatDate and formatError but neither is imported anywhere. src/testing/testUtils.ts exports mockApi and createMockUser but they are unused. Additionally, authService exports logoutUser and getCurrentUser which are never called by any component. discussionService exports createDiscussion, commentService exports fetchComments, teamService exports createTeam, and userService exports updateUser — all unused by the UI layer.",
+  "ranked_files": [
+    {
+      "id": "src/utils/helpers.ts",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Both exports (formatDate, formatError) are completely orphaned — no file imports this module"
+    },
+    {
+      "id": "src/testing/testUtils.ts",
+      "rank": 2,
+      "confidence": 0.9,
+      "reason": "Both exports (mockApi, createMockUser) are unused in src/"
+    },
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 3,
+      "confidence": 0.85,
+      "reason": "logoutUser and getCurrentUser are exported but never called — only loginUser is used"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 4,
+      "confidence": 0.8,
+      "reason": "createDiscussion is exported but never imported or called"
+    },
+    {
+      "id": "src/features/comments/commentService.ts",
+      "rank": 5,
+      "confidence": 0.8,
+      "reason": "fetchComments is exported but never imported or called — only addComment is used"
+    },
+    {
+      "id": "src/features/teams/teamService.ts",
+      "rank": 6,
+      "confidence": 0.8,
+      "reason": "createTeam is exported but never imported or called"
+    },
+    {
+      "id": "src/features/users/userService.ts",
+      "rank": 7,
+      "confidence": 0.8,
+      "reason": "updateUser is exported but never imported or called"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/utils/helpers.ts#formatDate",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/utils/helpers.ts#formatError",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/testing/testUtils.ts#mockApi",
+      "rank": 3,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/testing/testUtils.ts#createMockUser",
+      "rank": 4,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/auth/authService.ts#logoutUser",
+      "rank": 5,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/features/auth/authService.ts#getCurrentUser",
+      "rank": 6,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#createDiscussion",
+      "rank": 7,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/features/comments/commentService.ts#fetchComments",
+      "rank": 8,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/features/teams/teamService.ts#createTeam",
+      "rank": 9,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/features/users/userService.ts#updateUser",
+      "rank": 10,
+      "confidence": 0.8
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Auth",
+      "rank": 1,
+      "confidence": 0.8
+    },
+    {
+      "id": "Discussions",
+      "rank": 2,
+      "confidence": 0.7
+    },
+    {
+      "id": "Comments",
+      "rank": 3,
+      "confidence": 0.7
+    },
+    {
+      "id": "Teams",
+      "rank": 4,
+      "confidence": 0.7
+    },
+    {
+      "id": "Users",
+      "rank": 5,
+      "confidence": 0.7
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/utils/helpers.ts",
+      "start_line": 1,
+      "end_line": 8,
+      "note": "formatDate and formatError exported but not imported by any file"
+    },
+    {
+      "file_path": "src/testing/testUtils.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "mockApi and createMockUser exported but not imported by any file"
+    },
+    {
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 15,
+      "end_line": 20,
+      "note": "logoutUser and getCurrentUser exported but never called"
+    },
+    {
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 1,
+      "end_line": 25,
+      "note": "Only imports loginUser — does not import logoutUser or getCurrentUser"
+    }
+  ],
+  "confidence": 0.9,
+  "used_blockgraph": false
+}

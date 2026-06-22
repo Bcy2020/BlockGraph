@@ -1,0 +1,55 @@
+{
+  "case_id": "fixture-discussion-cross-flow",
+  "condition": "no_graph",
+  "accuracy": {
+    "file_precision": 1,
+    "file_recall": 1,
+    "file_f1": 1,
+    "entity_precision": 1,
+    "entity_recall": 1,
+    "entity_f1": 1,
+    "block_precision": 1,
+    "block_recall": 1,
+    "block_f1": 1,
+    "top1_file_hit": 1,
+    "top3_file_hit": 1,
+    "top5_file_hit": 1,
+    "top1_entity_hit": 1,
+    "top3_entity_hit": 1,
+    "flow_order_score": 1,
+    "must_not_include_penalty": 0,
+    "unsupported_evidence_penalty": 0
+  },
+  "efficiency": {
+    "reported_tool_calls": null,
+    "reported_read_calls": null,
+    "reported_grep_calls": null,
+    "reported_mcp_calls": null,
+    "unique_files_read": null,
+    "search_waste_ratio": null,
+    "duration_ms": null
+  },
+  "evidence": {
+    "evidence_file_exists_rate": 1,
+    "evidence_line_valid_rate": 1,
+    "evidence_entity_valid_rate": 1,
+    "unsupported_claim_count": 0
+  },
+  "accuracy_score": 1,
+  "efficiency_score": null,
+  "evidence_score": 1,
+  "overall_score": 1,
+  "warnings": [
+    "Unresolved blocks: Discussions, Comments, Shared API Client"
+  ],
+  "resolution": {
+    "resolved_blocks": 0,
+    "unresolved_blocks": 3,
+    "resolved_entities": 7,
+    "unresolved_entities": 0,
+    "resolution_methods": {
+      "unresolved": 3,
+      "exact": 14
+    }
+  }
+}

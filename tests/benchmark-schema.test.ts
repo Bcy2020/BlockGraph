@@ -72,7 +72,7 @@ describe("Benchmark Schemas", () => {
         expected_entities: [{ id: "src/test.ts#Foo" }],
         expected_blocks: [{ id: "Block1" }],
         expected_flow_order: ["step1", "step2"],
-        acceptable_alternatives: { files: ["alt.ts"] },
+        acceptable_alternatives: { files: { "src/test.ts": ["alt.ts"] } },
         must_not_include: { files: ["bad.ts"] },
         notes: "test notes",
       };
