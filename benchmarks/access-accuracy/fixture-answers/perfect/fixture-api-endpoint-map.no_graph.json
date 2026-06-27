@@ -1,0 +1,165 @@
+{
+  "task_id": "fixture-api-endpoint-map",
+  "condition": "no_graph",
+  "answer": "All HTTP calls flow through apiClient (src/lib/apiClient.ts) which wraps fetch() with a configurable BASE_URL. The endpoints are: POST /auth/login (loginUser, triggered by LoginForm), GET /discussions (fetchDiscussions, triggered by DiscussionList mount), POST /discussions/:id/comments (addComment, triggered by CommentForm submit), GET /teams (fetchTeams, triggered by TeamList mount), GET /users/:id (fetchUser, triggered by UserProfile mount). Additional unused endpoints: POST /auth/logout, GET /auth/me, POST /discussions, GET /discussions/:id/comments, POST /teams, PUT /users/:id.",
+  "ranked_files": [
+    {
+      "id": "src/lib/apiClient.ts",
+      "rank": 1,
+      "confidence": 0.95,
+      "reason": "Central transport layer — all HTTP calls go through this"
+    },
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 2,
+      "confidence": 0.95,
+      "reason": "POST /auth/login via loginUser, POST /auth/logout via logoutUser, GET /auth/me via getCurrentUser"
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx",
+      "rank": 3,
+      "confidence": 0.9,
+      "reason": "Triggers loginUser on form submit"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 4,
+      "confidence": 0.9,
+      "reason": "GET /discussions via fetchDiscussions, POST /discussions via createDiscussion"
+    },
+    {
+      "id": "src/features/discussions/DiscussionList.tsx",
+      "rank": 5,
+      "confidence": 0.85,
+      "reason": "Triggers fetchDiscussions on mount"
+    },
+    {
+      "id": "src/features/comments/commentService.ts",
+      "rank": 6,
+      "confidence": 0.9,
+      "reason": "GET /discussions/:id/comments via fetchComments, POST /discussions/:id/comments via addComment"
+    },
+    {
+      "id": "src/features/comments/CommentForm.tsx",
+      "rank": 7,
+      "confidence": 0.85,
+      "reason": "Triggers addComment on form submit"
+    },
+    {
+      "id": "src/features/teams/teamService.ts",
+      "rank": 8,
+      "confidence": 0.85,
+      "reason": "GET /teams via fetchTeams, POST /teams via createTeam"
+    },
+    {
+      "id": "src/features/teams/TeamList.tsx",
+      "rank": 9,
+      "confidence": 0.8,
+      "reason": "Triggers fetchTeams on mount"
+    },
+    {
+      "id": "src/features/users/userService.ts",
+      "rank": 10,
+      "confidence": 0.85,
+      "reason": "GET /users/:id via fetchUser, PUT /users/:id via updateUser"
+    },
+    {
+      "id": "src/features/users/UserProfile.tsx",
+      "rank": 11,
+      "confidence": 0.8,
+      "reason": "Triggers fetchUser on mount"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/lib/apiClient.ts#apiClient",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/auth/authService.ts#loginUser",
+      "rank": 2,
+      "confidence": 0.95
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "rank": 3,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/comments/commentService.ts#addComment",
+      "rank": 4,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/teams/teamService.ts#fetchTeams",
+      "rank": 5,
+      "confidence": 0.85
+    },
+    {
+      "id": "src/features/users/userService.ts#fetchUser",
+      "rank": 6,
+      "confidence": 0.85
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Shared API Client",
+      "rank": 1,
+      "confidence": 0.95
+    },
+    {
+      "id": "Auth",
+      "rank": 2,
+      "confidence": 0.9
+    },
+    {
+      "id": "Discussions",
+      "rank": 3,
+      "confidence": 0.85
+    },
+    {
+      "id": "Comments",
+      "rank": 4,
+      "confidence": 0.85
+    },
+    {
+      "id": "Teams",
+      "rank": 5,
+      "confidence": 0.8
+    },
+    {
+      "id": "Users",
+      "rank": 6,
+      "confidence": 0.8
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/lib/apiClient.ts",
+      "start_line": 1,
+      "end_line": 26,
+      "note": "apiClient with get/post/put methods wrapping fetch()"
+    },
+    {
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 5,
+      "end_line": 15,
+      "note": "loginUser calls apiClient.post('/auth/login')"
+    },
+    {
+      "file_path": "src/features/discussions/discussionService.ts",
+      "start_line": 5,
+      "end_line": 10,
+      "note": "fetchDiscussions calls apiClient.get('/discussions')"
+    },
+    {
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 10,
+      "end_line": 12,
+      "note": "addComment calls apiClient.post('/discussions/${id}/comments')"
+    }
+  ],
+  "confidence": 0.9,
+  "used_blockgraph": false
+}

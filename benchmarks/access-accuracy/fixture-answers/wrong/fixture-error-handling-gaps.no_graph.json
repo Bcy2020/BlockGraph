@@ -1,0 +1,23 @@
+{
+  "task_id": "fixture-error-handling-gaps",
+  "condition": "no_graph",
+  "answer": "The apiClient.ts file has no error handling for failed HTTP requests. The helpers.ts utility also lacks try/catch blocks. The test utilities in testUtils.ts could throw errors without being caught.",
+  "ranked_files": [
+    { "id": "src/lib/apiClient.ts", "rank": 1, "confidence": 0.5 },
+    { "id": "src/utils/helpers.ts", "rank": 2, "confidence": 0.4 },
+    { "id": "src/testing/testUtils.ts", "rank": 3, "confidence": 0.3 }
+  ],
+  "ranked_entities": [
+    { "id": "src/lib/apiClient.ts#apiClient", "rank": 1, "confidence": 0.5 },
+    { "id": "src/utils/helpers.ts#formatDate", "rank": 2, "confidence": 0.3 }
+  ],
+  "ranked_blocks": [
+    { "id": "Shared API Client", "rank": 1, "confidence": 0.4 }
+  ],
+  "evidence": [
+    { "file_path": "src/lib/apiClient.ts", "start_line": 1, "end_line": 26 },
+    { "file_path": "src/utils/helpers.ts", "start_line": 1, "end_line": 8 }
+  ],
+  "confidence": 0.2,
+  "used_blockgraph": false
+}

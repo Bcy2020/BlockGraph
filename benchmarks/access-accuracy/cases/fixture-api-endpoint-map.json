@@ -1,0 +1,169 @@
+{
+  "id": "fixture-api-endpoint-map",
+  "module": "access-accuracy",
+  "title": "API Endpoint to Code Mapping",
+  "description": "Map all HTTP API endpoints used in the codebase to the service functions and UI components that invoke them.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "cross_module_flow_recovery",
+    "prompt": "Map every HTTP API endpoint this application calls. For each endpoint, identify: the HTTP method, the URL path, the service function that calls it, the UI component that triggers it, and the shared transport layer used."
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/LoginForm.tsx",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/DiscussionList.tsx",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/CommentForm.tsx",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts",
+        "weight": 2
+      },
+      {
+        "id": "src/features/teams/TeamList.tsx",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts",
+        "weight": 2
+      },
+      {
+        "id": "src/features/users/UserProfile.tsx",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts#loginUser",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/commentService.ts#addComment",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/teamService.ts#fetchTeams",
+        "weight": 2
+      },
+      {
+        "id": "src/features/users/userService.ts#fetchUser",
+        "weight": 2
+      },
+      {
+        "id": "src/features/auth/authService.ts#logoutUser",
+        "weight": 1
+      },
+      {
+        "id": "src/features/auth/authService.ts#getCurrentUser",
+        "weight": 1
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#createDiscussion",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts#fetchComments",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts#createTeam",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts#updateUser",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Shared API Client",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Auth",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Discussions",
+        "weight": 2
+      },
+      {
+        "id": "Comments",
+        "weight": 2
+      },
+      {
+        "id": "Teams",
+        "weight": 2
+      },
+      {
+        "id": "Users",
+        "weight": 2
+      }
+    ],
+    "must_not_include": {
+      "files": [
+        "src/utils/helpers.ts",
+        "src/testing/testUtils.ts"
+      ]
+    }
+  },
+  "tags": [
+    "api",
+    "http",
+    "endpoints",
+    "cross-cutting"
+  ]
+}

@@ -19,8 +19,14 @@ Thumbs.db
 test-workspace/
 test-workspace-complex/
 
-# Benchmark repositories (external clones, not tracked)
-benchmarks/
+# Benchmark sources are versioned, but generated runs and external clones are not.
+benchmarks/runs/
+benchmarks/repos/
+benchmarks/access-accuracy/eval_*.py
+benchmarks/access-accuracy/cal-diy-cases/mcp-config.json
+benchmarks/access-accuracy/cal-diy-cases/*-verified.json
+benchmarks/access-accuracy/cal-diy-cases/prompts/
+benchmarks/access-accuracy/cal-diy-cases/prompts-mcp/
 
 # Claude Code machine-local state
 .claude/

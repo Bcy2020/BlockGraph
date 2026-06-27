@@ -1,0 +1,105 @@
+{
+  "id": "fixture-team-feature-landing",
+  "module": "access-accuracy",
+  "title": "Team Invitation Approval Feature Landing Zone",
+  "description": "Determine where to place a new team invitation approval feature within the existing architecture.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "feature_landing_zone",
+    "prompt": "We want to add team invitation approval. Which existing module should be extended, what new boundary or flow may be needed, and which shared modules should be referenced but not owned?"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/features/teams/TeamList.tsx",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/teamService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/types/team.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 2
+      },
+      {
+        "id": "src/hooks/useAuth.ts",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/features/teams/teamService.ts#fetchTeams",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/teamService.ts#createTeam",
+        "weight": 2
+      },
+      {
+        "id": "src/types/team.ts#Team",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Teams",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Shared API Client",
+        "weight": 2
+      },
+      {
+        "id": "Shared Types",
+        "weight": 1
+      }
+    ],
+    "acceptable_alternatives": {
+      "files": {
+        "src/features/teams/TeamList.tsx": ["src/features/users/UserProfile.tsx"],
+        "src/features/teams/teamService.ts": ["src/features/users/userService.ts"]
+      },
+      "entities": {
+        "src/features/teams/teamService.ts#fetchTeams": ["src/features/teams/TeamList.tsx#TeamList"]
+      }
+    },
+    "must_not_include": {
+      "files": [
+        "src/features/auth/LoginForm.tsx",
+        "src/features/discussions/DiscussionList.tsx"
+      ]
+    }
+  },
+  "tags": [
+    "teams",
+    "feature-landing",
+    "architecture",
+    "new-feature"
+  ]
+}

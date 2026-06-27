@@ -1,0 +1,24 @@
+{
+  "task_id": "fixture-auth-impact",
+  "condition": "no_graph",
+  "answer": "Changing auth token behavior would primarily affect the discussions feature since DiscussionList uses authentication to load content. The comment form also needs auth for submitting. The helpers utility file would need updates for any auth-related formatting.",
+  "ranked_files": [
+    { "id": "src/features/discussions/DiscussionList.tsx", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/comments/CommentForm.tsx", "rank": 2, "confidence": 0.4 },
+    { "id": "src/utils/helpers.ts", "rank": 3, "confidence": 0.3 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/discussions/DiscussionList.tsx#DiscussionList", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/comments/CommentForm.tsx#CommentForm", "rank": 2, "confidence": 0.4 }
+  ],
+  "ranked_blocks": [
+    { "id": "Discussions", "rank": 1, "confidence": 0.5 },
+    { "id": "Comments", "rank": 2, "confidence": 0.3 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/discussions/DiscussionList.tsx", "start_line": 1, "end_line": 19 },
+    { "file_path": "src/utils/helpers.ts", "start_line": 1, "end_line": 8 }
+  ],
+  "confidence": 0.2,
+  "used_blockgraph": false
+}

@@ -1,0 +1,34 @@
+{
+  "task_id": "fixture-error-handling-gaps",
+  "condition": "no_graph",
+  "answer": "Five components have unhandled async operations. LoginForm.handleSubmit calls await loginUser() without try/catch — if the API rejects, the error is unhandled. CommentForm.handleSubmit calls await addComment() without try/catch. DiscussionList, TeamList, and UserProfile all use useEffect with .then() but no .catch() — if the fetch fails, the promise rejection is unhandled. Only authService.getCurrentUser has a try/catch (catches and returns null), but it is unused by any component.",
+  "ranked_files": [
+    { "id": "src/features/auth/LoginForm.tsx", "rank": 1, "confidence": 0.95, "reason": "handleSubmit has await loginUser() without try/catch — user sees no error on login failure" },
+    { "id": "src/features/comments/CommentForm.tsx", "rank": 2, "confidence": 0.95, "reason": "handleSubmit has await addComment() without try/catch — user sees no error on comment failure" },
+    { "id": "src/features/discussions/DiscussionList.tsx", "rank": 3, "confidence": 0.85, "reason": "useEffect fetchDiscussions().then() has no .catch() — silent failure on load" },
+    { "id": "src/features/teams/TeamList.tsx", "rank": 4, "confidence": 0.85, "reason": "useEffect fetchTeams().then() has no .catch() — silent failure on load" },
+    { "id": "src/features/users/UserProfile.tsx", "rank": 5, "confidence": 0.85, "reason": "useEffect fetchUser().then() has no .catch() — silent failure on load" }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/auth/LoginForm.tsx#LoginForm", "rank": 1, "confidence": 0.95 },
+    { "id": "src/features/comments/CommentForm.tsx#CommentForm", "rank": 2, "confidence": 0.95 },
+    { "id": "src/features/discussions/DiscussionList.tsx#DiscussionList", "rank": 3, "confidence": 0.85 },
+    { "id": "src/features/teams/TeamList.tsx#TeamList", "rank": 4, "confidence": 0.85 },
+    { "id": "src/features/users/UserProfile.tsx#UserProfile", "rank": 5, "confidence": 0.85 }
+  ],
+  "ranked_blocks": [
+    { "id": "Auth", "rank": 1, "confidence": 0.9 },
+    { "id": "Comments", "rank": 2, "confidence": 0.9 },
+    { "id": "Discussions", "rank": 3, "confidence": 0.8 },
+    { "id": "Teams", "rank": 4, "confidence": 0.8 },
+    { "id": "Users", "rank": 5, "confidence": 0.8 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/auth/LoginForm.tsx", "start_line": 10, "end_line": 25, "note": "handleSubmit calls await loginUser without try/catch" },
+    { "file_path": "src/features/comments/CommentForm.tsx", "start_line": 10, "end_line": 25, "note": "handleSubmit calls await addComment without try/catch" },
+    { "file_path": "src/features/discussions/DiscussionList.tsx", "start_line": 8, "end_line": 15, "note": "useEffect with .then() but no .catch()" },
+    { "file_path": "src/features/teams/TeamList.tsx", "start_line": 8, "end_line": 15, "note": "useEffect with .then() but no .catch()" }
+  ],
+  "confidence": 0.9,
+  "used_blockgraph": false
+}

@@ -1,0 +1,156 @@
+{
+  "id": "fixture-shared-dep-impact",
+  "module": "access-accuracy",
+  "title": "Shared Dependency Change Impact",
+  "description": "Identify all modules that depend on the shared API client and would be affected by a change to its interface or behavior.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "impact_analysis",
+    "prompt": "The shared API client (src/lib/apiClient.ts) needs a breaking change to its request method signatures. Identify every feature module and service function that directly depends on apiClient, and rank them by how severely they would be affected.",
+    "changed_surface": "src/lib/apiClient.ts method signatures"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/commentService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/teamService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/users/userService.ts",
+        "weight": 3,
+        "required": true
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts#loginUser",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts#logoutUser",
+        "weight": 1
+      },
+      {
+        "id": "src/features/auth/authService.ts#getCurrentUser",
+        "weight": 1
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#createDiscussion",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts#addComment",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/commentService.ts#fetchComments",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts#fetchTeams",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/teamService.ts#createTeam",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts#fetchUser",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/users/userService.ts#updateUser",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Shared API Client",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Auth",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "Discussions",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "Comments",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "Teams",
+        "weight": 2
+      },
+      {
+        "id": "Users",
+        "weight": 2
+      }
+    ],
+    "must_not_include": {
+      "files": [
+        "src/utils/helpers.ts",
+        "src/testing/testUtils.ts",
+        "src/components/ui/Button.tsx"
+      ]
+    }
+  },
+  "tags": [
+    "shared-dep",
+    "api-client",
+    "impact",
+    "cross-cutting"
+  ]
+}

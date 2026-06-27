@@ -1,0 +1,27 @@
+{
+  "task_id": "fixture-component-prop-trace",
+  "condition": "no_graph",
+  "answer": "DiscussionList fetches data from the API and renders it. The discussionService has the fetch function and apiClient handles the HTTP call.",
+  "ranked_files": [
+    { "id": "src/features/discussions/DiscussionList.tsx", "rank": 1, "confidence": 0.8 },
+    { "id": "src/features/discussions/discussionService.ts", "rank": 2, "confidence": 0.7 },
+    { "id": "src/lib/apiClient.ts", "rank": 3, "confidence": 0.6 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/discussions/DiscussionList.tsx#DiscussionList", "rank": 1, "confidence": 0.8 },
+    { "id": "src/features/discussions/discussionService.ts#fetchDiscussions", "rank": 2, "confidence": 0.7 }
+  ],
+  "ranked_blocks": [
+    { "id": "Discussions", "rank": 1, "confidence": 0.8 }
+  ],
+  "predicted_flow_order": [
+    "src/features/discussions/DiscussionList.tsx#DiscussionList",
+    "src/features/discussions/discussionService.ts#fetchDiscussions"
+  ],
+  "evidence": [
+    { "file_path": "src/features/discussions/DiscussionList.tsx", "start_line": 8, "end_line": 19 },
+    { "file_path": "src/features/discussions/discussionService.ts", "start_line": 5, "end_line": 12 }
+  ],
+  "confidence": 0.55,
+  "used_blockgraph": false
+}

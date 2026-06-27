@@ -1,0 +1,355 @@
+{
+  "cases": [
+    {
+      "id": "cal-diy-booking-notification",
+      "title": "Booking Created Notification Missing",
+      "description": "When a booking is created, the confirmation email is not sent. The booking is saved to the database correctly, but the user never receives the notification.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts",
+          "packages/features/notifications/sendNotification.ts"
+        ],
+        "entities": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts#createBooking.ts",
+          "packages/features/notifications/sendNotification.ts#sendNotification.ts"
+        ],
+        "blocks": ["Bookings", "Notifications"]
+      }
+    },
+    {
+      "id": "cal-diy-event-type-not-found",
+      "title": "Event Type 404 for Team Events",
+      "description": "Users report that some event types return 404 even though they exist in the database. The issue seems related to how event types are fetched for team events.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/features/eventtypes/lib/getPublicEvent.ts",
+          "packages/features/eventtypes/lib/getEventTypesPublic.ts"
+        ],
+        "entities": [
+          "packages/features/eventtypes/lib/getPublicEvent.ts#getPublicEvent.ts",
+          "packages/features/eventtypes/lib/getEventTypesPublic.ts#getEventTypesPublic"
+        ],
+        "blocks": ["Event Types"]
+      }
+    },
+    {
+      "id": "cal-diy-calendar-sync",
+      "title": "Calendar Sync Failure",
+      "description": "Google Calendar events are not syncing correctly. The API returns success but events don't appear in Cal.com.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/features/calendars/lib/CalendarManager.ts",
+          "packages/features/calendars/lib/getCalendarsEvents.ts"
+        ],
+        "entities": [
+          "packages/features/calendars/lib/CalendarManager.ts#CalendarManager.ts",
+          "packages/features/calendars/lib/getCalendarsEvents.ts#getCalendarsEvents.ts"
+        ],
+        "blocks": ["Calendars"]
+      }
+    },
+    {
+      "id": "cal-diy-availability-override",
+      "title": "Availability Override Ignored",
+      "description": "When a user sets override availability for a specific date, the override is ignored and the default schedule is used instead.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/features/availability/lib/getUserAvailability.ts",
+          "packages/features/availability/lib/getAggregatedAvailability/getAggregatedAvailability.ts"
+        ],
+        "entities": [
+          "packages/features/availability/lib/getUserAvailability.ts#getUserAvailability.ts",
+          "packages/features/availability/lib/getAggregatedAvailability/getAggregatedAvailability.ts#getAggregatedAvailability.ts"
+        ],
+        "blocks": ["Availability"]
+      }
+    },
+    {
+      "id": "cal-diy-booking-conflict",
+      "title": "Double Booking Race Condition",
+      "description": "Two users can book the same time slot simultaneously, creating double bookings. The conflict check seems to have a race condition.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/features/bookings/lib/conflictChecker/checkForConflicts.ts",
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts"
+        ],
+        "entities": [
+          "packages/features/bookings/lib/conflictChecker/checkForConflicts.ts#checkForConflicts",
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts#createBooking.ts"
+        ],
+        "blocks": ["Bookings"]
+      }
+    },
+    {
+      "id": "cal-diy-email-not-sent",
+      "title": "Booking Confirmation Email Missing",
+      "description": "Users report not receiving booking confirmation emails. The booking succeeds but no email is delivered.",
+      "type": "bug_localization",
+      "golden": {
+        "files": [
+          "packages/emails/email-manager.ts",
+          "packages/features/bookings/lib/handleConfirmation.ts"
+        ],
+        "entities": [
+          "packages/emails/email-manager.ts#email-manager.ts",
+          "packages/features/bookings/lib/handleConfirmation.ts#handleConfirmation"
+        ],
+        "blocks": ["Notifications", "Bookings"]
+      }
+    },
+    {
+      "id": "cal-diy-recurring-event",
+      "title": "Add Recurring Event Support",
+      "description": "A new feature needs to be added to support recurring events (e.g., weekly meetings). Where should the new code be inserted?",
+      "type": "feature_landing_zone",
+      "golden": {
+        "files": [
+          "packages/features/eventtypes/repositories/eventTypeRepository.ts",
+          "packages/features/eventtypes/repositories/eventTypeRepository.ts"
+        ],
+        "entities": [
+          "packages/features/eventtypes/repositories/eventTypeRepository.ts#EventTypeRepository"
+        ],
+        "blocks": ["Event Types"]
+      }
+    },
+    {
+      "id": "cal-diy-team-availability",
+      "title": "Add Team Availability Management",
+      "description": "Add a feature that allows team admins to view and manage team member availability in one place.",
+      "type": "feature_landing_zone",
+      "golden": {
+        "files": [
+          "packages/features/schedules/services/ScheduleService.ts",
+          "packages/features/schedules/repositories/ScheduleRepository.ts"
+        ],
+        "entities": [
+          "packages/features/schedules/services/ScheduleService.ts#ScheduleService.ts",
+          "packages/features/schedules/repositories/ScheduleRepository.ts#ScheduleRepository.ts"
+        ],
+        "blocks": ["Availability"]
+      }
+    },
+    {
+      "id": "cal-diy-booking-embed",
+      "title": "Add Booking Embed Widget",
+      "description": "Add support for embedding the booking flow in external websites via iframe.",
+      "type": "feature_landing_zone",
+      "golden": {
+        "files": [
+          "packages/embeds/embed-core/src/embed.ts",
+          "packages/embeds/embed-react/src/useEmbed.ts"
+        ],
+        "entities": [
+          "packages/embeds/embed-core/src/embed.ts#embed.ts",
+          "packages/embeds/embed-react/src/useEmbed.ts#useEmbed"
+        ],
+        "blocks": ["Embed"]
+      }
+    },
+    {
+      "id": "cal-diy-payment-integration",
+      "title": "Add Stripe Payment Integration",
+      "description": "Add Stripe payment integration for paid bookings. Where should the payment logic be inserted?",
+      "type": "feature_landing_zone",
+      "golden": {
+        "files": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts"
+        ],
+        "entities": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts#createBooking.ts"
+        ],
+        "blocks": ["Bookings"]
+      }
+    },
+    {
+      "id": "cal-diy-webhook-notifications",
+      "title": "Add Webhook Notifications",
+      "description": "Add webhook support so external services can receive booking notifications.",
+      "type": "feature_landing_zone",
+      "golden": {
+        "files": [
+          "packages/features/webhooks/lib/WebhookService.ts",
+          "packages/features/webhooks/lib/sendPayload.ts"
+        ],
+        "entities": [
+          "packages/features/webhooks/lib/WebhookService.ts#WebhookService",
+          "packages/features/webhooks/lib/sendPayload.ts#sendPayload.ts"
+        ],
+        "blocks": ["Notifications"]
+      }
+    },
+    {
+      "id": "cal-diy-auth-token-impact",
+      "title": "Auth Token Format Change Impact",
+      "description": "The authentication token format is being changed from JWT to opaque tokens. Which files and modules will be affected?",
+      "type": "impact_analysis",
+      "golden": {
+        "files": [
+          "packages/features/auth/lib/next-auth-options.ts",
+          "packages/features/auth/lib/getServerSession.ts",
+          "packages/trpc/server/createContext.ts"
+        ],
+        "entities": [
+          "packages/features/auth/lib/next-auth-options.ts#next-auth-options.ts",
+          "packages/features/auth/lib/getServerSession.ts#getServerSession.ts",
+          "packages/trpc/server/createContext.ts#createContext.ts"
+        ],
+        "blocks": ["Authentication", "tRPC API Layer"]
+      }
+    },
+    {
+      "id": "cal-diy-booking-model-change",
+      "title": "Booking Model Schema Change Impact",
+      "description": "The Booking model needs to add a new `status` field. What other files will need to be updated?",
+      "type": "impact_analysis",
+      "golden": {
+        "files": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts",
+          "packages/features/bookings/repositories/BookingRepository.ts",
+          "packages/features/bookings/lib/handleConfirmation.ts"
+        ],
+        "entities": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts#createBooking.ts",
+          "packages/features/bookings/repositories/BookingRepository.ts#BookingRepository",
+          "packages/features/bookings/lib/handleConfirmation.ts#handleConfirmation"
+        ],
+        "blocks": ["Bookings"]
+      }
+    },
+    {
+      "id": "cal-diy-api-middleware-change",
+      "title": "tRPC Middleware Refactor Impact",
+      "description": "The tRPC session middleware is being refactored. Which modules will be affected?",
+      "type": "impact_analysis",
+      "golden": {
+        "files": [
+          "packages/trpc/server/middlewares/sessionMiddleware.ts",
+          "packages/trpc/server/procedures/authedProcedure.ts",
+          "packages/trpc/server/createContext.ts"
+        ],
+        "entities": [
+          "packages/trpc/server/middlewares/sessionMiddleware.ts#sessionMiddleware.ts",
+          "packages/trpc/server/procedures/authedProcedure.ts#authedProcedure.ts",
+          "packages/trpc/server/createContext.ts#createContext.ts"
+        ],
+        "blocks": ["tRPC API Layer"]
+      }
+    },
+    {
+      "id": "cal-diy-calendar-provider-change",
+      "title": "Google Calendar API Upgrade Impact",
+      "description": "The Google Calendar API is being upgraded from v3 to v4. Which files need to be updated?",
+      "type": "impact_analysis",
+      "golden": {
+        "files": [
+          "packages/features/calendars/lib/CalendarManager.ts",
+          "packages/features/calendars/lib/getCalendarsEvents.ts"
+        ],
+        "entities": [
+          "packages/features/calendars/lib/CalendarManager.ts#CalendarManager.ts",
+          "packages/features/calendars/lib/getCalendarsEvents.ts#getCalendarsEvents.ts"
+        ],
+        "blocks": ["Calendars"]
+      }
+    },
+    {
+      "id": "cal-diy-booking-creation-flow",
+      "title": "Booking Creation Flow Trace",
+      "description": "Trace the complete flow of creating a booking, from API call to database save.",
+      "type": "cross_module_flow",
+      "golden": {
+        "files": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts",
+          "packages/features/bookings/lib/conflictChecker/checkForConflicts.ts",
+          "packages/features/bookings/lib/handleConfirmation.ts"
+        ],
+        "entities": [
+          "packages/features/bookings/lib/handleNewBooking/createBooking.ts#createBooking.ts",
+          "packages/features/bookings/lib/conflictChecker/checkForConflicts.ts#checkForConflicts",
+          "packages/features/bookings/lib/handleConfirmation.ts#handleConfirmation"
+        ],
+        "blocks": ["Bookings"]
+      }
+    },
+    {
+      "id": "cal-diy-auth-to-trpc-flow",
+      "title": "Auth to tRPC API Call Flow",
+      "description": "Trace the flow from user authentication to making a tRPC API call.",
+      "type": "cross_module_flow",
+      "golden": {
+        "files": [
+          "packages/features/auth/lib/getServerSession.ts",
+          "packages/trpc/server/createContext.ts",
+          "packages/trpc/server/middlewares/sessionMiddleware.ts"
+        ],
+        "entities": [
+          "packages/features/auth/lib/getServerSession.ts#getServerSession.ts",
+          "packages/trpc/server/createContext.ts#createContext.ts",
+          "packages/trpc/server/middlewares/sessionMiddleware.ts#sessionMiddleware.ts"
+        ],
+        "blocks": ["Authentication", "tRPC API Layer"]
+      }
+    },
+    {
+      "id": "cal-diy-event-type-creation-flow",
+      "title": "Event Type Creation Flow",
+      "description": "Trace the complete flow of creating a new event type, from UI to database.",
+      "type": "cross_module_flow",
+      "golden": {
+        "files": [
+          "packages/features/eventtypes/repositories/eventTypeRepository.ts",
+          "packages/features/eventtypes/components/CreateEventTypeForm.tsx"
+        ],
+        "entities": [
+          "packages/features/eventtypes/repositories/eventTypeRepository.ts#EventTypeRepository",
+          "packages/features/eventtypes/components/CreateEventTypeForm.tsx#CreateEventTypeForm"
+        ],
+        "blocks": ["Event Types"]
+      }
+    },
+    {
+      "id": "cal-diy-embed-loading-flow",
+      "title": "Embed Widget Loading Flow",
+      "description": "Trace how the embed widget loads and initializes.",
+      "type": "cross_module_flow",
+      "golden": {
+        "files": [
+          "packages/embeds/embed-core/src/embed.ts",
+          "packages/embeds/embed-core/src/embed-iframe.ts",
+          "packages/embeds/embed-react/src/useEmbed.ts"
+        ],
+        "entities": [
+          "packages/embeds/embed-core/src/embed.ts#embed.ts",
+          "packages/embeds/embed-core/src/embed-iframe.ts#embed-iframe.ts",
+          "packages/embeds/embed-react/src/useEmbed.ts#useEmbed"
+        ],
+        "blocks": ["Embed"]
+      }
+    },
+    {
+      "id": "cal-diy-notification-delivery-flow",
+      "title": "Notification Delivery Flow",
+      "description": "Trace the flow of how a booking notification is delivered to the user.",
+      "type": "cross_module_flow",
+      "golden": {
+        "files": [
+          "packages/features/notifications/sendNotification.ts",
+          "packages/emails/email-manager.ts",
+          "packages/features/webhooks/lib/sendPayload.ts"
+        ],
+        "entities": [
+          "packages/features/notifications/sendNotification.ts#sendNotification.ts",
+          "packages/emails/email-manager.ts#email-manager.ts",
+          "packages/features/webhooks/lib/sendPayload.ts#sendPayload.ts"
+        ],
+        "blocks": ["Notifications"]
+      }
+    }
+  ]
+}

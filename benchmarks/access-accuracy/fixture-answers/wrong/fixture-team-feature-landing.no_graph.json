@@ -1,0 +1,26 @@
+{
+  "task_id": "fixture-team-feature-landing",
+  "condition": "no_graph",
+  "answer": "The Auth module should be extended for team invitation approval since invitations require authentication. LoginForm and authService would need new fields for invitation tokens. The DiscussionList could display pending invitations alongside discussions.",
+  "ranked_files": [
+    { "id": "src/features/auth/authService.ts", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/auth/LoginForm.tsx", "rank": 2, "confidence": 0.4 },
+    { "id": "src/features/discussions/DiscussionList.tsx", "rank": 3, "confidence": 0.3 },
+    { "id": "src/hooks/useAuth.ts", "rank": 4, "confidence": 0.3 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/auth/authService.ts#loginUser", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/auth/LoginForm.tsx#LoginForm", "rank": 2, "confidence": 0.4 },
+    { "id": "src/features/discussions/DiscussionList.tsx#DiscussionList", "rank": 3, "confidence": 0.3 }
+  ],
+  "ranked_blocks": [
+    { "id": "Auth", "rank": 1, "confidence": 0.5 },
+    { "id": "Discussions", "rank": 2, "confidence": 0.3 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/auth/authService.ts", "start_line": 1, "end_line": 20 },
+    { "file_path": "src/features/auth/LoginForm.tsx", "start_line": 1, "end_line": 25 }
+  ],
+  "confidence": 0.2,
+  "used_blockgraph": false
+}

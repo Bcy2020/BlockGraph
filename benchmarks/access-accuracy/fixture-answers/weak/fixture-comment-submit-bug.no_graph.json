@@ -1,0 +1,35 @@
+{
+  "task_id": "fixture-comment-submit-bug",
+  "condition": "no_graph",
+  "answer": "The CommentForm component is where comments are submitted.",
+  "ranked_files": [
+    {
+      "id": "src/features/comments/CommentForm.tsx",
+      "rank": 1,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/comments/CommentForm.tsx#CommentForm",
+      "rank": 1,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Comments",
+      "rank": 1,
+      "confidence": 0.6
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 1,
+      "end_line": 26
+    }
+  ],
+  "confidence": 0.4,
+  "used_blockgraph": false
+}

@@ -1,0 +1,119 @@
+{
+  "id": "fixture-login-flow",
+  "module": "access-accuracy",
+  "title": "Login Form Submit Path",
+  "description": "Trace the activation path when a user submits the login form, from UI through auth service and shared API/client layers.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "entrypoint_path_location",
+    "prompt": "In the fixture app, a user submits the login form. Identify the most relevant files/entities/modules activated in order, from UI submit through auth service and shared API/client layers.",
+    "entrypoint_hint": "LoginForm.tsx handleSubmit"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/features/auth/LoginForm.tsx",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/hooks/useAuth.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/types/user.ts",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/features/auth/LoginForm.tsx#LoginForm",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts#loginUser",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/hooks/useAuth.ts#useAuth",
+        "weight": 2
+      },
+      {
+        "id": "src/types/user.ts#User",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Auth",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Shared API Client",
+        "weight": 2,
+        "required": true
+      }
+    ],
+    "expected_flow_order": [
+      "src/features/auth/LoginForm.tsx#LoginForm",
+      "src/features/auth/authService.ts#loginUser",
+      "src/lib/apiClient.ts#apiClient"
+    ],
+    "acceptable_alternatives": {
+      "files": {
+        "src/features/auth/LoginForm.tsx": [
+          "src/components/ui/Button.tsx",
+          "src/components/ui/Input.tsx"
+        ]
+      },
+      "entities": {
+        "src/features/auth/LoginForm.tsx#LoginForm": [
+          "src/components/ui/Button.tsx#Button",
+          "src/components/ui/Input.tsx#Input"
+        ]
+      }
+    },
+    "must_not_include": {
+      "files": [
+        "src/features/teams/TeamList.tsx",
+        "src/features/discussions/DiscussionList.tsx"
+      ]
+    }
+  },
+  "tags": [
+    "auth",
+    "ui",
+    "entrypoint",
+    "core-path"
+  ]
+}

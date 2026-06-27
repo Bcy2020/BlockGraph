@@ -1,0 +1,40 @@
+{
+  "task_id": "fixture-comment-submit-bug",
+  "condition": "no_graph",
+  "answer": "The auth service is responsible for comment submission issues.",
+  "ranked_files": [
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 1,
+      "confidence": 0.4
+    },
+    {
+      "id": "src/features/auth/LoginForm.tsx",
+      "rank": 2,
+      "confidence": 0.3
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/auth/authService.ts#loginUser",
+      "rank": 1,
+      "confidence": 0.4
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Auth",
+      "rank": 1,
+      "confidence": 0.3
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/auth/authService.ts",
+      "start_line": 1,
+      "end_line": 20
+    }
+  ],
+  "confidence": 0.2,
+  "used_blockgraph": false
+}

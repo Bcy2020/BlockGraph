@@ -1,0 +1,49 @@
+{
+  "task_id": "fixture-login-flow",
+  "condition": "no_graph",
+  "answer": "The teams feature handles login through TeamList and teamService.",
+  "ranked_files": [
+    {
+      "id": "src/features/teams/TeamList.tsx",
+      "rank": 1,
+      "confidence": 0.5
+    },
+    {
+      "id": "src/features/teams/teamService.ts",
+      "rank": 2,
+      "confidence": 0.4
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/teams/TeamList.tsx#TeamList",
+      "rank": 1,
+      "confidence": 0.5
+    },
+    {
+      "id": "src/features/teams/teamService.ts#fetchTeams",
+      "rank": 2,
+      "confidence": 0.4
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Teams",
+      "rank": 1,
+      "confidence": 0.4
+    }
+  ],
+  "predicted_flow_order": [
+    "src/features/teams/TeamList.tsx#TeamList",
+    "src/features/teams/teamService.ts#fetchTeams"
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/teams/TeamList.tsx",
+      "start_line": 1,
+      "end_line": 19
+    }
+  ],
+  "confidence": 0.3,
+  "used_blockgraph": false
+}

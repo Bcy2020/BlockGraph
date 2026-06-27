@@ -1,0 +1,138 @@
+{
+  "id": "fixture-auth-impact",
+  "module": "access-accuracy",
+  "title": "Auth Token Change Impact",
+  "description": "Analyze the impact of changing the auth token attachment behavior across the application.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "impact_analysis",
+    "prompt": "If the auth token attachment behavior changes, which files, entities, modules, and user flows are likely affected?",
+    "changed_surface": "src/features/auth/authService.ts token attachment"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/features/auth/authService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/hooks/useAuth.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/features/auth/authService.ts#loginUser",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/hooks/useAuth.ts#useAuth",
+        "weight": 2
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts#addComment",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts#fetchTeams",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts#fetchUser",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Auth",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Shared API Client",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Discussions",
+        "weight": 1
+      },
+      {
+        "id": "Comments",
+        "weight": 1
+      },
+      {
+        "id": "Teams",
+        "weight": 1
+      },
+      {
+        "id": "Users",
+        "weight": 1
+      }
+    ],
+    "acceptable_alternatives": {
+      "files": {
+        "src/features/auth/authService.ts": ["src/features/auth/LoginForm.tsx"]
+      },
+      "entities": {
+        "src/features/auth/authService.ts#loginUser": ["src/features/auth/authService.ts#logoutUser", "src/features/auth/authService.ts#getCurrentUser"]
+      }
+    },
+    "must_not_include": {
+      "files": [
+        "src/utils/helpers.ts",
+        "src/testing/testUtils.ts"
+      ]
+    }
+  },
+  "tags": [
+    "auth",
+    "impact",
+    "cross-cutting",
+    "api-client"
+  ]
+}

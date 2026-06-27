@@ -1,0 +1,24 @@
+{
+  "task_id": "fixture-auth-impact",
+  "condition": "no_graph",
+  "answer": "Changing the auth token would affect authService and apiClient. The useAuth hook might also be impacted. Other services probably use apiClient too but I am not sure which ones.",
+  "ranked_files": [
+    { "id": "src/features/auth/authService.ts", "rank": 1, "confidence": 0.7 },
+    { "id": "src/lib/apiClient.ts", "rank": 2, "confidence": 0.7 },
+    { "id": "src/hooks/useAuth.ts", "rank": 3, "confidence": 0.5 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/auth/authService.ts#loginUser", "rank": 1, "confidence": 0.7 },
+    { "id": "src/lib/apiClient.ts#apiClient", "rank": 2, "confidence": 0.6 }
+  ],
+  "ranked_blocks": [
+    { "id": "Auth", "rank": 1, "confidence": 0.7 },
+    { "id": "Shared API Client", "rank": 2, "confidence": 0.6 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/auth/authService.ts", "start_line": 1, "end_line": 20 },
+    { "file_path": "src/lib/apiClient.ts", "start_line": 1, "end_line": 20 }
+  ],
+  "confidence": 0.5,
+  "used_blockgraph": false
+}

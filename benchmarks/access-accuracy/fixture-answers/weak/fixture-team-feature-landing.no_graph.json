@@ -1,0 +1,22 @@
+{
+  "task_id": "fixture-team-feature-landing",
+  "condition": "no_graph",
+  "answer": "The Teams module should be extended for invitation approval. teamService and TeamList would need changes. The apiClient is used for HTTP calls.",
+  "ranked_files": [
+    { "id": "src/features/teams/teamService.ts", "rank": 1, "confidence": 0.7 },
+    { "id": "src/features/teams/TeamList.tsx", "rank": 2, "confidence": 0.7 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/teams/teamService.ts#fetchTeams", "rank": 1, "confidence": 0.7 },
+    { "id": "src/features/teams/TeamList.tsx#TeamList", "rank": 2, "confidence": 0.6 }
+  ],
+  "ranked_blocks": [
+    { "id": "Teams", "rank": 1, "confidence": 0.7 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/teams/teamService.ts", "start_line": 1, "end_line": 12 },
+    { "file_path": "src/features/teams/TeamList.tsx", "start_line": 1, "end_line": 19 }
+  ],
+  "confidence": 0.5,
+  "used_blockgraph": false
+}

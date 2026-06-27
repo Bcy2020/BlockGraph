@@ -10,6 +10,7 @@ import { compareRuns } from "../src/benchmark/compare.js";
 import { createFixtureAdapter } from "../src/benchmark/adapters/fixture.js";
 import { createFileAdapter } from "../src/benchmark/adapters/file.js";
 import { createCommandAdapter } from "../src/benchmark/adapters/command.js";
+import { createOpenModelAdapter } from "../src/benchmark/adapters/openmodel.js";
 import type { GraphCondition, AgentAdapter } from "../src/benchmark/schema.js";
 
 // ── Argument Parsing ───────────────────────────────────────────────────────
@@ -29,6 +30,8 @@ interface CliArgs {
   candidateDir?: string;
   timeoutMs: number;
   model?: string;
+  apiKey?: string;
+  baseUrl?: string;
   dryRun: boolean;
   failOnMismatch: boolean;
 }
@@ -110,6 +113,14 @@ function parseArgs(argv: string[]): CliArgs {
         break;
       case "--model":
         args.model = next!;
+        i++;
+        break;
+      case "--api-key":
+        args.apiKey = next!;
+        i++;
+        break;
+      case "--base-url":
+        args.baseUrl = next!;
         i++;
         break;
       case "--dry-run":
@@ -198,6 +209,20 @@ function createAdapter(args: CliArgs): AgentAdapter {
         process.exit(1);
       }
       return createCommandAdapter({ command: args.command });
+    case "openmodel":
+      if (!args.apiKey) {
+        console.error("Error: --api-key is required for openmodel adapter");
+        process.exit(1);
+      }
+      if (!args.model) {
+        console.error("Error: --model is required for openmodel adapter");
+        process.exit(1);
+      }
+      return createOpenModelAdapter({
+        apiKey: args.apiKey,
+        model: args.model,
+        baseUrl: args.baseUrl ?? "https://api.openmodel.ai",
+      });
     default:
       console.error(`Error: Unknown adapter: ${args.adapter}`);
       process.exit(1);

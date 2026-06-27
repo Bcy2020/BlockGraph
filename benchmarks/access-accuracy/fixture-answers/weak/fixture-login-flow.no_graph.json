@@ -1,0 +1,43 @@
+{
+  "task_id": "fixture-login-flow",
+  "condition": "no_graph",
+  "answer": "LoginForm and authService are involved in the login flow.",
+  "ranked_files": [
+    {
+      "id": "src/features/auth/LoginForm.tsx",
+      "rank": 1,
+      "confidence": 0.8
+    },
+    {
+      "id": "src/features/auth/authService.ts",
+      "rank": 2,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/auth/LoginForm.tsx#LoginForm",
+      "rank": 1,
+      "confidence": 0.8
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Auth",
+      "rank": 1,
+      "confidence": 0.7
+    }
+  ],
+  "predicted_flow_order": [
+    "src/features/auth/LoginForm.tsx#LoginForm"
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/auth/LoginForm.tsx",
+      "start_line": 1,
+      "end_line": 25
+    }
+  ],
+  "confidence": 0.5,
+  "used_blockgraph": false
+}

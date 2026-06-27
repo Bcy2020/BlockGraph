@@ -1,0 +1,26 @@
+{
+  "task_id": "fixture-api-endpoint-map",
+  "condition": "no_graph",
+  "answer": "The app uses apiClient for HTTP calls. I found the auth login endpoint and the discussions fetch endpoint. There are probably more endpoints in the other service files.",
+  "ranked_files": [
+    { "id": "src/lib/apiClient.ts", "rank": 1, "confidence": 0.7 },
+    { "id": "src/features/auth/authService.ts", "rank": 2, "confidence": 0.7 },
+    { "id": "src/features/auth/LoginForm.tsx", "rank": 3, "confidence": 0.6 },
+    { "id": "src/features/discussions/discussionService.ts", "rank": 4, "confidence": 0.6 }
+  ],
+  "ranked_entities": [
+    { "id": "src/lib/apiClient.ts#apiClient", "rank": 1, "confidence": 0.7 },
+    { "id": "src/features/auth/authService.ts#loginUser", "rank": 2, "confidence": 0.7 },
+    { "id": "src/features/discussions/discussionService.ts#fetchDiscussions", "rank": 3, "confidence": 0.5 }
+  ],
+  "ranked_blocks": [
+    { "id": "Shared API Client", "rank": 1, "confidence": 0.7 },
+    { "id": "Auth", "rank": 2, "confidence": 0.6 }
+  ],
+  "evidence": [
+    { "file_path": "src/lib/apiClient.ts", "start_line": 1, "end_line": 26 },
+    { "file_path": "src/features/auth/authService.ts", "start_line": 5, "end_line": 15 }
+  ],
+  "confidence": 0.5,
+  "used_blockgraph": false
+}

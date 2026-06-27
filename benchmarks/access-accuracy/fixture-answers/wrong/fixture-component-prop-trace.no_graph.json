@@ -1,0 +1,30 @@
+{
+  "task_id": "fixture-component-prop-trace",
+  "condition": "no_graph",
+  "answer": "The data flow for the Teams feature: TeamList component mounts and calls teamService.fetchTeams(), which uses the HTTP client to GET /teams. The Team type defines the response shape with id and name fields.",
+  "ranked_files": [
+    { "id": "src/features/teams/TeamList.tsx", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/teams/teamService.ts", "rank": 2, "confidence": 0.5 },
+    { "id": "src/types/team.ts", "rank": 3, "confidence": 0.4 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/teams/TeamList.tsx#TeamList", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/teams/teamService.ts#fetchTeams", "rank": 2, "confidence": 0.5 },
+    { "id": "src/types/team.ts#Team", "rank": 3, "confidence": 0.4 }
+  ],
+  "ranked_blocks": [
+    { "id": "Teams", "rank": 1, "confidence": 0.5 }
+  ],
+  "predicted_flow_order": [
+    "src/features/teams/TeamList.tsx#TeamList",
+    "src/features/teams/teamService.ts#fetchTeams",
+    "src/types/team.ts#Team"
+  ],
+  "evidence": [
+    { "file_path": "src/features/teams/TeamList.tsx", "start_line": 1, "end_line": 19 },
+    { "file_path": "src/features/teams/teamService.ts", "start_line": 1, "end_line": 12 },
+    { "file_path": "src/types/team.ts", "start_line": 1, "end_line": 5 }
+  ],
+  "confidence": 0.25,
+  "used_blockgraph": false
+}

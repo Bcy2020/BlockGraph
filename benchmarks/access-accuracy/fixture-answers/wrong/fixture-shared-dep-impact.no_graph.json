@@ -1,0 +1,25 @@
+{
+  "task_id": "fixture-shared-dep-impact",
+  "condition": "no_graph",
+  "answer": "If apiClient changes, the helpers.ts and testUtils.ts files would be most affected since they handle data formatting and test setup. The useAuth hook also depends on the API layer for token management.",
+  "ranked_files": [
+    { "id": "src/utils/helpers.ts", "rank": 1, "confidence": 0.5 },
+    { "id": "src/testing/testUtils.ts", "rank": 2, "confidence": 0.4 },
+    { "id": "src/hooks/useAuth.ts", "rank": 3, "confidence": 0.3 },
+    { "id": "src/components/ui/Button.tsx", "rank": 4, "confidence": 0.2 }
+  ],
+  "ranked_entities": [
+    { "id": "src/utils/helpers.ts#formatDate", "rank": 1, "confidence": 0.5 },
+    { "id": "src/testing/testUtils.ts#mockApi", "rank": 2, "confidence": 0.4 },
+    { "id": "src/hooks/useAuth.ts#useAuth", "rank": 3, "confidence": 0.3 }
+  ],
+  "ranked_blocks": [
+    { "id": "Shared Types", "rank": 1, "confidence": 0.4 }
+  ],
+  "evidence": [
+    { "file_path": "src/utils/helpers.ts", "start_line": 1, "end_line": 8 },
+    { "file_path": "src/testing/testUtils.ts", "start_line": 1, "end_line": 12 }
+  ],
+  "confidence": 0.15,
+  "used_blockgraph": false
+}

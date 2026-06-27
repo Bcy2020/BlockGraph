@@ -1,0 +1,87 @@
+{
+  "task_id": "fixture-comment-submit-bug",
+  "condition": "no_graph",
+  "answer": "The bug likely originates in commentService.addComment or the discussion ID binding in CommentForm. The comment may be submitted without a valid discussionId, or the API call may not associate the comment correctly.",
+  "ranked_files": [
+    {
+      "id": "src/features/comments/CommentForm.tsx",
+      "rank": 1,
+      "confidence": 0.9,
+      "reason": "Form component that submits comments — check discussionId binding"
+    },
+    {
+      "id": "src/features/comments/commentService.ts",
+      "rank": 2,
+      "confidence": 0.9,
+      "reason": "addComment function — check API payload includes discussionId"
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts",
+      "rank": 3,
+      "confidence": 0.7,
+      "reason": "fetchDiscussions — verify discussions load correctly"
+    },
+    {
+      "id": "src/types/comment.ts",
+      "rank": 4,
+      "confidence": 0.6,
+      "reason": "Comment type definition — check discussionId field"
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/features/comments/CommentForm.tsx#CommentForm",
+      "rank": 1,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/comments/commentService.ts#addComment",
+      "rank": 2,
+      "confidence": 0.9
+    },
+    {
+      "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+      "rank": 3,
+      "confidence": 0.7
+    },
+    {
+      "id": "src/types/comment.ts#Comment",
+      "rank": 4,
+      "confidence": 0.6
+    }
+  ],
+  "ranked_blocks": [
+    {
+      "id": "Comments",
+      "rank": 1,
+      "confidence": 0.9
+    },
+    {
+      "id": "Discussions",
+      "rank": 2,
+      "confidence": 0.7
+    }
+  ],
+  "evidence": [
+    {
+      "file_path": "src/features/comments/CommentForm.tsx",
+      "start_line": 1,
+      "end_line": 26,
+      "note": "CommentForm handleSubmit calling addComment"
+    },
+    {
+      "file_path": "src/features/comments/commentService.ts",
+      "start_line": 1,
+      "end_line": 12,
+      "note": "addComment using apiClient.post"
+    },
+    {
+      "file_path": "src/types/comment.ts",
+      "start_line": 1,
+      "end_line": 7,
+      "note": "Comment interface with discussionId field"
+    }
+  ],
+  "confidence": 0.85,
+  "used_blockgraph": false
+}

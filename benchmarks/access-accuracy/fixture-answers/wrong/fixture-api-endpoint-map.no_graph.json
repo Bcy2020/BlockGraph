@@ -1,0 +1,25 @@
+{
+  "task_id": "fixture-api-endpoint-map",
+  "condition": "no_graph",
+  "answer": "The main API endpoints are in teamService which handles GET /teams and POST /teams. The userService also has endpoints for user management. These are the primary HTTP calls in the application.",
+  "ranked_files": [
+    { "id": "src/features/teams/teamService.ts", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/teams/TeamList.tsx", "rank": 2, "confidence": 0.4 },
+    { "id": "src/features/users/userService.ts", "rank": 3, "confidence": 0.4 },
+    { "id": "src/features/users/UserProfile.tsx", "rank": 4, "confidence": 0.3 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/teams/teamService.ts#fetchTeams", "rank": 1, "confidence": 0.5 },
+    { "id": "src/features/users/userService.ts#fetchUser", "rank": 2, "confidence": 0.4 }
+  ],
+  "ranked_blocks": [
+    { "id": "Teams", "rank": 1, "confidence": 0.5 },
+    { "id": "Users", "rank": 2, "confidence": 0.4 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/teams/teamService.ts", "start_line": 1, "end_line": 12 },
+    { "file_path": "src/features/users/userService.ts", "start_line": 1, "end_line": 12 }
+  ],
+  "confidence": 0.2,
+  "used_blockgraph": false
+}

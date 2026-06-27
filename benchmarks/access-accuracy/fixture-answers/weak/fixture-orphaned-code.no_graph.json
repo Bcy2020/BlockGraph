@@ -1,0 +1,29 @@
+{
+  "task_id": "fixture-orphaned-code",
+  "condition": "no_graph",
+  "answer": "The helpers.ts file seems unused. Also some service methods might not be called.",
+  "ranked_files": [
+    {
+      "id": "src/utils/helpers.ts",
+      "rank": 1,
+      "confidence": 0.7
+    }
+  ],
+  "ranked_entities": [
+    {
+      "id": "src/utils/helpers.ts#formatDate",
+      "rank": 1,
+      "confidence": 0.6
+    }
+  ],
+  "ranked_blocks": [],
+  "evidence": [
+    {
+      "file_path": "src/utils/helpers.ts",
+      "start_line": 1,
+      "end_line": 8
+    }
+  ],
+  "confidence": 0.4,
+  "used_blockgraph": false
+}

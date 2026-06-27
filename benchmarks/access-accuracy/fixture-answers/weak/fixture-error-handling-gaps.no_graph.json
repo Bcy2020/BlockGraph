@@ -1,0 +1,20 @@
+{
+  "task_id": "fixture-error-handling-gaps",
+  "condition": "no_graph",
+  "answer": "LoginForm and CommentForm probably lack error handling since they have async submit handlers.",
+  "ranked_files": [
+    { "id": "src/features/auth/LoginForm.tsx", "rank": 1, "confidence": 0.7 },
+    { "id": "src/features/comments/CommentForm.tsx", "rank": 2, "confidence": 0.7 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/auth/LoginForm.tsx#LoginForm", "rank": 1, "confidence": 0.7 }
+  ],
+  "ranked_blocks": [
+    { "id": "Auth", "rank": 1, "confidence": 0.6 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/auth/LoginForm.tsx", "start_line": 10, "end_line": 25 }
+  ],
+  "confidence": 0.4,
+  "used_blockgraph": false
+}

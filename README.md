@@ -300,6 +300,10 @@ pnpm benchmark --adapter command --conditions block_graph_with_flows \
 
 See [benchmarks/access-accuracy/README.md](benchmarks/access-accuracy/README.md) for full documentation.
 
+### Real Fix Probe
+
+A small real-world repair probe was run on `benchmarks/repos/cal-diy-web` for a video fallback bug. Both the baseline and BlockGraph-guided agents produced the same one-line fix, while the BlockGraph-guided path used the graph to reach the video module and `videoClient.ts` more directly. The total run cost was not lower in that probe because the BlockGraph-guided agent performed more post-fix validation; future repair probes should report localization, patching, and validation costs separately.
+
 Benchmark test coverage:
 - `tests/benchmark-schema.test.ts` — Schema validation and case loading (26 tests)
 - `tests/benchmark-access-accuracy.test.ts` — Evaluator scoring (16 tests)

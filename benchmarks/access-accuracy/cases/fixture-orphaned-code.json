@@ -1,0 +1,131 @@
+{
+  "id": "fixture-orphaned-code",
+  "module": "access-accuracy",
+  "title": "Orphaned Code Detection",
+  "description": "Identify exported functions, utilities, and components that are defined but never imported or called by any other file in the codebase.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "bug_localization",
+    "prompt": "Several exported functions and utilities in this codebase are never imported or called by any other file. Identify all orphaned exports — functions, components, or utilities that exist but are not wired into the application.",
+    "symptom": "Dead code accumulating in the codebase"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/utils/helpers.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/testing/testUtils.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts",
+        "weight": 2
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/utils/helpers.ts#formatDate",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/utils/helpers.ts#formatError",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/testing/testUtils.ts#mockApi",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/testing/testUtils.ts#createMockUser",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/auth/authService.ts#logoutUser",
+        "weight": 2
+      },
+      {
+        "id": "src/features/auth/authService.ts#getCurrentUser",
+        "weight": 2
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#createDiscussion",
+        "weight": 1
+      },
+      {
+        "id": "src/features/comments/commentService.ts#fetchComments",
+        "weight": 1
+      },
+      {
+        "id": "src/features/teams/teamService.ts#createTeam",
+        "weight": 1
+      },
+      {
+        "id": "src/features/users/userService.ts#updateUser",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Shared Types",
+        "weight": 1
+      },
+      {
+        "id": "Auth",
+        "weight": 2
+      }
+    ],
+    "acceptable_alternatives": {
+      "files": {
+        "src/utils/helpers.ts": [
+          "src/config/paths.ts"
+        ]
+      },
+      "entities": {
+        "src/utils/helpers.ts#formatDate": [
+          "src/config/paths.ts#PATHS"
+        ]
+      }
+    },
+    "scoring_mode": "any_hit"
+  },
+  "tags": [
+    "dead-code",
+    "maintenance",
+    "cleanup"
+  ]
+}

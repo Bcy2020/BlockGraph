@@ -1,0 +1,23 @@
+{
+  "task_id": "fixture-discussion-cross-flow",
+  "condition": "no_graph",
+  "answer": "The DiscussionList component loads discussions and the CommentForm lets users add comments. Both use some shared service layer.",
+  "ranked_files": [
+    { "id": "src/features/discussions/DiscussionList.tsx", "rank": 1, "confidence": 0.8 },
+    { "id": "src/features/comments/CommentForm.tsx", "rank": 2, "confidence": 0.7 }
+  ],
+  "ranked_entities": [
+    { "id": "src/features/discussions/DiscussionList.tsx#DiscussionList", "rank": 1, "confidence": 0.8 },
+    { "id": "src/features/comments/CommentForm.tsx#CommentForm", "rank": 2, "confidence": 0.7 }
+  ],
+  "ranked_blocks": [
+    { "id": "Discussions", "rank": 1, "confidence": 0.8 },
+    { "id": "Comments", "rank": 2, "confidence": 0.6 }
+  ],
+  "evidence": [
+    { "file_path": "src/features/discussions/DiscussionList.tsx", "start_line": 1, "end_line": 19 },
+    { "file_path": "src/features/comments/CommentForm.tsx", "start_line": 1, "end_line": 26 }
+  ],
+  "confidence": 0.5,
+  "used_blockgraph": false
+}

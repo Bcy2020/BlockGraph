@@ -1,0 +1,126 @@
+{
+  "id": "fixture-discussion-cross-flow",
+  "module": "access-accuracy",
+  "title": "Discussion and Comment Cross-Module Flow",
+  "description": "Recover the cross-module path for viewing discussions and interacting with related comments.",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "cross_module_flow_recovery",
+    "prompt": "Recover the cross-module path for viewing discussions and interacting with related comments. Which modules and files are involved?"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/features/discussions/DiscussionList.tsx",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/CommentForm.tsx",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/commentService.ts",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts",
+        "weight": 2
+      },
+      {
+        "id": "src/types/discussion.ts",
+        "weight": 1
+      },
+      {
+        "id": "src/types/comment.ts",
+        "weight": 1
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/discussionService.ts#fetchDiscussions",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/CommentForm.tsx#CommentForm",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/commentService.ts#addComment",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/lib/apiClient.ts#apiClient",
+        "weight": 2
+      },
+      {
+        "id": "src/types/discussion.ts#Discussion",
+        "weight": 1
+      },
+      {
+        "id": "src/types/comment.ts#Comment",
+        "weight": 1
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Discussions",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Comments",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Shared API Client",
+        "weight": 2
+      }
+    ],
+    "acceptable_alternatives": {
+      "entities": {
+        "src/features/discussions/discussionService.ts#fetchDiscussions": ["src/features/discussions/discussionService.ts#createDiscussion"],
+        "src/features/comments/commentService.ts#addComment": ["src/features/comments/commentService.ts#fetchComments"]
+      }
+    },
+    "must_not_include": {
+      "files": [
+        "src/features/teams/TeamList.tsx",
+        "src/features/auth/LoginForm.tsx"
+      ]
+    }
+  },
+  "tags": [
+    "discussions",
+    "comments",
+    "cross-module",
+    "flow"
+  ]
+}

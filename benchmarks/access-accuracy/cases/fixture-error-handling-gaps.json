@@ -1,0 +1,115 @@
+{
+  "id": "fixture-error-handling-gaps",
+  "module": "access-accuracy",
+  "title": "Error Handling Gap Analysis",
+  "description": "Identify async operations (API calls, event handlers, useEffect callbacks) that lack proper error handling (try/catch).",
+  "repo": {
+    "kind": "fixture",
+    "path": "fixtures/ts-react-complex"
+  },
+  "task": {
+    "type": "bug_localization",
+    "prompt": "Several async operations in this codebase lack try/catch error handling. If an API call fails, the user sees no error feedback. Identify every file with unhandled async operations — form submit handlers and useEffect callbacks that call API functions without error handling.",
+    "symptom": "Silent failures when API calls reject"
+  },
+  "allowed_conditions": [
+    "no_graph",
+    "code_facts_only",
+    "block_graph",
+    "block_graph_with_flows",
+    "stale_or_incomplete_graph",
+    "block_graph_mcp"
+  ],
+  "golden": {
+    "expected_files": [
+      {
+        "id": "src/features/auth/LoginForm.tsx",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/CommentForm.tsx",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/DiscussionList.tsx",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/TeamList.tsx",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/users/UserProfile.tsx",
+        "weight": 2,
+        "required": true
+      }
+    ],
+    "expected_entities": [
+      {
+        "id": "src/features/auth/LoginForm.tsx#LoginForm",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/comments/CommentForm.tsx#CommentForm",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "src/features/discussions/DiscussionList.tsx#DiscussionList",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/teams/TeamList.tsx#TeamList",
+        "weight": 2,
+        "required": true
+      },
+      {
+        "id": "src/features/users/UserProfile.tsx#UserProfile",
+        "weight": 2,
+        "required": true
+      }
+    ],
+    "expected_blocks": [
+      {
+        "id": "Auth",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Comments",
+        "weight": 3,
+        "required": true
+      },
+      {
+        "id": "Discussions",
+        "weight": 2
+      },
+      {
+        "id": "Teams",
+        "weight": 2
+      },
+      {
+        "id": "Users",
+        "weight": 2
+      }
+    ],
+    "must_not_include": {
+      "files": [
+        "src/lib/apiClient.ts",
+        "src/utils/helpers.ts"
+      ]
+    },
+    "scoring_mode": "any_hit"
+  },
+  "tags": [
+    "error-handling",
+    "robustness",
+    "bug"
+  ]
+}
